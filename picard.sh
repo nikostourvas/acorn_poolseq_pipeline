@@ -8,9 +8,9 @@ cat inds | parallel --verbose -j 10 \
 	MarkDuplicates REMOVE_DUPLICATES=true \
 	ASSUME_SORTED=true VALIDATION_STRINGENCY=SILENT \
 	MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000 \
-	INPUT=$BASE{}.bam \
-	OUTPUT=$BASE{}.rmd.bam \
-	METRICS_FILE=$BASE{}.rmd.bam.metrics
+	INPUT=$BASE{}_sort.bam \
+	OUTPUT=$BASE{}_sort.rmd.bam \
+	METRICS_FILE=$BASE{}_sort.rmd.bam.metrics
  
 # Index all bam files again
-samtools index $BASE*.rmd.bam
+samtools index $BASE/*_sort.rmd.bam
