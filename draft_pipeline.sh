@@ -4,7 +4,8 @@
 bash fastqc.sh untrimmed_fastq data
 
 # Trimmomatic
-bash trimmomatic_simple_loop.sh
+parallel --verbose -j 2 \
+	'bash trimmomatic_parallel.sh {}' :::: inds
 
 # fastqc again
 bash fastqc.sh trimmed_fastq results
