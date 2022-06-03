@@ -1,11 +1,13 @@
 #!/bin/bash
 
-DATA="/home/tourvasn/ngs_training/results/align/Plomion"
+DATA="/home/tourvasn/ngs_training/results/align"
 RESULTS="/home/tourvasn/ngs_training/results/VCF"
-REF="/home/tourvasn/ngs_training/data/reference/Plomion_et_al_2018/Qrob_V2_2N.fa"
+REF="/home/tourvasn/ngs_training/data/reference/Qrob_PM1N.fa"
+
+mkdir ../results/VCF
 	
-/programs/samtools/bin/samtools mpileup -B -q 1 -f $REF $DATA/*_sort.rmd.bam > $RESULTS/cohort.mpileup
+samtools mpileup -B -q 1 -f $REF $DATA/*.sort.Q20.nodup.bam > $RESULTS/cohort.mpileup
 java -jar /programs/VarScan.jar mpileup2snp $RESULTS/cohort.mpileup \
 	--vcf-sample-list inds \
-	--min-coverage 10 --min-var-freq 0.0125 --p-value 0.05 \
-	--output-vcf 1 > $RESULTS/cohort.varScan.snp.vcf
+	--min-coverage 8 --min-var-freq 0.0055 --p-value 0.05 \
+	--output-vcf 1 > $RESULTS/Qrob_209-220.varScan.snp.vcf

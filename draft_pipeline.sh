@@ -1,21 +1,23 @@
 #!/bin/bash
 
+# fastqc
+bash fastqc.sh untrimmed_fastq data
+
 # Trimmomatic
 bash trimmomatic_simple_loop.sh
 
+# fastqc again
+bash fastqc.sh trimmed_fastq results
+
 # Map
-#bwa index /home/tourvasn/ngs_training/data/reference/Plomion_et_al_2018/Qrob_V2_2N.fa
-#samtools faidx /home/tourvasn/ngs_training/data/reference/Plomion_et_al_2018/Qrob_V2_2N.fa
+bwa index /home/tourvasn/ngs_training/data/reference/Qrob_PM1N.fa
+samtools faidx /home/tourvasn/ngs_training/data/reference/Qrob_PM1N.fa
 
 parallel --verbose -j 2 \
-	'bash parallel_bwa.sh {}' :::: inds
+	'bash mapping.sh {}' :::: inds
 
-# Picard
 parallel --verbose -j 2 \
-	'bash picard.sh {}' :::: inds
-
-# Index all bam files again
-samtools index -@ 8 /home/tourvasn/ngs_training/results/align/Plomion/*_sort.rmd.bam
+	'bash bam_cleaning.sh {}' :::: inds
 
 # Variant calling
 bash variant_calling_samtools-VarScan.sh

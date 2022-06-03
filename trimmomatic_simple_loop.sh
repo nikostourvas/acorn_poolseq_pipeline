@@ -3,6 +3,9 @@
 UNTRIMMED=/home/tourvasn/ngs_training/data/untrimmed_fastq/
 TRIMMED=/home/tourvasn/ngs_training/results/trimmed_fastq/
 
+# create output directory
+mkdir ../results/trimmed_fastq
+
 for infile in ${UNTRIMMED}*1_001.fastq.gz
  do
    base=$(basename ${infile} 1_001.fastq.gz)
