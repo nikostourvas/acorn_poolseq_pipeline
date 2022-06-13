@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # create output directory
-mkdir ../results/trimmed_fastq
+mkdir -p ../results/trimmed_fastq
 
 # variables
 IND=$1
