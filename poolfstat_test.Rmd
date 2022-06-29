@@ -1,0 +1,111 @@
+---
+title: "vcf2poolfstat"
+output: html_document
+date: '2022-06-09'
+---
+
+```{r}
+library(poolfstat)
+```
+
+```{r}
+pool209220 <- vcf2pooldata(vcf.file = "../results/VCF/Qrob_total_filter2.snp.vcf",
+                           poolnames = c("209", "220"),
+                           poolsizes = c(44, 47))
+```
+
+```{r}
+unique(pool209220@snp.info$Chromosome)
+```
+
+Filter
+```{r}
+filtered <- vcf2pooldata(vcf.file = "../results/VCF/Qrob_total_filter2.snp.vcf",
+     poolnames = c("209", "220"),
+       poolsizes = c(44, 47),
+     min.cov.per.pool = 45,
+     max.cov.per.pool = 450,
+     min.maf = 0.05)
+```
+
+LD pruning (not necessary)
+first convert pooldata to baypass
+```{r}
+pooldata2genobaypass(filtered, writing.dir = "../results/popgen/", subsamplesize = -1)
+```
+
+prepare the snpdet file for next script
+we will add header to the file
+```{bash, echo=FALSE}
+cd ../results/popgen/
+sed -i '1 i\scaffold\tpos\tref\talt' snpdet
+```
+
+```{r}
+# To run the script below, you need to take the snpdet output from the poolfstat2baypass command above, and give the columns headers. Importantly, the first column must be titled "scaffold" and the second column must be titled "pos" (these are the contig and position columns).Here I called this file 'snpdet.pruning.txt'
+
+# Read input file
+data<-read.table("../results/popgen/snpdet",sep=" ",header=F)
+colnames(data) <- c("scaffold", "pos", "ref", "alt")
+
+# Initiate data for LD pruning
+data_LD<-NULL
+
+# Window for LD pruning, here at 1000 bp (select 1 SNP per 1000 base pairs)
+window<-1000
+
+# Print every unique contig, and for every contig, randomly subsample 1 SNP per 1000 bp window
+scaffold_ID<-unique(data$scaffold)
+for(i in 1:length(scaffold_ID)){
+  print(scaffold_ID[i])
+  subset<-data[which(data$scaffold==scaffold_ID[i]),]
+for(j in 0:10){
+  print(window*j+1)
+  subset_bin_i<-subset[which(subset$pos>=window*j & subset$pos<=window*(j+1)),]
+  random<-sample(1:length(subset_bin_i[,1]),1)
+  subsubset<-subset_bin_i[random,]
+  data_LD<-rbind(data_LD,subsubset)
+}
+}
+
+# Get the unique LD pruned SNP list
+uniq.LD <- unique(data_LD)
+
+# Write to excel file
+WriteXLS(uniq.LD, "SG.LD.list.xls")
+
+####### SUBSET BAYPASS FILE  ###########
+
+# Here we are going to filter our BayPass input files to now only relate to the LD-pruned SNPs. To do this, we first need to combine the .genobaypass and .snpdet outptut files from above. So in excel or text editor, have the first columns relate to the .snpdet output, then add the .genobaypass columns following. In other words, your input file here is the contig position, allele states, and then allele counts. Make sure the columns do not have headers. Here I called this file 'SG.snpdet.geno.txt'
+
+library(dplyr)
+
+# Read the .genobaypass/.snpdet file type explained above, relating to all SNPs
+snp.data<-read.table("SG.snpdet.geno.txt",sep="",header=F)
+
+# Read your LD SNP list. To make this text file, I just took the first two columns of the SG.LD.list excel file just created, and turned that into a text file. So basically a text file with first column being contig, and second column being position for all LD-pruned SNPs (but with no column headers)
+ld.data<-read.table("SG.LD.index.txt",sep="\t",header=F)
+
+# Filter the list of all SNPs to now only list the LD pruned SNPs
+snp.data.f <- dplyr::inner_join(snp.data, ld.data)
+
+# Write out as new file, and then from there you can split back up into new .snpdet and .genobaypass input files
+write.table(snp.data.f, file="SG.LD.snpdet.geno.txt", col.names = F, row.names= F, quote = F)
+```
+
+# PopGen Statistics
+```{r}
+gFST <- computeFST(filtered, method = "Anova")
+```
+
+```{r}
+gFST2 <- computeFST(filtered, sliding.window.size = 50)
+```
+
+
+
+# Extract allele frequencies
+```{r}
+ref_freq <- filtered@refallele.readcount / filtered@readcoverage
+```
+
