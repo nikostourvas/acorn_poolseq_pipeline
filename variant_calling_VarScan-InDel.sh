@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RESULTS="/home/tourvasn/ngs_training/results/VCF"
+RESULTS=../results/VCF
 
 java -jar /programs/VarScan.jar mpileup2indel $RESULTS/cohort.mpileup \
 	--min-coverage 10 --min-var-freq 0.0100 --p-value 0.10 \

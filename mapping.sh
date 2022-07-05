@@ -1,19 +1,17 @@
 #!/bin/bash
 
-BASE="/home/tourvasn/ngs_training"
-
 # create output directory
-mkdir -p ${BASE}/results/align
+mkdir -p ../results/align
 
 # reference genome
-REF=${BASE}/data/reference/Qrob_PM1N.fa
+REF=../data/reference/Qrob_PM1N.fa
 
 # declare variables
 IND=${1}
-FORWARD=${BASE}/results/trimmed_fastq/${IND}_1.trim.fastq.gz
-REVERSE=${BASE}/results/trimmed_fastq/${IND}_2.trim.fastq.gz
+FORWARD=../results/trimmed_fastq/${IND}_1.trim.fastq.gz
+REVERSE=../results/trimmed_fastq/${IND}_2.trim.fastq.gz
 RG="@RG\tID:${IND}\tPL:Illumina\tSM:${IND}"
-OUTPUT=${BASE}/results/align/${IND}
+OUTPUT=../results/align/${IND}
 
 # then align, filter for quality, remove duplicates, and sort
 # -t how many cores to use PER SAMPLE
