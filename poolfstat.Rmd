@@ -106,6 +106,6 @@ gFST2 <- computeFST(filtered, sliding.window.size = 50)
 
 # Extract allele frequencies
 ```{r}
-ref_freq <- filtered@refallele.readcount / filtered@readcoverage
+ref_freq <- t(filtered@refallele.readcount / filtered@readcoverage)
 ```
 

@@ -7,8 +7,58 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Setup
+
+## Palettes
+```{r}
+cb_paired=c("#B1DF8A","#33A02C","#A6CEE3","#1F78B4","#FB9A99","#E31A1C",
+            "#CAB2D6","#6A3D9A","#FDBF6F","#FF7F00","grey50","#B15928",
+            "black")
+
+xlstat=c("#7a81ff", "#00fe0a", "#7030a0", "#0070c0", "#00b050", "#03f2fc", "#f905ab",
+         "#92d050", "#945200", "#ff0000", "#262626", "#c00000", "#ffc000")
+
+wong=c("#000000","#E69F00","#56B4E9","#009E73","#CC79A7","#F0E442","#006699",
+         "#D55E00")
+```
+
+## Libraries
 ```{r}
 library(pcadapt)
 library(qvalue)
 ```
+
+# Analysis
+```{r}
+filename <- read.pcadapt(ref_freq, type = "pool")
+```
+
+```{r eval=FALSE}
+pool.data <- system.file("extdata", "pool3pops", package = "pcadapt")
+filename <- read.pcadapt(pool.data, type = "pool")
+```
+
+```{r}
+res <- pcadapt(filename)
+#The same as res <- pcadapt(filename,K=2)
+summary(res)
+```
+
+```{r}
+plot(res,option="screeplot")
+```
+
+```{r}
+plot(res, option = "manhattan")
+```
+
+A list of outliers can be obtained as for individual genotype data
+
+```{r}
+padj <- p.adjust(res$pvalues, method = "BH")
+alpha <- 0.1
+outliers <- which(padj < alpha)
+length(outliers)
+```
+
 
