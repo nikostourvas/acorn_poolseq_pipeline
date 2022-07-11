@@ -44,6 +44,7 @@ res <- pcadapt(filename)
 summary(res)
 ```
 
+Scree plot will not be available with only two pops
 ```{r}
 plot(res,option="screeplot")
 ```
