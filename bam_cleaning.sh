@@ -1,10 +1,8 @@
 #!/bin/bash
 
-BASE="/home/tourvasn/ngs_training"
-
 # declare variables
 IND=${1}
-OUTPUT=${BASE}/results/align/${IND}
+OUTPUT=../results/align/${IND}
 
 # Re-sort the reads according to their genomic coordinates
 samtools sort -@ 15 ${OUTPUT}.fixmate.sort.bam > ${OUTPUT}.fixmate.newsort.bam

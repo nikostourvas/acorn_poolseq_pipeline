@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # declare variables
-RESULTS="/home/tourvasn/ngs_training/results/VCF"
+RESULTS=../results/VCF
 SNPVCFS=$RESULTS/*snp.vcf
 INDELVCFS=$RESULTS/*indel.vcf
 
