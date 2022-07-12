@@ -26,16 +26,34 @@ wong=c("#000000","#E69F00","#56B4E9","#009E73","#CC79A7","#F0E442","#006699",
 ```{r}
 library(pcadapt)
 library(qvalue)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+```
+
+## Load previous results
+```{r}
+load("../results/popgen/poolfstat.RData")
 ```
 
 # Analysis
+keep only SNPs found in Chromosomes, NOT scaffolds!
 ```{r}
-filename <- read.pcadapt(ref_freq, type = "pool")
+#get chromosome info
+chrom <- filtered@snp.info
+str(chrom)
+dim(chrom)
+
+# find rows of chromosome SNPS
+chrom <- dplyr::filter(chrom, str_detect(Chromosome, "Qrob_Chr"))
+
+# filter pcadapt input file
+pcadapt_input <- ref_freq[ ,1:nrow(chrom)]
 ```
 
-```{r eval=FALSE}
-pool.data <- system.file("extdata", "pool3pops", package = "pcadapt")
-filename <- read.pcadapt(pool.data, type = "pool")
+
+```{r}
+filename <- read.pcadapt(pcadapt_input, type = "pool")
 ```
 
 ```{r}
@@ -49,17 +67,77 @@ Scree plot will not be available with only two pops
 plot(res,option="screeplot")
 ```
 
-```{r}
-plot(res, option = "manhattan")
-```
-
-A list of outliers can be obtained as for individual genotype data
-
+list of outliers
 ```{r}
 padj <- p.adjust(res$pvalues, method = "BH")
-alpha <- 0.1
+alpha <- 0.01
 outliers <- which(padj < alpha)
 length(outliers)
+```
+
+Make Manhattan plot by chromosome
+NA p values arise because of MAF filter
+MAF filter works differently in poolfstat and pcadapt
+In poolfstat MAF filter is global (as if the data consisted of one pop only)
+PCAdapt MAF filter is applied per population (pool) basis
+```{r fig.width=10, fig.height= 5}
+pca_df <- as.data.frame(cbind(chrom, padj))
+colnames(pca_df) <- c("chr", "position", "ref", "alt", "pvalues")
+pca_df$chr <- gsub(pattern = "Qrob_Chr0", replacement = "", pca_df$chr)
+pca_df$chr <- gsub(pattern = "Qrob_Chr", replacement = "", pca_df$chr)
+pca_df$chr <- as.factor(reorder(pca_df$chr, sort(as.integer(pca_df$chr))))
+str(pca_df)
+
+manh_p <- ggplot(data = pca_df, aes(x = position, 
+                                    y = -log10(pvalues),
+                                    color = reorder(chr,
+                                                    sort(as.numeric(chr))))) +
+  facet_wrap(~chr, scales = "free_x", nrow=1, strip.position = "bottom") +
+  geom_point(alpha = 1, size = 0.8) +
+  geom_abline(intercept = -log10(sort(padj)[length(outliers)]), 
+              slope = 0, linetype = "dashed") +
+  scale_color_manual(values = rep(wong[-6], 3)) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        panel.spacing = unit(0, "lines")) +
+  xlab("Chromosome") + ylab("-log10(p-value)")
+
+manh_p + 
+    theme(panel.grid.major.x = element_line(colour = NA,
+      linetype = "blank"),
+      panel.grid.minor = element_line(linetype = "blank"),
+      plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave(filename = "Qrob_pcadapt-p-values-by-chr.png",
+       path = "../results/figs", dpi=300,
+       width = 10, height = 5)
+```
+
+```{r fig.width=10, fig.height=24}
+manh_p2 <- ggplot(data = pca_df, aes(x = position / 10^6, 
+                                    y = -log10(pvalues),
+                                    color = chr)) +
+  facet_wrap(~chr, scales = "free", ncol=1, strip.position = "top") +
+  geom_point(alpha = 1, size = 0.8) +
+  geom_abline(intercept = -log10(sort(padj)[length(outliers)]), 
+              slope = 0, linetype = "dashed") +
+  scale_color_manual(values = rep(wong[-6], 4)) +
+  theme_bw() +
+  theme(legend.position = "none",
+        panel.grid.major.x = element_line(colour = NA, linetype = "blank"),
+        panel.grid.minor = element_line(linetype = "blank"),
+        panel.spacing = unit(0, "lines")) +
+  xlab("Position (Mb)") + ylab("-log10(p-value)") +
+  scale_x_continuous(labels = scales::comma)
+
+manh_p2 + 
+    theme(plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave(filename = "Qrob_pcadapt-p-values-by-chr2.png",
+       path = "../results/figs", dpi=300,
+       width = 10, height = 24)
 ```
 
 
