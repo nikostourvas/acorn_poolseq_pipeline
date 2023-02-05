@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # fastqc
+# You can change number of cores per job by accessing fastqc.sh script.
 bash fastqc.sh untrimmed_fastq data
 
 # make list of samples
@@ -10,13 +11,18 @@ do
 done > ../data/inds
 
 # Trimmomatic
+# You can change number of cores per job by accessing trimmomatic_parallel.sh script.
+# For example you can set trimmomatic to use 4 cores. 
+# ATTN: So if you ask parallel to run 2 jobs concurrently, you need 2 x 4 = 8 cores.
 parallel --verbose -j 2 \
 	'bash trimmomatic_parallel.sh {}' :::: ../data/inds
 
 # fastqc again
+# You can change number of cores per job by accessing fastqc.sh script.
 bash fastqc.sh trimmed_fastq results
 
 # Map
+# You can change number of cores per job by accessing mapping.sh script.
 bwa index ../data/reference/Qrob_PM1N.fa
 samtools faidx ../data/reference/Qrob_PM1N.fa
 
