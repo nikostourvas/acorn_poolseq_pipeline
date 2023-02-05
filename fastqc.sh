@@ -6,4 +6,4 @@ DIRECTORY=$2 # either data or results
 # create output directory 
 mkdir -p ../results/fastqc_$1
 
-fastqc -t 4 -o ../results/fastqc_$1/ ../$2/$1/*fastq.gz
+fastqc -t 32 -o ../results/fastqc_$1/ ../$2/$1/*fastq.gz
