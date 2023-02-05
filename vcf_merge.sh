@@ -21,21 +21,19 @@ do
 done
 
 # Index VCFs
-# TODO: multithreading on bcftools index
 for SNPVCF in ${SNPVCFS[@]}
 do
-    bcftools index ${SNPVCF}.gz
+    bcftools index --threads 32 ${SNPVCF}.gz
 done
 
 for INDELVCF in ${INDELVCFS[@]}
 do
-    bcftools index ${INDELVCF}.gz
+    bcftools index --threads 32 ${INDELVCF}.gz
 done
 
 # Merge VCFs
-# TODO: multithreading on bcftools concat
-bcftools concat $RESULTS/Qrob*.snp.vcf.gz -o $RESULTS/Qrob_total.snp.vcf
-bcftools concat $RESULTS/Qrob*.indel.vcf.gz -o $RESULTS/Qrob_total.indel.vcf
+bcftools concat --threads 32 $RESULTS/Qrob*.snp.vcf.gz -o $RESULTS/Qrob_total.snp.vcf
+bcftools concat --threads 32 $RESULTS/Qrob*.indel.vcf.gz -o $RESULTS/Qrob_total.indel.vcf
 
 # Filter SNPs close to InDels
 java -jar /usr/share/java/varscan.jar filter $RESULTS/Qrob_total.snp.vcf \
@@ -45,6 +43,5 @@ java -jar /usr/share/java/varscan.jar filter $RESULTS/Qrob_total.snp.vcf \
     --output-file $RESULTS/Qrob_total_filter.snp.vcf
 
 # keep only biallelic SNPs
-# TODO: multithreading on bcftools view possible???
-bcftools view -m2 -M2 -v snps $RESULTS/Qrob_total_filter.snp.vcf \
+bcftools view --threads 32 -m2 -M2 -v snps $RESULTS/Qrob_total_filter.snp.vcf \
     -o $RESULTS/Qrob_total_filter2.snp.vcf
