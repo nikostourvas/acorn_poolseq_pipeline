@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 #SBATCH --time=06:00:00               # Run time (days-hh:mm:ss) - (max 7days)
 #SBATCH --partition=rome             # Submit to queue/partition named batch
