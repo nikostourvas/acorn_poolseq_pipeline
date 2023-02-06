@@ -12,5 +12,5 @@ module load gcc/9.2.0 singularity/3.6.4
 
 # Load Apptainer/Singularity container
 singularity exec --bind /mnt/forgenet_a/projects/ngs_training:/mnt \
-        /mnt/forgenet_a/container_images/poolseq_tools_0.1.8.sif \
+        /mnt/forgenet_a/container_images/poolseq_tools_0.1.9.sif \
         /bin/sh -c 'cd /mnt/acorn_poolseq_pipeline/ && /usr/bin/time -v bash draft_pipeline.sh'
