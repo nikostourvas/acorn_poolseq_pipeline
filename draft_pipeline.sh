@@ -43,6 +43,10 @@ parallel --verbose -j 20 \
 
 bash vcf_merge.sh
 
+bash snp_indel_rm.sh
+
+bash vcf_biallelic.sh
+
 # filter for paralogs
 # extremely RAM hungry - DO NOT RUN
 #singularity exec ~/singularity_images/bam-readcount.sif false_positive_filter.sh
