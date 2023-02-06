@@ -37,7 +37,6 @@ grep 'Qrob' ../data/reference/Qrob_PM1N.fa | \
  cut -c2- > ../data/regions 
 
 # Variant calling
-#####REMOVE IF NOT USEDbash variant_calling_samtools-VarScan.sh
 parallel --verbose -j 20 \
 	'bash variant_calling_parallel.sh {}' :::: ../data/regions
 
