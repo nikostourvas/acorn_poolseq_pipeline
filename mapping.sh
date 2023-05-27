@@ -25,3 +25,5 @@ samtools sort -n -@ 16 ${OUTPUT}.raw.bam > ${OUTPUT}.name.sort.bam
 samtools fixmate -m ${OUTPUT}.name.sort.bam ${OUTPUT}.fixmate.sort.bam
 # gather statistics
 samtools flagstat ${OUTPUT}.fixmate.sort.bam > ${OUTPUT}.sort.stats
+
+rm ${OUTPUT}${IND}.raw.bam
