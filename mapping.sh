@@ -24,6 +24,6 @@ samtools sort -n -@ 16 ${OUTPUT}.raw.bam > ${OUTPUT}.name.sort.bam
 # fix read-mates so that they both have the same sets of attributesfor the subsequent preprocessing
 samtools fixmate -m ${OUTPUT}.name.sort.bam ${OUTPUT}.fixmate.sort.bam
 # gather statistics
-samtools flagstat ${OUTPUT}.fixmate.sort.bam > ${OUTPUT}.sort.stats
+samtools flagstat ${OUTPUT}.fixmate.sort.bam > ${OUTPUT}.sort.flagstat
 
 rm ${OUTPUT}${IND}.raw.bam
