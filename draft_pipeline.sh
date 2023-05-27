@@ -21,6 +21,9 @@ parallel --verbose -j 2 \
 # You can change number of cores per job by accessing fastqc.sh script.
 bash fastqc.sh trimmed_fastq results
 
+# Create a unified report with MultiQC
+multiqc ../results
+
 # Map
 # You can change number of cores per job by accessing mapping.sh script.
 bwa index ../data/reference/Qrob_PM1N.fa
@@ -49,3 +52,6 @@ bash vcf_biallelic.sh
 # filter for paralogs
 # extremely RAM hungry - DO NOT RUN
 #singularity exec ~/singularity_images/bam-readcount.sif false_positive_filter.sh
+
+# Create a unified final report with MultiQC
+multiqc --force ../results
