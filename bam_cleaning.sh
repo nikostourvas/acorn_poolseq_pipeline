@@ -18,6 +18,7 @@ samtools index -@ 16 ${OUTPUT}.sort.Q20.markdup.bam
 samtools flagstat ${OUTPUT}.sort.Q20.markdup.bam > ${OUTPUT}.sort.Q20.markdup.flagstat
 samtools idxstats ${OUTPUT}.sort.Q20.markdup.bam > ${OUTPUT}.sort.Q20.markdup.idxstat
 samtools stats -@ 16 ${OUTPUT}.sort.Q20.markdup.bam > ${OUTPUT}.sort.Q20.markdup.stats
+samtools depth -@ 16 -aa ${OUTPUT}.sort.Q20.markdup.bam > ${OUTPUT}.sort.Q20.markdup.depth
 
 # remove unnecessary files
 rm ${OUTPUT}${IND}.sort.bam ${OUTPUT}${IND}.sort.Q20.bam
