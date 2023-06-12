@@ -15,4 +15,4 @@ java -jar /usr/share/java/trimmomatic-0.39.jar PE \
         ${TRIMMED}${IND}_2.trim.fastq.gz ${TRIMMED}${IND}_2un.trim.fastq.gz \
         SLIDINGWINDOW:4:20 MINLEN:25 ILLUMINACLIP:${ADAPTER}:2:40:15 \
 	-threads 16 \
-        2> trim_out.log
+        2> ${TRIMMED}trim_out.log
