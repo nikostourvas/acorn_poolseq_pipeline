@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Check FASTQ file integrity
+# Generate a hash for each file
+md5sum ../data/untrimmed_fastq/*.fastq >  ../data/untrimmed_fastq/hashList.txt
+
 # fastqc
 # You can change number of cores per job by accessing fastqc.sh script.
 bash fastqc.sh untrimmed_fastq data
