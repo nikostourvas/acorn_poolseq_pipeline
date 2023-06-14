@@ -21,4 +21,4 @@ samtools stats -@ 16 ${OUTPUT}.sort.Q20.markdup.bam > ${OUTPUT}.sort.Q20.markdup
 samtools depth -@ 16 -aa ${OUTPUT}.sort.Q20.markdup.bam > ${OUTPUT}.sort.Q20.markdup.depth
 
 # remove unnecessary files
-rm ${OUTPUT}${IND}.sort.bam ${OUTPUT}${IND}.sort.Q20.bam
+rm ${OUTPUT}.sort.bam ${OUTPUT}.sort.Q20.bam
