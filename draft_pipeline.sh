@@ -26,7 +26,7 @@ parallel --verbose -j 2 \
 bash fastqc.sh trimmed_fastq results
 
 # Create a unified report with MultiQC
-multiqc ../results
+multiqc ../results -o ../results
 
 # Map
 # You can change number of cores per job by accessing mapping.sh script.
@@ -58,4 +58,4 @@ bash vcf_biallelic.sh
 #singularity exec ~/singularity_images/bam-readcount.sif false_positive_filter.sh
 
 # Create a unified final report with MultiQC
-multiqc --force ../results
+multiqc --force ../results -o ../results
