@@ -19,9 +19,13 @@ java -jar /usr/share/java/varscan.jar filter $RESULTS/Qrob_total.snp.vcf \
 #-For somatic mutations, generate bam-readcounts with the Tumor BAM. For LOH and Germline, generate readcounts with the Normal BAM
 #-For de novo mutations (trio calling), generate readcounts with the child BAM.
 # The filter requires the bam-readcount utility: https://github.com/genome/bam-readcount
+# Individual BAM files need to be merged into a single large BAM file!!!
 
+# Merge bams
+#samtools merge -r $RESULTS/all.bam $BAM_FILES \
+        #--threads 4
 # Readcount BAM
-#bam-readcount -q 1 -b 20 -f $REF $BAM_FILES > $RESULTS/readcount.tsv
+#bam-readcount -w 1 -q 1 -b 20 -f $REF $RESULTS/all.bam > $RESULTS/readcount.tsv
 
 #java -jar /usr/share/java/varscan.jar fpfilter $RESULTS/Qrob_total_filter.snp.vcf \
-#    [readcount file] OPTIONS
+#     $RESULTS/readcount.tsv --output-file $RESULTS/Qrob_total_filterfp.snp.vcf
