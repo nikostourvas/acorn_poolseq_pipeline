@@ -22,4 +22,4 @@ java -jar /usr/share/java/varscan.jar mpileup2indel $RESULTS/$REGION.mpileup \
 	--min-coverage 8 --min-var-freq 0.0055 --p-value 0.1 \
 	--output-vcf 1 > $RESULTS/$REGION.varScan.indel.vcf
 
-#rm $RESULTS/$REGION.mpileup
+rm $RESULTS/$REGION.mpileup
