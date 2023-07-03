@@ -5,7 +5,7 @@ mkdir -p ../results/trimmed_fastq
 
 # variables
 IND=$1
-UNTRIMMED=../data/untrimmed_reduced/
+UNTRIMMED=../data/untrimmed_fastq/
 TRIMMED=../results/trimmed_fastq/
 ADAPTER=../data/adapters/TruSeq3-PE-2.fa
 
