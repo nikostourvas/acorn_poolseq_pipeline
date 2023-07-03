@@ -6,6 +6,7 @@ OUTPUT=../results/align/${IND}
 
 # Re-sort the reads according to their genomic coordinates
 samtools sort -@ 16 ${OUTPUT}.fixmate.sort.bam > ${OUTPUT}.fixmate.newsort.bam
+rm ${OUTPUT}*.sort.bam
 # Quality filter 
 samtools view -@ 16 -bh -q 20 ${OUTPUT}.fixmate.newsort.bam > ${OUTPUT}.sort.Q20.bam
 # mark the duplicate reads as variant callers take this information into account
@@ -22,4 +23,4 @@ samtools stats -@ 16 ${OUTPUT}.sort.Q20.markdup.bam > ${OUTPUT}.sort.Q20.markdup
 #samtools depth -@ 16 -aa ${OUTPUT}.sort.Q20.markdup.bam > ${OUTPUT}.sort.Q20.markdup.depth
 
 # remove unnecessary files
-rm ${OUTPUT}.sort.bam ${OUTPUT}.sort.Q20.bam
+rm ${OUTPUT}.sort.Q20.bam

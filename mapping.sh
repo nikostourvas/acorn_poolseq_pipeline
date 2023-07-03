@@ -19,11 +19,11 @@ bwa mem -R ${RG} -M -t 16 ${REF} ${FORWARD} ${REVERSE} > ${OUTPUT}.raw.sam
 
 # -@ how many cores to use PER SAMPLE
 samtools view -@ 16 -b ${OUTPUT}.raw.sam > ${OUTPUT}.raw.bam
+rm ${OUTPUT}.raw.sam
 # sort reads in the BAM according to their names so that pairs are placed one below the other
 samtools sort -n -@ 16 ${OUTPUT}.raw.bam > ${OUTPUT}.name.sort.bam
+rm ${OUTPUT}.raw.bam
 # fix read-mates so that they both have the same sets of attributesfor the subsequent preprocessing
 samtools fixmate -m ${OUTPUT}.name.sort.bam ${OUTPUT}.fixmate.sort.bam
 # gather statistics
 samtools flagstat ${OUTPUT}.fixmate.sort.bam > ${OUTPUT}.sort.flagstat
-
-rm ${OUTPUT}.raw.bam
