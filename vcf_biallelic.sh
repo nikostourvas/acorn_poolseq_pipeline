@@ -2,7 +2,7 @@
 
 # declare variables
 RESULTS=../results/VCF
-REF=../data/reference/Qrob_PM1N.fa
+REF=/mnt/data/reference/Qrob_PM1N.fa
 
 # keep only biallelic SNPs
 bcftools view --threads 32 -m2 -M2 -v snps $RESULTS/Qrob_total_filter.snp.vcf \

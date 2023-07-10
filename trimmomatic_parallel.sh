@@ -5,9 +5,9 @@ mkdir -p ../results/trimmed_fastq
 
 # variables
 IND=$1
-UNTRIMMED=../data/untrimmed_fastq/
+UNTRIMMED=/mnt/data/untrimmed_fastq/
 TRIMMED=../results/trimmed_fastq/
-ADAPTER=../data/adapters/TruSeq3-PE-2.fa
+ADAPTER=/mnt/data/adapters/TruSeq3-PE-2.fa
 
 java -jar /usr/share/java/trimmomatic-0.39.jar PE \
 	${UNTRIMMED}${IND}_R1_001.fastq.gz ${UNTRIMMED}${IND}_R2_001.fastq.gz \

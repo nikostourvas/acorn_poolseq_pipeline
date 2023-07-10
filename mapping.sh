@@ -4,7 +4,7 @@
 mkdir -p ../results/align
 
 # reference genome
-REF=../data/reference/Qrob_PM1N.fa
+REF=/mnt/data/reference/Qrob_PM1N.fa
 
 # declare variables
 IND=${1}

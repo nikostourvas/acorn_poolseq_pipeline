@@ -2,7 +2,7 @@
 
 # declare variables
 RESULTS=../results/VCF
-REF=../data/reference/Qrob_PM1N.fa
+REF=/mnt/data/reference/Qrob_PM1N.fa
 BAM_FILES=../results/align/*.sort.Q20.markdup.bam
 
 # Filter SNPs close to InDels

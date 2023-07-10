@@ -6,7 +6,7 @@ mkdir -p ../results/VCF
 # declare variables
 DATA=../results/align
 RESULTS=../results/VCF
-REF=../data/reference/Qrob_PM1N.fa
+REF=/mnt/data/reference/Qrob_PM1N.fa
 REGION=$1
 	
 samtools mpileup -B -q 1 -r $REGION -f $REF $DATA/*.sort.Q20.markdup.bam \
