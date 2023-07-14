@@ -1,6 +1,15 @@
 ---
-title: "pcadapt"
-output: html_document
+title: "ACORN Pool-Seq PCAdapt outlier SNPs"
+author: "Nikolaos Tourvas"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+output: 
+  html_document:
+    code_download: yes
+    code_folding: show
+    theme: default
+    toc: yes
+    toc_float: yes
+    keep_md: no
 ---
 
 ```{r setup, include=FALSE}
@@ -15,15 +24,13 @@ cb_paired=c("#B1DF8A","#33A02C","#A6CEE3","#1F78B4","#FB9A99","#E31A1C",
             "#CAB2D6","#6A3D9A","#FDBF6F","#FF7F00","grey50","#B15928",
             "black")
 
-xlstat=c("#7a81ff", "#00fe0a", "#7030a0", "#0070c0", "#00b050", "#03f2fc", "#f905ab",
-         "#92d050", "#945200", "#ff0000", "#262626", "#c00000", "#ffc000")
-
 wong=c("#000000","#E69F00","#56B4E9","#009E73","#CC79A7","#F0E442","#006699",
          "#D55E00")
 ```
 
 ## Libraries
 ```{r}
+library(poolfstat)
 library(pcadapt)
 library(qvalue)
 library(ggplot2)
@@ -31,13 +38,39 @@ library(dplyr)
 library(stringr)
 ```
 
-## Load previous results
+```{bash}
+mkdir -p ../results/figs
+```
+
+## Load data
 ```{r}
-load("../results/popgen/poolfstat.RData")
+pool209220 <- vcf2pooldata(vcf.file = "../results/VCF/Qrob_total_filter2.snp.vcf",
+                           poolnames = c("209", "220"),
+                           poolsizes = c(44, 47))
+```
+
+Verify chromosomes were loaded correctly
+```{r}
+unique(pool209220@snp.info$Chromosome)
+```
+
+Filter for coverage (not necessary)
+```{r}
+filtered <- vcf2pooldata(vcf.file = "../results/VCF/Qrob_total_filter2.snp.vcf",
+     poolnames = c("209", "220"),
+       poolsizes = c(44, 47),
+     min.cov.per.pool = 45,
+     max.cov.per.pool = 450,
+     min.maf = 0.05)
+```
+
+Extract allele frequencies
+```{r}
+ref_freq <- t(filtered@refallele.readcount / filtered@readcoverage)
 ```
 
 # Analysis
-keep only SNPs found in Chromosomes, NOT scaffolds!
+Keep only SNPs found in Chromosomes, NOT scaffolds!
 ```{r}
 #get chromosome info
 chrom <- filtered@snp.info
@@ -46,33 +79,67 @@ dim(chrom)
 
 # find rows of chromosome SNPS
 chrom <- dplyr::filter(chrom, str_detect(Chromosome, "Qrob_Chr"))
-
 # filter pcadapt input file
-pcadapt_input <- ref_freq[ ,1:nrow(chrom)]
-```
-
-
-```{r}
-filename <- read.pcadapt(pcadapt_input, type = "pool")
+pcadapt_pre_input <- ref_freq[ ,1:nrow(chrom)]
 ```
 
 ```{r}
-res <- pcadapt(filename)
-#The same as res <- pcadapt(filename,K=2)
+pcadapt_input <- read.pcadapt(pcadapt_pre_input, type = "pool")
+```
+
+Perform pcadapt analysis
+PCAdapt offers a SNP thinning function, but it is not available for pooled
+data as it is impossible to calculate LD
+```{r}
+res <- pcadapt(pcadapt_input, K=1, min.maf = 0.05)
+#The same as res <- pcadapt(pcadapt_input,K=2)
 summary(res)
 ```
 
-Scree plot will not be available with only two pops
+Make a PCA plot
+```{r}
+plot(res, option = "scores", pop = c("209", "220"))
+```
+
+Investigate screeplot
+Decide how many PCA axes to use
+Hint: You can also decide based on PCA plots for axes 3,4 or more
 ```{r}
 plot(res,option="screeplot")
 ```
 
+Rerun pcadapt with the chosen number of PCA axes
+```{r}
+# res <- pcadapt(pcadapt_input, K=1, min.maf = 0.05)
+# #The same as res <- pcadapt(pcadapt_input,K=2)
+# summary(res)
+```
+
 list of outliers
 ```{r}
-padj <- p.adjust(res$pvalues, method = "BH")
+padj <- p.adjust(res$pvalues, method = "fdr")
 alpha <- 0.01
 outliers <- which(padj < alpha)
 length(outliers)
+```
+
+```{r}
+plot(res, option = "qqplot")
+```
+
+```{r}
+hist(res$pvalues, xlab = "p-values", main = NULL, breaks = 50, col = "orange")
+```
+
+```{r}
+plot(res, option = "stat.distribution")
+```
+
+Export outliers
+```{r}
+write.csv(x = outliers,
+          file = "../results/VCF/pcadapt_outliers.csv",
+          quote = FALSE, row.names = FALSE, col.names = FALSE)
 ```
 
 Make Manhattan plot by chromosome
@@ -110,7 +177,7 @@ manh_p +
       panel.grid.minor = element_line(linetype = "blank"),
       plot.background = element_rect(fill = "white", color = "white"))
 
-ggsave(filename = "Qrob_pcadapt-p-values-by-chr.png",
+ggsave(filename = "Qrob_pcadapt-p-values-by-chr.pdf",
        path = "../results/figs", dpi=300,
        width = 10, height = 5)
 ```
@@ -135,7 +202,7 @@ manh_p2 <- ggplot(data = pca_df, aes(x = position / 10^6,
 manh_p2 + 
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
-ggsave(filename = "Qrob_pcadapt-p-values-by-chr2.png",
+ggsave(filename = "Qrob_pcadapt-p-values-by-chr2.pdf",
        path = "../results/figs", dpi=300,
        width = 10, height = 24)
 ```
