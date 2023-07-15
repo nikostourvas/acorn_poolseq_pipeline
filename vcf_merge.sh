@@ -23,14 +23,14 @@ done
 # Index VCFs
 for SNPVCF in ${SNPVCFS[@]}
 do
-    bcftools index --threads 32 ${SNPVCF}.gz
+    bcftools index --threads 4 ${SNPVCF}.gz
 done
 
 for INDELVCF in ${INDELVCFS[@]}
 do
-    bcftools index --threads 32 ${INDELVCF}.gz
+    bcftools index --threads 4 ${INDELVCF}.gz
 done
 
 # Merge VCFs
-bcftools concat --threads 32 $RESULTS/Qrob*.snp.vcf.gz -o $RESULTS/Qrob_total.snp.vcf
-bcftools concat --threads 32 $RESULTS/Qrob*.indel.vcf.gz -o $RESULTS/Qrob_total.indel.vcf
+bcftools concat --threads 4 $RESULTS/Qrob*.snp.vcf.gz -o $RESULTS/Qrob_total.snp.vcf
+bcftools concat --threads 4 $RESULTS/Qrob*.indel.vcf.gz -o $RESULTS/Qrob_total.indel.vcf

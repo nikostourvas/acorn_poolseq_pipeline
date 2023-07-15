@@ -16,5 +16,5 @@ java -jar /usr/share/java/trimmomatic-0.39.jar PE \
         ILLUMINACLIP:${ADAPTER}:2:40:15 \
         SLIDINGWINDOW:4:20 \
         MINLEN:25 \ 
-	-threads 16 \
+	-threads 2 \
         2> ${TRIMMED}trim_out.log
