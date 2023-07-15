@@ -44,7 +44,7 @@ grep 'Qrob' /mnt/data/reference/Qrob_PM1N.fa | \
  cut -c2- > /mnt/data/regions && 
 
 # Variant calling
-parallel --verbose -j 20 \
+parallel --verbose -j 4 \
 	'bash variant_calling_parallel.sh {}' :::: /mnt/data/regions &&
 
 # Merge the multiple small VCF files that were produced in the previous step
