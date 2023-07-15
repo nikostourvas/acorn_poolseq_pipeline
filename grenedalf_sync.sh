@@ -10,5 +10,7 @@ grenedalf sync \
     --sam-path $BAM/*Q20.markdup.bam \
     --out-dir $OUTPUT \
     --file-prefix bamfiles_ \
+    --compress \
     --log-file $OUTPUT/grenedalf_sync_log.txt \
-    --allow-file-overwriting
+    --allow-file-overwriting \
+    --threads 4

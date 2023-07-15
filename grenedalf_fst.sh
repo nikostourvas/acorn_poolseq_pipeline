@@ -18,4 +18,5 @@ grenedalf fst \
     --sync-path $OUTPUT/bamfiles_sync.sync \
     --out-dir $OUTPUT \
     --log-file $OUTPUT/grenedalf_fst_log.txt \
-    --allow-file-overwriting
+    --allow-file-overwriting \
+    --threads 4
