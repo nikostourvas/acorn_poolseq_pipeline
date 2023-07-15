@@ -4,17 +4,16 @@ mkdir -p ../results/frequencies
 
 # declare variables
 OUTPUT=../results/frequencies
-SYNC=../results/frequencies/bamfiles_sync.gz
-POOLSIZES=/mnt/data/pool_sizes
+SYNC=../results/frequencies/simulate.sync.gz
+POOLSIZES=pool_sizes_sim
 
 grenedalf fst \
-    --window-type sliding \
-    --window-sliding-width 1000 \
+    --window-type genome \
     --method unbiased-nei \
-    --pool-sizes $POOLSIZES \
+    --pool-sizes $OUTPUT/$POOLSIZES \
     --filter-sample-min-count 8 \
     --filter-sample-max-coverage 500 \
-    --filter-sample-min-coverage 50 \
+    --filter-sample-min-coverage 8 \
     --filter-total-only-biallelic-snps \
     --sync-path $SYNC \
     --out-dir $OUTPUT \
