@@ -9,10 +9,11 @@ samtools sort -@ 2 ${OUTPUT}.fixmate.sort.bam > ${OUTPUT}.fixmate.newsort.bam
 rm ${OUTPUT}*.sort.bam
 # Quality filter 
 samtools view -@ 2 -bh -q 20 ${OUTPUT}.fixmate.newsort.bam > ${OUTPUT}.sort.Q20.bam
-# mark the duplicate reads as variant callers take this information into account
-# here we don't use 'samtools rmdup' as it is no longer recommended to remove duplicates
-# marking the duplicates is enough
-samtools markdup -@ 2 ${OUTPUT}.sort.Q20.bam ${OUTPUT}.sort.Q20.markdup.bam
+# mark (and remove) the duplicate reads as variant callers take this information into account
+# here we don't use 'samtools rmdup' as it is no longer maintained. 
+# 'markdup -r' should achieve the same as 'rmdup'
+samtools markdup -r -s -@ 16 ${OUTPUT}.sort.Q20.bam ${OUTPUT}.sort.Q20.markdup.bam
+
 # index
 samtools index -@ 2 ${OUTPUT}.sort.Q20.markdup.bam
 # gather stats
