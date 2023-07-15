@@ -2,7 +2,8 @@
 
 # Check FASTQ file integrity
 # Generate a hash for each file
-md5sum /mnt/data/untrimmed_fastq/*.fastq.gz >  /mnt/data/untrimmed_fastq/hashList.txt &&
+mkdir -p ../results
+md5sum /mnt/data/untrimmed_fastq/*.fastq.gz >  ../results/hashList.txt &&
 
 # fastqc - Quality control for raw sequences
 # You can change number of cores per job by accessing fastqc.sh script.
