@@ -5,7 +5,8 @@ mkdir -p ../results/trimmed_fastq
 
 # variables
 IND=$1
-UNTRIMMED=/mnt/data/untrimmed_fastq/
+# UNTRIMMED value set for the workshop. CHANGE LATER!!!
+UNTRIMMED=/mnt/data/untrimmed_reduced/
 TRIMMED=../results/trimmed_fastq/
 ADAPTER=/mnt/data/adapters/TruSeq3-PE-2.fa
 
