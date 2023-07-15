@@ -96,6 +96,17 @@ res <- pcadapt(pcadapt_input, K=1, min.maf = 0.05)
 summary(res)
 ```
 
+To evaluate if LD might be an issue for our dataset, we will display the loadings 
+(contributions of each SNP to the PC) and  evaluate if the loadings are clustered 
+in a single or several genomic regions.
+```{r fig.width=10, fig.height=10}
+par(mfrow = c(2, 2))
+for (i in 1:1)
+  plot(res$loadings[, i], pch = 19, cex = .3, 
+       col = rgb(red=0, green=0, blue=1, alpha = 0.2),
+       ylab = paste0("Loadings PC", i))
+```
+
 Make a PCA plot
 ```{r}
 plot(res, option = "scores", pop = c("209", "220"))
