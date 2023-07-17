@@ -16,5 +16,4 @@ java -jar /usr/share/java/trimmomatic-0.39.jar PE \
         ${TRIMMED}${IND}_2.trim.fastq.gz ${TRIMMED}${IND}_2un.trim.fastq.gz \
         ILLUMINACLIP:${ADAPTER}:2:40:15 \
         SLIDINGWINDOW:4:20 \
-        MINLEN:25 \ 
-	-threads 2
+        MINLEN:25
