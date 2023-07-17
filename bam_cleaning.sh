@@ -4,7 +4,7 @@
 IND=${1}
 OUTPUT=../results/align/${IND}
 
-# Re-sort the reads according to their genomic coordinates
+# Re-sort the reads according to their genomic coordinates NIKOS
 samtools sort -@ 2 ${OUTPUT}.fixmate.sort.bam > ${OUTPUT}.fixmate.newsort.bam
 rm ${OUTPUT}*.sort.bam
 # Quality filter 
