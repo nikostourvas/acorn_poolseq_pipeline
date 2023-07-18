@@ -5,7 +5,7 @@ mkdir -p ../results/frequencies
 # declare variables
 OUTPUT=../results/frequencies
 SYNC=../results/frequencies/simulate.sync.gz
-POOLSIZES=pool_sizes_sim
+POOLSIZES=/mnt/workshop_backup/pool_sizes_sim
 
 grenedalf fst \
     --window-type genome \
