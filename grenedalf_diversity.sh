@@ -11,7 +11,7 @@ grenedalf diversity \
     --window-type sliding \
     --window-sliding-width 1000 \
     --pool-sizes $POOLSIZES \
-    --filter-sample-min-count 8 \
+    --filter-sample-min-count 2 \
     --filter-sample-max-coverage 500 \
     --filter-sample-min-coverage 50 \
     --sync-path $SYNC \
