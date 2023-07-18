@@ -4,7 +4,7 @@ mkdir -p ../results/frequencies
 
 # declare variables
 OUTPUT=../results/frequencies
-SYNC=../results/frequencies/bamfiles_sync.gz
+SYNC=/home/geneticsShare/ngs_training/workshop_backup/bamfiles_sync.sync.gz
 POOLSIZES=/mnt/data/pool_sizes
 
 grenedalf fst \
