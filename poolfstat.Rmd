@@ -9,7 +9,7 @@ library(poolfstat)
 ```
 
 ```{r}
-pool209220 <- vcf2pooldata(vcf.file = "../results/VCF/Qrob_total_filter2.snp.vcf",
+pool209220 <- vcf2pooldata(vcf.file = "/mnt/results/VCF/Qrob_total_filter2.snp.vcf",
                            poolnames = c("209", "220"),
                            poolsizes = c(44, 47))
 ```
@@ -20,7 +20,7 @@ unique(pool209220@snp.info$Chromosome)
 
 Filter
 ```{r}
-filtered <- vcf2pooldata(vcf.file = "../results/VCF/Qrob_total_filter2.snp.vcf",
+filtered <- vcf2pooldata(vcf.file = "/mnt/results/VCF/Qrob_total_filter2.snp.vcf",
      poolnames = c("209", "220"),
        poolsizes = c(44, 47),
      min.cov.per.pool = 45,
