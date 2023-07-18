@@ -14,7 +14,6 @@ grenedalf diversity \
     --filter-sample-min-count 8 \
     --filter-sample-max-coverage 500 \
     --filter-sample-min-coverage 50 \
-    --filter-total-only-biallelic-snps \
     --sync-path $SYNC \
     --out-dir $OUTPUT \
     --log-file $OUTPUT/grenedalf_div_log.txt \
