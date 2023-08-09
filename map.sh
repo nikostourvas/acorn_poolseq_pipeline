@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # create output directory
-mkdir -p ../results/align
+mkdir -p ../results/align_Batch1
 
 # declare variables
 IND=${1}
 REF=..reference/Qrob_PM1N.fa
-FORWARD=../results/trimmed_fastq/${IND}_1.trim.fastq.gz
-REVERSE=../results/trimmed_fastq/${IND}_2.trim.fastq.gz
+FORWARD=../results/trimmed_fastq_Batch1/${IND}_1.trim.fastq.gz
+REVERSE=../results/trimmed_fastq_Batch1/${IND}_2.trim.fastq.gz
 RG="@RG\tID:${IND}\tPL:Illumina\tSM:${IND}"
-OUTPUT=../results/align/${IND}
+OUTPUT=../results/align_Batch1/${IND}
 
 # Align to reference genome and export raw bam file
 
@@ -25,8 +25,7 @@ OUTPUT=../results/align/${IND}
 # (e.g. 4c BWA + 1c samtools = 5 cores in total)
 # samtools flagstat is run afterwards (much sorter time) utilizing all 5 cores
 
-
-bwa mem -R ${RG} -M -t 4 ${REF} ${FORWARD} ${REVERSE} 2> ${IND}.bwa-mem.err \
+bwa mem -R ${RG} -M -t 4 ${REF} ${FORWARD} ${REVERSE} 2> ${OUTPUT}.bwa-mem.err \
     | samtools view -h -b ${OUTPUT}.raw.bam
 
 # gather statistics
