@@ -20,7 +20,7 @@ done > /mnt/data/inds &&
 # For example you can set trimmomatic to use 4 cores. 
 # ATTN: So if you ask parallel to run 2 jobs concurrently, you need 2 x 4 = 8 cores.
 parallel --verbose -j 2 \
-	'bash trimmomatic_parallel.sh {}' :::: /mnt/data/inds &&
+	'nohup bash trimmomatic_parallel.sh {} 1>/mnt/results/trimmed_fastq_Batch1/logs/{}.out 2> /mnt/results/trimmed_fastq_Batch1/logs/{}.error' :::: /mnt/AcornSeqdata/inds_Batch1.txt &&
 
 # fastqc again - Quality control for trimmed sequences
 # You can change number of cores per job by accessing fastqc.sh script.
