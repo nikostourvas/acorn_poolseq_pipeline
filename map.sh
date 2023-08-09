@@ -5,7 +5,7 @@ mkdir -p ../results/align
 
 # declare variables
 IND=${1}
-REF=../AcornSeqdata/reference/Qrob_PM1N.fa
+REF=..reference/Qrob_PM1N.fa
 FORWARD=../results/trimmed_fastq/${IND}_1.trim.fastq.gz
 REVERSE=../results/trimmed_fastq/${IND}_2.trim.fastq.gz
 RG="@RG\tID:${IND}\tPL:Illumina\tSM:${IND}"
