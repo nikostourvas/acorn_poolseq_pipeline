@@ -34,11 +34,11 @@ multiqc ../results -o ../results &&
 bwa index /mnt/data/reference/Qrob_PM1N.fa &&
 samtools faidx /mnt/data/reference/Qrob_PM1N.fa &&
 
-parallel --verbose -j 7 \
+parallel --verbose -j 12 \
 	'bash map.sh {}' :::: ../AcornSeqdata/inds_Batch1.txt
 
-parallel --verbose -j 2 \
-	'bash bam_cleaning.sh {}' :::: /mnt/data/inds &&
+parallel --verbose -j 7 \
+	'bash bam_filtering.sh {}' :::: ../AcornSeqdata/inds_Batch1.txt
 
 # make list of all chromosomes & scaffolds for next step
 grep 'Qrob' /mnt/data/reference/Qrob_PM1N.fa | \
