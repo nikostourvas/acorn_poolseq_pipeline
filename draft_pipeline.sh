@@ -34,8 +34,8 @@ multiqc ../results -o ../results &&
 bwa index /mnt/data/reference/Qrob_PM1N.fa &&
 samtools faidx /mnt/data/reference/Qrob_PM1N.fa &&
 
-parallel --verbose -j 2 \
-	'bash mapping.sh {}' :::: /mnt/data/inds &&
+parallel --verbose -j 7 \
+	'bash map.sh {}' :::: ../AcornSeqdata/inds_Batch1.txt
 
 parallel --verbose -j 2 \
 	'bash bam_cleaning.sh {}' :::: /mnt/data/inds &&
