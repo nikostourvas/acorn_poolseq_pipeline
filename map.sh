@@ -22,7 +22,11 @@ OUTPUT=../results/align_Batch1/${IND}
 # -b output a bam file
 
 # Be mindful to account for as many cores have been assigned to bwa and samtools 
-# (e.g. 4c BWA + 1c samtools = 5 cores in total)
+# (e.g. 2c BWA + 1c samtools = 3 cores in total)
+# samtools flagstat is run afterwards (much sorter time) utilizing all 3 cores
 
-bwa mem -R ${RG} -M -t 4 ${REF} ${FORWARD} ${REVERSE} 2> ${OUTPUT}.bwa-mem.err \
-    | samtools view -h -b -o ${OUTPUT}.raw.bam
+bwa mem -R ${RG} -M -t 2 ${REF} ${FORWARD} ${REVERSE} 2> ${OUTPUT}.bwa-mem.err \
+    | samtools view -h -b -o ${OUTPUT}.raw.bam 2> ${OUTPUT}.sam-view.err
+
+# gather statistics
+samtools flagstat -@ 3 ${OUTPUT}.raw.bam > ${OUTPUT}.raw.flagstat
