@@ -24,7 +24,7 @@ parallel --verbose -j 2 \
 
 # fastqc again - Quality control for trimmed sequences
 # You can change number of cores per job by accessing fastqc.sh script.
-bash fastqc.sh trimmed_fastq ../results &&
+bash fastqc.sh ../results/trimmed_fastq_Batch1 &&
 
 # Create a unified report with MultiQC
 multiqc ../results -o ../results &&
