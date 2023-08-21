@@ -11,7 +11,7 @@ OUTPUT=../results/align_Batch1/${IND}
 
 # Be mindful to account for as many cores as each piped command requires
 # Here we have 5 single-threaded samtools commands so we need 5 cores
-# samtools flagstat is run afterwards (much sorter time) utilizing all 5 cores
+# samtools flagstat is run afterwards (much shorter time) utilizing all 5 cores
 
 # Quick explanation of what individual commands do:
 # collate: groups the reads by read name in the bam file. This puts the read pairs close together so that fixmate can work 
