@@ -41,22 +41,22 @@ parallel --verbose -j 7 \
 	'bash bam_filtering.sh {}' :::: ../AcornSeqdata/inds_Batch1.txt
 
 # make list of all chromosomes & scaffolds for next step
-grep 'Qrob' /mnt/data/reference/Qrob_PM1N.fa | \
- cut -c2- > /mnt/data/regions && 
+grep 'Qrob' ../reference/Qrob_PM1N.fa | \
+ cut -c2- > ../AcornSeqdata/regions
 
 # Variant calling
-parallel --verbose -j 4 \
-	'bash variant_calling_parallel.sh {}' :::: /mnt/data/regions &&
+parallel --verbose -j 19 \
+	'bash variant_calling.sh {}' :::: ../AcornSeqdata/regions
 
 # Merge the multiple small VCF files that were produced in the previous step
 # into one large VCF
-bash vcf_merge.sh &&
+bash vcf_merge.sh
 
 # Filter SNPs detected close to INDELs, as suggested by VarScan manual
-bash snp_indel_rm.sh &&
+bash snp_indel_rm.sh
 
 # Filter out multi-allelic SNPs
-bash vcf_biallelic.sh &&
+bash vcf_biallelic.sh
 
 # Create a unified final report with MultiQC
 multiqc --force ../results -o ../results
