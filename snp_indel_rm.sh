@@ -2,15 +2,15 @@
 
 # declare variables
 RESULTS=../results/VCF
-REF=/mnt/data/reference/Qrob_PM1N.fa
-BAM_FILES=../results/align/*.sort.Q20.markdup.bam
+REF=../reference/Qrob_PM1N.fa
 
-# Filter SNPs close to InDels
+# Remove SNPs close to InDels & perform further SNP filtering
 java -jar /usr/share/java/varscan.jar filter $RESULTS/Qrob_total.snp.vcf \
-    --min-var-freq 0.0055 --p-value 0.05 --min-avg-qual 20 \
-    --min-coverage 50 --min-reads2 2 \
+    --min-var-freq 0.025 --p-value 0.05 --min-avg-qual 20 \
+    --min-coverage 30 --min-reads2 1 \
     --indel-file $RESULTS/Qrob_total.indel.vcf \
-    --output-file $RESULTS/Qrob_total_filter.snp.vcf
+    --output-file $RESULTS/Qrob_total_filter.snp.vcf \
+    2> $RESULTS/varscan_SNP_filter.err
 
 # OPTIONAL TODO!
 # Use VarScan false positive filter
