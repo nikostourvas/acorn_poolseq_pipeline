@@ -86,7 +86,7 @@ rm ${RESULTS}/${REGION}.varScan.snpindel.vcf.gz \
 
 # some scaffolds will have no snps/indels
 # delete the empty vcf files originating from these scaffolds
-find $RESULTS/${REGION}*.gz -maxdepth 1 -type f -empty -print -delete
+find ${RESULTS}/${REGION}*.gz -maxdepth 1 -type f -empty -print -delete
 
 # index newly created VCFs
 bcftools index ${RESULTS}/${REGION}.varScan.snp.vcf.gz \
