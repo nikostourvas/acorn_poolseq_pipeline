@@ -11,6 +11,14 @@ REGION=${1}
 THREADS=2
 
 # Create a mpileup file for each genomic region and call snps & indels together
+# Input: (i) Filtered BAM files, (ii) indexed reference genome
+# Output: (i) compressed genomic region VCF files for SNPs,
+#         (ii) compressed genomic region VCF files for INDELs            
+
+# Multiple instances of this script can be run concurrently with GNU parallel.
+# The mpileup | varscan | bgzip pipeline requires 2 CPU threads to run 
+# efficiently. For this reason we assign 2 CPU threads to the downstream
+# bcftools steps.
 
 # samtools mpileup arguments:
 # -B: disable Base Alignment Quality (BAQ) adjustment as recommended by VarScan
