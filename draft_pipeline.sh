@@ -40,9 +40,6 @@ parallel --verbose -j 12 \
 parallel --verbose -j 7 \
 	'bash bam_filtering.sh {}' :::: ../AcornSeqdata/inds_Batch1.txt
 
-parallel --verbose -j 19 \
-	'bash bam_indexing.sh {}' :::: ../AcornSeqdata/inds_Batch1.txt
-
 # make list of all chromosomes & scaffolds for next step
 grep 'Qrob' ../reference/Qrob_PM1N.fa | \
  cut -c2- > ../AcornSeqdata/regions
