@@ -9,13 +9,11 @@ OUTPUT=../results/align_Batch1/${IND}
 # See https://www.htslib.org/algorithms/duplicate.html
 # After that the BAM file is filtered with samtools view
 
-# Be mindful to account for as many cores as each piped command requires
-# Here we have 5 single-threaded samtools commands so we need 5 cores
-# samtools flagstat is run afterwards (much shorter time) utilizing all 5 cores
-
 # Quick explanation of what individual commands do:
-# collate: groups the reads by read name in the bam file. This puts the read pairs close together so that fixmate can work 
-# fixmate: fix read-mates so that they both have the same sets of attributesfor the subsequent preprocessing
+# collate: groups the reads by read name in the bam file. This puts the read 
+# pairs close together so that fixmate can work 
+# fixmate: fix read-mates so that they both have the same sets of attributesfor
+# the subsequent preprocessing
 # sort: sort reads again based on genomic coordinates and
 # markdup: remove duplicates (-r argument)
 # Then produce filtered BAM files with samtools view and the following arguments
@@ -40,4 +38,7 @@ samtools collate -O -u ${OUTPUT}.raw.bam 2> ${OUTPUT}.collate.err \
 
 # gather statistics
 # -@ number of cores
-samtools flagstat -@5 ${OUTPUT}.markdup.Q20.bam > ${OUTPUT}.markdup.Q20.flagstat
+samtools flagstat -@ 1 ${OUTPUT}.markdup.Q20.bam > ${OUTPUT}.markdup.Q20.flagstat
+
+# index bam files
+samtools index -@ 1 ${OUTPUT}.markdup.Q20.bam
