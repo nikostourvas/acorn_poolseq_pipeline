@@ -15,6 +15,9 @@ TARGET_SIZE=$2 #The size in bp that every chunk should roughly be.
 
 mkdir -p ../reference/ChunkFiles
 
+rm ../reference/ChunkFiles/*unk* #Remove anything chunk-related that is already in the output directory.
+#This step is necessary because this script CONCETENATES output onto a file, instead of OVERWRITING anything. 
+
 OUTDIR=../reference/ChunkFiles
 
 #Convert the .fai into a .bed, so we have all of our genomic coordinates.
