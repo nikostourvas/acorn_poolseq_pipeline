@@ -7,7 +7,7 @@ mkdir -p ../results/VCF
 BAM=../results/Test_VariantCall_Input/*Pl1-???.*
 RESULTS=../results/VCF
 REF=../reference/Qrob_PM1N.fa
-REGION=${1}
+REGION=$1
 THREADS=2
 
 # Create a mpileup file for each genomic region and call snps & indels together
@@ -59,40 +59,40 @@ samtools mpileup -B -q 20 -r ${REGION} -f ${REF} ${BAM}/*.markdup.Q20.bam \
             --min-freq-for-hom 0.75 \
             --p-value 0.1 \
             --output-vcf 1 \
-            2> ${RESULTS}/${REGION}.varScan.snpindel.err \
+            2> ${RESULTS}/$(basename ${REGION}).varScan.snpindel.err \
             | bgzip --compress-level -1 \
-				> ${RESULTS}/${REGION}.varScan.snpindel.vcf.gz
+				> ${RESULTS}/$(basename ${REGION}).varScan.snpindel.vcf.gz
 
 # index vcfs
-bcftools index ${RESULTS}/${REGION}.varScan.snpindel.vcf.gz \
+bcftools index ${RESULTS}/$(basename ${REGION}).varScan.snpindel.vcf.gz \
     --threads ${THREADS} \
-    2> ${RESULTS}/${REGION}.bcftools_index.snpindel.vcf.err
+    2> ${RESULTS}/$(basename {REGION}).bcftools_index.snpindel.vcf.err
 
 # extract snps and save them in a separate compressed VCF
 bcftools view -v snps --threads ${THREADS} \
-    ${RESULTS}/${REGION}.varScan.snpindel.vcf.gz \
-    -Oz -o ${RESULTS}/${REGION}.varScan.snp.vcf.gz \
-    2> ${RESULTS}/${REGION}.bcftools_view.snp.vcf.err \
+    ${RESULTS}/$(basename ${REGION}).varScan.snpindel.vcf.gz \
+    -Oz -o ${RESULTS}/$(basename ${REGION}).varScan.snp.vcf.gz \
+    2> ${RESULTS}/$(basename ${REGION}).bcftools_view.snp.vcf.err \
 
 # extract indels and save them in a separate compressed VCF
 bcftools view -v indels --threads ${THREADS} \
-    ${RESULTS}/${REGION}.varScan.snpindel.vcf.gz \
-    -Oz -o ${RESULTS}/${REGION}.varScan.indel.vcf.gz \
-    2> ${RESULTS}/${REGION}.bcftools.indel.vcf.err
+    ${RESULTS}/$(basename ${REGION}).varScan.snpindel.vcf.gz \
+    -Oz -o ${RESULTS}/$(basename ${REGION}).varScan.indel.vcf.gz \
+    2> ${RESULTS}/$(basename ${REGION}).bcftools.indel.vcf.err
 
 # remove redundant files for storage efficiency
-rm ${RESULTS}/${REGION}.varScan.snpindel.vcf.gz \
-   ${RESULTS}/${REGION}.varScan.snpindel.vcf.gz.csi
+rm ${RESULTS}/$(basename ${REGION}).varScan.snpindel.vcf.gz \
+   ${RESULTS}/$(basename ${REGION}).varScan.snpindel.vcf.gz.csi
 
 # some scaffolds will have no snps/indels
 # delete the empty vcf files originating from these scaffolds
-find ${RESULTS}/${REGION}*.gz -maxdepth 1 -type f -empty -print -delete
+find ${RESULTS}/$(basename ${REGION})*.gz -maxdepth 1 -type f -empty -print -delete
 
 # index newly created VCFs
-bcftools index ${RESULTS}/${REGION}.varScan.snp.vcf.gz \
+bcftools index ${RESULTS}/$(basename ${REGION}).varScan.snp.vcf.gz \
     --threads ${THREADS} \   
-    2> ${RESULTS}/${REGION}.bcftools_index.snp.vcf.err
+    2> ${RESULTS}/$(basename ${REGION}).bcftools_index.snp.vcf.err
 
-bcftools index ${RESULTS}/${REGION}.varScan.indel.vcf.gz \
+bcftools index ${RESULTS}/$(basename ${REGION}).varScan.indel.vcf.gz \
     --threads ${THREADS} \
-    2> ${RESULTS}/${REGION}.bcftools_index.indel.vcf.err
+    2> ${RESULTS}/$(basename ${REGION}).bcftools_index.indel.vcf.err
