@@ -66,7 +66,7 @@ samtools mpileup -B -q 20 -r ${REGION} -f ${REF} ${BAM}/*.markdup.Q20.bam \
 # index vcfs
 bcftools index ${RESULTS}/$(basename ${REGION}).varScan.snpindel.vcf.gz \
     --threads ${THREADS} \
-    2> ${RESULTS}/$(basename {REGION}).bcftools_index.snpindel.vcf.err
+    2> ${RESULTS}/$(basename ${REGION}).bcftools_index.snpindel.vcf.err
 
 # extract snps and save them in a separate compressed VCF
 bcftools view -v snps --threads ${THREADS} \
