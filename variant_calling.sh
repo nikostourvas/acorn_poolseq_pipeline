@@ -4,7 +4,7 @@
 mkdir -p ../results/VCF
 
 # declare variables
-BAM=../results/align_Batch1/*Pl1-???.*
+BAM=../results/Test_VariantCall_Input/*Pl1-???.*
 RESULTS=../results/VCF
 REF=../reference/Qrob_PM1N.fa
 REGION=${1}
