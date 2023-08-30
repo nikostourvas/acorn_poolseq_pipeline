@@ -50,7 +50,7 @@ THREADS=2
 # wait forever for input. However this is quite unlikely with real data.
 
 samtools mpileup -B -q 20 -r ${REGION} -f ${REF} ${BAM}/*.markdup.Q20.bam \
-    2> ${RESULTS}/${REGION}.mpileup.err \
+    2> ${RESULTS}/$(basename ${REGION}).mpileup.err \
     | java -jar /usr/share/java/varscan.jar mpileup2cns \
             --vcf-sample-list inds \
             --min-coverage 30 \
