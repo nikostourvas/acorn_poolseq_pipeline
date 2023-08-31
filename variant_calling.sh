@@ -82,8 +82,8 @@ bcftools view -v indels --threads ${THREADS} \
     2> ${RESULTS}/${CHUNK_SHORT}.bcftools.indel.vcf.err
 
 # remove redundant files for storage efficiency
-rm ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
-   ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz.csi
+# rm ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
+#   ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz.csi
 
 # some scaffolds will have no snps/indels
 # delete the empty vcf files originating from these scaffolds
