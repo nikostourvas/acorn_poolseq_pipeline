@@ -50,7 +50,7 @@ THREADS=2
 # to a scaffold then the resulting mpileup file will be empty and varscan will 
 # wait forever for input. However this is quite unlikely with real data.
 
-samtools mpileup -B -q 20 -r ${CHUNK} -f ${REF} ${BAM}/*Pl1-???.markdup.Q20.bam \
+samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM}/*Pl1-???.markdup.Q20.bam \
     2> ${RESULTS}/${CHUNK_SHORT}.mpileup.err \
     | java -jar /usr/share/java/varscan.jar mpileup2cns \
             --vcf-sample-list inds \
