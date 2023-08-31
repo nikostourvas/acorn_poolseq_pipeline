@@ -5,7 +5,7 @@ mkdir -p ../results/VCF
 
 # declare variables
 BAM=../results/Test_VariantCall_Input
-RESULTS=../results/VCF
+RESULTS=/mnt/results/VCF
 REF=../reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
