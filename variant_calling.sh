@@ -51,7 +51,7 @@ THREADS=2
 # wait forever for input. However this is quite unlikely with real data.
 
 samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM}/*Pl1-???.markdup.Q20.bam \
-    2> ${RESULTS}/${CHUNK_SHORT}.mpileup.err \
+    | tee 2> ${RESULTS}/${CHUNK_SHORT}.mpileup.err \
     | java -jar /usr/share/java/varscan.jar mpileup2cns \
             --vcf-sample-list inds \
             --min-coverage 30 \
