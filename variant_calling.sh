@@ -11,6 +11,9 @@ CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 THREADS=2
 
+#To try and address an issue where varScan does not write to a VCF file, we create empty files before initiating the tool.
+touch ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz
+
 # Create a mpileup file for each genomic region and call snps & indels together
 # Input: (i) Filtered BAM files, (ii) indexed reference genome
 # Output: (i) compressed genomic region VCF files for SNPs,
