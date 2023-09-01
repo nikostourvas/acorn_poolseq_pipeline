@@ -64,7 +64,7 @@ samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM}/*Pl1-???.markdup.Q20.bam 
             --p-value 0.1 \
             --output-vcf 1 \
             2> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.err \
-            | bgzip --compress-level -1 \
+            | bgzip --compress-level -1 2>${RESULTS}/${CHUNK_SHORT}_Gzipping.err\
 				> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz &&
 
 # index vcfs
