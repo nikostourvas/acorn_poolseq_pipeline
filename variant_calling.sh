@@ -11,9 +11,6 @@ CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 THREADS=2
 
-#To try and address an issue where varScan does not write to a VCF file, we create empty files before initiating the tool.
-touch ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz
-
 # Create a mpileup file for each genomic region and call snps & indels together
 # Input: (i) Filtered BAM files, (ii) indexed reference genome
 # Output: (i) compressed genomic region VCF files for SNPs,
@@ -64,7 +61,7 @@ samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM}/*Pl1-???.markdup.Q20.bam 
             --p-value 0.1 \
             --output-vcf 1 \
             2> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.err \
-            | bgzip --compress-level -1 2>${RESULTS}/${CHUNK_SHORT}_Gzipping.err\
+            | bgzip --compress-level -1 2> ${RESULTS}/${CHUNK_SHORT}_Gzipping.err \
 				> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz &&
 
 # index vcfs
@@ -85,12 +82,12 @@ bcftools view -v indels --threads ${THREADS} \
     2> ${RESULTS}/${CHUNK_SHORT}.bcftools.indel.vcf.err
 
 # remove redundant files for storage efficiency
-# rm ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
-#   ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz.csi
+rm ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
+   ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz.csi
 
 # some scaffolds will have no snps/indels
 # delete the empty vcf files originating from these scaffolds
-find ${RESULTS}/${CHUNk_SHORT}*.gz -maxdepth 1 -type f -empty -print -delete
+find ${RESULTS}/${CHUNK_SHORT}*.gz -maxdepth 1 -type f -empty -print -delete
 
 # index newly created VCFs
 bcftools index ${RESULTS}/${CHUNK_SHORT}.varScan.snp.vcf.gz \
