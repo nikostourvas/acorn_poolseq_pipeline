@@ -14,7 +14,7 @@ realpath ${UNMERGED_VCF_DIR}/chunk*.varScan.snp.vcf.gz > ${UNMERGED_VCF_DIR}/SNP
 realpath ${UNMERGED_VCF_DIR}/chunk*.varScan.indel.vcf.gz > ${UNMERGED_VCF_DIR}/INDEL_VCF_List.txt
 
 #Concatenate the VCFs containing SNPs using bcftools
-bcftools concat -f ${UNMERGED_VCF_DIR}/SNP_VCF_List.txt -O z -o ${UNMERGED_VCF_DIR}/${VCF_PREFIX}_SNP.vcf.gz
+bcftools concat -f ${UNMERGED_VCF_DIR}/SNP_VCF_List.txt -a -O z -o ${UNMERGED_VCF_DIR}/${VCF_PREFIX}_SNP.vcf.gz
 
 #Concatenate the VCFs containing INDELs using bcftools
-bcftools concat -f ${UNMERGED_VCF_DIR}/INDEL_VCF_List.txt -O z -o ${UNMERGED_VCF_DIR}/${VCF_PREFIX}_INDEL.vcf.gz
+bcftools concat -f ${UNMERGED_VCF_DIR}/INDEL_VCF_List.txt -a -O z -o ${UNMERGED_VCF_DIR}/${VCF_PREFIX}_INDEL.vcf.gz
