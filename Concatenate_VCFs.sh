@@ -10,8 +10,8 @@ UNMERGED_VCF_DIR=$1 #The path to the directory in which all the unmerged VCF fil
 VCF_PREFIX=$2 #The name for the merged VCF
 
 #Create a list of filepaths containing each of the VCFs we wish to merge. One for SNPs, one for Indels
-realpath ${UNMERGED_VCF_DIR}/chunk*.varScan.snp.vcf.gz > ${UNMERGED_VCF_DIR}/SNP_VCF_List.txt
-realpath ${UNMERGED_VCF_DIR}/chunk*.varScan.indel.vcf.gz > ${UNMERGED_VCF_DIR}/INDEL_VCF_List.txt
+realpath ${UNMERGED_VCF_DIR}/chunk*.varScan.snp.vcf.gz | sort -V > ${UNMERGED_VCF_DIR}/SNP_VCF_List.txt
+realpath ${UNMERGED_VCF_DIR}/chunk*.varScan.indel.vcf.gz | sort -V > ${UNMERGED_VCF_DIR}/INDEL_VCF_List.txt
 
 #Concatenate the VCFs containing SNPs using bcftools
 bcftools concat -f ${UNMERGED_VCF_DIR}/SNP_VCF_List.txt -a -O z -o ${UNMERGED_VCF_DIR}/${VCF_PREFIX}_SNP.vcf.gz
