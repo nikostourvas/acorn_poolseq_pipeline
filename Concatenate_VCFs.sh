@@ -13,8 +13,17 @@ VCF_PREFIX=$2 #The name for the merged VCF
 realpath ${UNMERGED_VCF_DIR}/chunk*.varScan.snp.vcf.gz | sort -V > ${UNMERGED_VCF_DIR}/SNP_VCF_List.txt
 realpath ${UNMERGED_VCF_DIR}/chunk*.varScan.indel.vcf.gz | sort -V > ${UNMERGED_VCF_DIR}/INDEL_VCF_List.txt
 
-#Concatenate the VCFs containing SNPs using bcftools
+#Concatenate the VCFs containing SNPs using bcftools.
+#This implementation does not allow for overlaps
+#-f takes input from the list of filepaths we created earlier.
+#-a allows for discontiguous regions to be accepted (manual check: This only applies to the very edges of chromosomes. No harm there).
+#-O z sets the output type to gzipped vcf
+#-o is the output prefix (specified by user)
 bcftools concat -f ${UNMERGED_VCF_DIR}/SNP_VCF_List.txt -a -O z -o ${UNMERGED_VCF_DIR}/${VCF_PREFIX}_SNP.vcf.gz
 
-#Concatenate the VCFs containing INDELs using bcftools
+#Concatenate the VCFs containing INDELs using bcftools.
 bcftools concat -f ${UNMERGED_VCF_DIR}/INDEL_VCF_List.txt -a -O z -o ${UNMERGED_VCF_DIR}/${VCF_PREFIX}_INDEL.vcf.gz
+
+#Remove some intermediate files
+rm ${UNMERGED_VCF_DIR}/SNP_VCF_List.txt
+rm ${UNMERGED_VCF_DIR}/INDEL_VCF_List.txt
