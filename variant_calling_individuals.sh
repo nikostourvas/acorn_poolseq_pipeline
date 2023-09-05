@@ -47,7 +47,7 @@ mkdir -p ${OUTDIR}
 # --output-vcf: Set to 1, to produce VCF file instead of table of alleles
 
 samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM_IN}/*Pl1-?????.markdup.Q20.bam \
-    2> ${OUTDIR}/${CHUNK_SHORT}.mpileup.err \
+    2> ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err \
     | java -jar /usr/share/java/varscan.jar mpileup2cns \
             --vcf-sample-list inds \
             --min-coverage 5 \
@@ -56,40 +56,40 @@ samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM_IN}/*Pl1-?????.markdup.Q20
             --min-freq-for-hom 0.85 \
             --p-value 0.1 \
             --output-vcf 1 \
-            2> ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.snpindel.err \
+            2> ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.err \
             | bgzip --compress-level -1 \
-                                > ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.snpindel.vcf.gz
+                                > ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz
 
 # index vcfs
-bcftools index ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.snpindel.vcf.gz \
+bcftools index ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz \
     --threads ${THREADS} \
-    2> ${OUTDIR}/${CHUNK_SHORT}.Ind.bcftools_index.snpindel.vcf.err
+    2> ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.snpindel.vcf.err
 
 # extract snps and save them in a separate compressed VCF
 bcftools view -v snps --threads ${THREADS} \
-    ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.snpindel.vcf.gz \
-    -Oz -o ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.snp.vcf.gz \
-    2> ${OUTDIR}/${CHUNK_SHORT}.Ind.bcftools_view.snp.vcf.err \
+    ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz \
+    -Oz -o ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snp.vcf.gz \
+    2> ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_view.snp.vcf.err \
 
 # extract indels and save them in a separate compressed VCF
 bcftools view -v indels --threads ${THREADS} \
-    ${OUTDIR}/${CHUNK_SHORT}.IND.varScan.snpindel.vcf.gz \
-    -Oz -o ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.indel.vcf.gz \
-    2> ${OUTDIR}/${CHUNK_SHORT}.Ind.bcftools.indel.vcf.err
+    ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz \
+    -Oz -o ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.indel.vcf.gz \
+    2> ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools.indel.vcf.err
 
 # remove redundant files for storage efficiency
-rm ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.snpindel.vcf.gz \
-   ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.snpindel.vcf.gz.csi
+rm ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz \
+   ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz.csi
 
 # some scaffolds will have no snps/indels
 # delete the empty vcf files originating from these scaffolds
 find ${OUTDIR}/${CHUNK_SHORT}*.gz -maxdepth 1 -type f -empty -print -delete
 
 # index newly created VCFs
-bcftools index ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.snp.vcf.gz \
+bcftools index ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snp.vcf.gz \
     --threads ${THREADS} \
-    2> ${OUTDIR}/${CHUNK_SHORT}.Ind.bcftools_index.snp.vcf.err
+    2> ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.snp.vcf.err
 
-bcftools index ${OUTDIR}/${CHUNK_SHORT}.Ind.varScan.indel.vcf.gz \
+bcftools index ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.indel.vcf.gz \
     --threads ${THREADS} \
-    2> ${OUTDIR}/${CHUNK_SHORT}.Ind.bcftools_index.indel.vcf.err
+    2> ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err
