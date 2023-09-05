@@ -13,6 +13,9 @@ CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 THREADS=1
 
+#Make sure the output directory is created.
+mkdir -p ${OUTDIR}
+
 # Create a mpileup file for each genomic region and call snps & indels together
 # Input: (i) Filtered BAM files, (ii) indexed reference genome
 # Output: (i) compressed genomic region VCF files for SNPs,
