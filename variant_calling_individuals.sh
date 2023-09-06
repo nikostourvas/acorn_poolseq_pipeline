@@ -11,6 +11,7 @@ OUTDIR=../results/indVCF
 REF=../reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
+CHUNK_LOCATION=$(awk BEGIN; '{ print $1 }' )
 THREADS=1
 
 #Make sure the output directory is created.
@@ -31,6 +32,7 @@ mkdir -p ${OUTDIR}
 # publication (Kobolt et al., 2013)
 # -q: minimum mapping quality
 # -r: region where variant calling is performed
+# -l: Specific chunk within region where variant calling is performed
 # -f: reference genome file
 
 # varscan arguments:
@@ -46,7 +48,7 @@ mkdir -p ${OUTDIR}
 # stage though with the script "snp_indel_rm.sh".
 # --output-vcf: Set to 1, to produce VCF file instead of table of alleles
 
-samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM_IN}/*Pl1-?????.markdup.Q20.bam \
+samtools mpileup -B -q 20 -r ${CHUNK_LOCATION} -l ${CHUNK} -f ${REF} ${BAM_IN}/*Pl1-?????.markdup.Q20.bam \
     2> ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err \
     | java -jar /usr/share/java/varscan.jar mpileup2cns \
             --vcf-sample-list inds \
