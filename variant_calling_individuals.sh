@@ -46,7 +46,7 @@ mkdir -p ${OUTDIR}
 # stage though with the script "snp_indel_rm.sh".
 # --output-vcf: Set to 1, to produce VCF file instead of table of alleles
 
-samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM_IN}/*Pl1-?????.markdup.Q20.bam \
+bcftools mpileup -B -q 20 -R ${CHUNK} -f ${REF} ${BAM_IN}/*Pl1-?????.markdup.Q20.bam \
     2> ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err \
     | java -jar /usr/share/java/varscan.jar mpileup2cns \
             --vcf-sample-list inds \
