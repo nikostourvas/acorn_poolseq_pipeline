@@ -14,6 +14,8 @@ CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 CHUNK_LOCATION=$(awk BEGIN; '{ print $1 }' )
 THREADS=1
 
+echo ${CHUNK_LOCATION}
+
 #Make sure the output directory is created.
 mkdir -p ${OUTDIR}
 
