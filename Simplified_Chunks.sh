@@ -24,6 +24,17 @@ OUTDIR=../reference/ChunkFiles
 
 awk 'BEGIN {FS="\t"}; {print $1 FS "0" FS $2}' ${INDEX} > ${INDEX/.fa.fai/.bed} # Take info about contig name and length from .fa.fai index file and use it to construct a .bed file
 
-bedtools makewindows -b ${INDEX/.fa.fai/.bed} -w ${TARGET_SIZE} > ${OUTDIR}/$(basename ${INDEX/.fa.fai/_windowed.txt}) # Divide any large chromosomes or scaffolds up into chunks that match the target size.
+bedtools makewindows -b ${INDEX/.fa.fai/.bed} -w ${TARGET_SIZE} > ${INDEX/.fa.fai/_windowed.bed} # Divide any large chromosomes or scaffolds up into chunks that match the target size.
 
+TICKER=1;
+while read line; do
+printf "%s\t%s\t%s\n" ${line} > ${OUTDIR}/chunk${TICKER}.bed;
+TICKER=$((${TICKER}+1))
+done < ${INDEX/.fa.fai/_windowed.bed} #Use the windowed .bed as input for this loop.
+
+#Store the paths to all of the chunk files in a convenient file that can be used later by gnu parellel when running the genotyping. 
+realpath ${OUTDIR}/chunk*.bed > ${OUTDIR}/Locations_Of_Chunk_Beds.txt
+
+#Remove some clutter files that are no longer needed.
+rm ${INDEX/.fa.fai/_windowed.bed}
 rm ${INDEX/.fa.fai/.bed}
