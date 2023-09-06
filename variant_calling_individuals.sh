@@ -11,7 +11,7 @@ OUTDIR=../results/indVCF
 REF=../reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
-CHUNK_LOCATION=$(awk BEGIN; '{ print $1 }' ${CHUNK})
+CHUNK_LOCATION=$(head -n 1 ${CHUNK} | awk '{ print $1 }')
 THREADS=1
 
 #Make sure the output directory is created.
