@@ -95,3 +95,23 @@ bcftools index ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snp.vcf.gz \
 bcftools index ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.indel.vcf.gz \
     --threads ${THREADS} \
     2> ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err
+
+echo -e "All log files for ${CHUNK_SHORT/.bed/}\n\n#####\n\nSamtools mpileup\n\n">${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/{CHUNK_SHORT}_ind.mpileup.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nvarScan.snpindel\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools index\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.snpindel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools view snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_view.snp.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools view indels\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.snp.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+
+rm ${OUTDIR}/*.err
+
+
+
