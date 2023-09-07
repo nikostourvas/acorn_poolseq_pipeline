@@ -113,7 +113,7 @@ cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.snp.vcf.err >> ${OUTDIR}/AllLogF
 echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
 cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
 
-rm ${OUTDIR}/*.err
+rm ${OUTDIR}/${CHUNK_SHORT}*.err
 
 
 
