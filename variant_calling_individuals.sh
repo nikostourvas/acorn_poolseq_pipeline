@@ -85,7 +85,8 @@ rm ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz \
 
 # some scaffolds will have no snps/indels
 # delete the empty vcf files originating from these scaffolds
-find ${OUTDIR}/${CHUNK_SHORT}*.gz -maxdepth 1 -type f -empty -print -delete
+#find ${OUTDIR}/${CHUNK_SHORT}*.gz -maxdepth 1 -type f -empty -print -delete
+#Defunct, but not tested since.
 
 # index newly created VCFs
 bcftools index ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snp.vcf.gz \
