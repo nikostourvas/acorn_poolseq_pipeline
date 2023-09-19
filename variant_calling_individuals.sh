@@ -48,19 +48,20 @@ mkdir -p ${OUTDIR}
 # stage though with the script "snp_indel_rm.sh".
 # --output-vcf: Set to 1, to produce VCF file instead of table of alleles
 
-samtools mpileup -B -q 20 -r ${CHUNK_LOCATION} -l ${CHUNK} -f ${REF} ${BAM_IN}/*Pl1-?????.markdup.Q20.bam \
-    2> ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err \
-    | java -jar /usr/share/java/varscan.jar mpileup2cns \
-            --vcf-sample-list inds \
-            --min-coverage 5 \
-            --min-var-freq 0.025 \
-            --min-reads2 1 \
-            --min-freq-for-hom 0.85 \
-            --p-value 0.1 \
-            --output-vcf 1 \
-            2> ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.err \
-            | bgzip --compress-level -1 \
-                                > ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz
+samtools mpileup -B -q 20 -r ${CHUNK_LOCATION} -l ${CHUNK} -f ${REF} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup ${BAM_IN}/*Pl1-?????.markdup.Q20.bam \
+    2> ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err &&
+    
+java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup\
+    --vcf-sample-list inds \
+    --min-coverage 5 \
+    --min-var-freq 0.025 \
+    --min-reads2 1 \
+    --min-freq-for-hom 0.85 \
+    --p-value 0.1 \
+    --output-vcf 1 \
+    2> ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.err \
+    | bgzip --compress-level -1 \
+        > ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz
 
 # index vcfs
 bcftools index ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz \
@@ -113,3 +114,4 @@ echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_S
 cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log &&
 
 rm ${OUTDIR}/${CHUNK_SHORT}*.err 
+rm ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup
