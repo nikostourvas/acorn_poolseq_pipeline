@@ -41,16 +41,15 @@ parallel --verbose -j 7 \
 	'bash bam_filtering.sh {}' :::: ../AcornSeqdata/inds_Batch1.txt
 
 # make list of all chromosomes & scaffolds for next step
-grep 'Qrob' ../reference/Qrob_PM1N.fa | \
- cut -c2- > ../AcornSeqdata/regions
+bash Simplified_Chunks.sh ../reference/Qrob_PM1N.fa.fai 2000000
 
 # Variant calling
 parallel --verbose -j 19 \
-	'bash variant_calling.sh {}' :::: ../AcornSeqdata/regions
+	'bash variant_calling.sh {}' :::: ../reference/ChunkFiles/Locations_Of_Chunk_Beds.txt
 
 # Merge the multiple small VCF files that were produced in the previous step
 # into one large VCF
-bash vcf_merge.sh
+bash Concatenate_VCFs.sh ../results/[VCF_DIRECTORY] [PREFIX_CONCATENATED_VCF]
 
 # Filter SNPs detected close to INDELs, as suggested by VarScan manual
 bash snp_indel_rm.sh
