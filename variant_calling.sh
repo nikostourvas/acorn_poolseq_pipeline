@@ -51,17 +51,18 @@ THREADS=2
 # wait forever for input. However this is quite unlikely with real data.
 
 samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM}/*Pl1-???.markdup.Q20.bam \
-	2> ${RESULTS}/${CHUNK_SHORT}.mpileup.err \
-    | java -jar /usr/share/java/varscan.jar mpileup2cns \
-            --vcf-sample-list inds \
-            --min-coverage 30 \
-            --min-var-freq 0.025 \
-            --min-reads2 1 \
-            --min-freq-for-hom 0.75 \
-            --p-value 0.1 \
-            --output-vcf 1 \
-            2> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.err \
-            | bgzip --compress-level -1 2> ${RESULTS}/${CHUNK_SHORT}_Gzipping.err \
+	2> ${RESULTS}/${CHUNK_SHORT}.mpileup.err &&
+
+java -jar /usr/share/java/varscan.jar mpileup2cns 
+	--vcf-sample-list inds \
+	--min-coverage 30 \
+	--min-var-freq 0.025 \
+        --min-reads2 1 \
+        --min-freq-for-hom 0.75 \
+        --p-value 0.1 \
+        --output-vcf 1 \
+        2> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.err \
+        | bgzip --compress-level -1 2> ${RESULTS}/${CHUNK_SHORT}_Gzipping.err \
 				> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz &&
 
 # index vcfs
@@ -87,7 +88,8 @@ rm ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
 
 # some scaffolds will have no snps/indels
 # delete the empty vcf files originating from these scaffolds
-find ${RESULTS}/${CHUNK_SHORT}*.gz -maxdepth 1 -type f -empty -print -delete
+# find ${RESULTS}/${CHUNK_SHORT}*.gz -maxdepth 1 -type f -empty -print -delete
+#Defunct, but useful for any necessary benchmarking in the future. 
 
 # index newly created VCFs
 bcftools index ${RESULTS}/${CHUNK_SHORT}.varScan.snp.vcf.gz \
@@ -96,4 +98,22 @@ bcftools index ${RESULTS}/${CHUNK_SHORT}.varScan.snp.vcf.gz \
 
 bcftools index ${RESULTS}/${CHUNK_SHORT}.varScan.indel.vcf.gz \
     --threads ${THREADS} \
-    2> ${RESULTS}/${CHUNK_SHORT}.bcftools_index.indel.vcf.err
+    2> ${RESULTS}/${CHUNK_SHORT}.bcftools_index.indel.vcf.err &&
+
+echo -e "All log files for ${CHUNK_SHORT/.bed/}\n\n#####\n\nSamtools mpileup\n\n">${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nvarScan.snpindel\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools index\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.snpindel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools view snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_view.snp.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools view indels\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.snp.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
+cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log &&
+
+rm ${OUTDIR}/${CHUNK_SHORT}*.err 
+rm ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup
