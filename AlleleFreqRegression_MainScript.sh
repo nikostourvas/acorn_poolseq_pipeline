@@ -27,7 +27,7 @@ R_SCRIPT=./AlleleFreqRegression_SupportingScript.R # The R script that will be u
 #CREATING THE NECESSARY DIRECTORIES.
 
 #Create a subdirectory of the current working directory and name it using the filenames of the VCFs.
-OUTDIR=./AlleleFreqRegression_$(basename ${POOL_VCF/.vcf.gz/})_WITH_$(basename ${IND_VCF/.vcf.gz/})
+OUTDIR=../results/AlleleFreqRegression_$(basename ${POOL_VCF/.vcf.gz/})_WITH_$(basename ${IND_VCF/.vcf.gz/})
 mkdir -p ${OUTDIR} #Create the directory if it does not exist yet.
 #Also create a directory within the working directory to place intermediate nonsense.
 INTERMEDIATEDIR=/tmp
