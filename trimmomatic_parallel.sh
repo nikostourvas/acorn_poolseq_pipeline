@@ -5,7 +5,7 @@ mkdir -p ../results/trimmed_fastq_Batch2
 
 # variables
 IND=$1 #The individual (or pool) that will be considered in this run. GNU parallel will be used to 'assign' a pool/individual to run on.
-UNTRIMMED=/mnt/AcornSeqdata/AdapterClipped_Batch2 #A directory that contains the untrimmed files that you'd like to process.
+UNTRIMMED=/mnt/AcornSeqdata/AdapterClipped_Batch2/Sample* #A directory that contains the untrimmed files that you'd like to process.
 TRIMMED=/mnt/results/trimmed_fastq_Batch2 #The output directory for trimmed reads.
 #ADAPTER=/mnt/data/adapters/TruSeq3-PE-2.fa #Location of a file that contains information about the adapters that were used to sequence the reads. DERELICT!!!
 
