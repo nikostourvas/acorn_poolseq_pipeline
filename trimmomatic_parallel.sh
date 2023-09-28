@@ -1,13 +1,12 @@
 #!/bin/bash
 
 # create output directory
-mkdir -p ../results/trimmed_fastq_Batch1
+mkdir -p ../results/trimmed_fastq_Batch2
 
 # variables
 IND=$1 #The individual (or pool) that will be considered in this run. GNU parallel will be used to 'assign' a pool/individual to run on.
-# UNTRIMMED value set for the workshop. CHANGE LATER!!!
-UNTRIMMED=/mnt/AcornSeqdata/AdapterClippedgz_Batch1 #A directory that contains the untrimmed files that you'd like to process.
-TRIMMED=/mnt/results/trimmed_fastq_Batch1 #The output directory for trimmed reads.
+UNTRIMMED=/mnt/AcornSeqdata/AdapterClipped_Batch2 #A directory that contains the untrimmed files that you'd like to process.
+TRIMMED=/mnt/results/trimmed_fastq_Batch2 #The output directory for trimmed reads.
 #ADAPTER=/mnt/data/adapters/TruSeq3-PE-2.fa #Location of a file that contains information about the adapters that were used to sequence the reads. DERELICT!!!
 
 #The structure of the trimmomatic script is as follows (line by line). For now, the ILLUMINACLIP option is left out. 
