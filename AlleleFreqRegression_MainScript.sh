@@ -27,13 +27,13 @@ R_SCRIPT=./AlleleFreqRegression_SupportingScript.R # The R script that will be u
 #CREATING THE NECESSARY DIRECTORIES.
 
 #Create a subdirectory of the current working directory and name it using the filenames of the VCFs.
-OUTDIR=../results/AlleleFreqRegression_$(basename ${POOL_VCF/.vcf.gz/})_WITH_$(basename ${IND_VCF/.vcf.gz/})
+OUTDIR=../results/AlleleFreqRegression
 mkdir -p ${OUTDIR} #Create the directory if it does not exist yet.
 #Also create a directory within the working directory to place intermediate nonsense.
 #INTERMEDIATEDIR=/tmp
 
 #The following two lines can be used instead of '/tmp', in case containers do not support this functionality.
-INTERMEDIATEDIR=../AlleleFreqRegression_$(basename ${POOL_VCF/.vcf.gz/})_WITH_$(basename ${IND_VCF/.vcf.gz/})/IntermediateFiles
+INTERMEDIATEDIR=${OUTDIR}/IntermediateFiles
 mkdir -p ${INTERMEDIATEDIR}
 
 
@@ -42,14 +42,19 @@ mkdir -p ${INTERMEDIATEDIR}
 #For PoolSeq data
 
 #Following one-liner extracts allele frequency for each site on the first pool. This should yield all the info necessary to run the R-script later.
-bcftools query -s Sample4 -f '%CHROM %POS %REF %ALT [%DP %AD %FREQ]\n' ${POOL_VCF} > ${INTERMEDIATEDIR}/Pool_Sample1_AltCalls_Freq.txt
+bcftools query -s Sample1 -f '%CHROM %POS %REF %ALT [%DP %AD %FREQ]\n' ${POOL_VCF} > ${INTERMEDIATEDIR}/Pool_Sample1_AltCalls_Freq.txt
 
 #For IndSeq data
+
+#Convert the input vcf to VCF 4.2 format. 4.2 and 4.3 don't differ in any way that matters to us, so a simple substitution takes care of this.
+zcat ${IND_VCF} | \
+sed --expression='s/^##fileformat=VCFv4.3/##fileformat=VCFv4.2/' | \
+gzip > ${INTERMEDIATEDIR}/$(basename ${IND_VCF/vcf.gz/})_VersionChanged.vcf.gz
 
 #The following vcftools command first excludes GENOTYPES that are not based on the minimum read depth (--minDP).
 #It then excludes SITES for which one or more genotypes were removed in the last step (--max-missing-count 0).
 #Not sure why, but I also encountered SNPs that were not biallelic, so I also enforce that by setting the minimum and maximum  number of alleles to 2 (--min-alleles and --max-alleles)
-vcftools --gzvcf ${IND_VCF} --minDP ${IND_MIN_RD} --max-missing-count 0 --min-alleles 2 --max-alleles 2 --recode --recode-INFO-all --stdout | gzip -c > ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_RDfiltered.vcf.gz});
+vcftools --gzvcf ${INTERMEDIATEDIR}/$(basename ${IND_VCF/vcf.gz/})_VersionChanged.vcf --minDP ${IND_MIN_RD} --max-missing-count 0 --min-alleles 2 --max-alleles 2 --recode --recode-INFO-all --stdout 2> ${INTERMEDIATEDIR}/vcftools.log | gzip -c > ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_RDfiltered.vcf.gz});
 
 #Next, use vcftools again on the output data and create a file with allele frequencies. Seems ideal, but the format it comes in is quite annoying.
 vcftools --gzvcf ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_RDfiltered.vcf.gz}) --freq --out ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_AlleleFreq});   
@@ -61,4 +66,4 @@ tail -n +2 ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_AlleleFreq.frq}) > $
 
 #This line passes on the two processed VCFs (Pool and Ind) to the R-script that further filters, merges the data, performs regression, and outputs figures.
 Rscript ${R_SCRIPT} ${INTERMEDIATEDIR}/Pool_Sample1_AltCalls_Freq.txt ${INTERMEDIATEDIR}/Processed_IndSeq_ForR.txt ${OUTDIR} #Rscript runs the R file and passes on 
-the two VCF files as arguments. Third argument is the out directory
+#the two VCF files as arguments. Third argument is the out directory
