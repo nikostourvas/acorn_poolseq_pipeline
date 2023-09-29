@@ -9,13 +9,13 @@
 # refgenome as first input
 GENOME=../reference/Qrob_PM1N.fa
 # outdir as second
-OUTDIR=../reference/SNPability_Mask/
+OUTDIR=../reference/SNPability_Mask
 #Temporary directory for intermediate files
 INTDIR=../reference/SNPability_Mask/Intermediates
-# set the path to where the seqbility scripts are 
-SEQBILITY_PATH=../reference/SNPability_Mask/seqbility-20091110/
+# set the path to where the seqbility scripts are
+SEQBILITY_PATH=../reference/SNPability_Mask/seqbility-20091110
 # tools to msmc-tools (used in the last step)
-MSMC_TOOLS_PATH=../reference/SNPability_Mask/msmc-tools/
+MSMC_TOOLS_PATH=../reference/SNPability_Mask/msmc-tools
 
 # create outdir if it doesn't exist
 mkdir -p ${OUTDIR}
