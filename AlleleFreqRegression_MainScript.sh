@@ -42,22 +42,22 @@ mkdir -p ${INTERMEDIATEDIR}
 #For PoolSeq data
 
 #Following one-liner extracts allele frequency for each site on the first pool. This should yield all the info necessary to run the R-script later.
-bcftools query -s Sample1 -f '%CHROM %POS %REF %ALT [%DP %AD %FREQ]\n' ${POOL_VCF} > ${INTERMEDIATEDIR}/Pool_Sample1_AltCalls_Freq.txt
+#bcftools query -s Sample1 -f '%CHROM %POS %REF %ALT [%DP %AD %FREQ]\n' ${POOL_VCF} > ${INTERMEDIATEDIR}/Pool_Sample1_AltCalls_Freq.txt
 
 #For IndSeq data
 
 #Convert the input vcf to VCF 4.2 format. 4.2 and 4.3 don't differ in any way that matters to us, so a simple substitution takes care of this.
-zcat ${IND_VCF} | \
-sed --expression='s/^##fileformat=VCFv4.3/##fileformat=VCFv4.2/' | \
-gzip > ${INTERMEDIATEDIR}/$(basename ${IND_VCF/vcf.gz/})_VersionChanged.vcf.gz
+#zcat ${IND_VCF} | \
+#sed --expression='s/^##fileformat=VCFv4.3/##fileformat=VCFv4.2/' | \
+#gzip > ${INTERMEDIATEDIR}/$(basename ${IND_VCF/vcf.gz/})_VersionChanged.vcf.gz
 
 #The following vcftools command first excludes GENOTYPES that are not based on the minimum read depth (--minDP).
 #It then excludes SITES for which one or more genotypes were removed in the last step (--max-missing-count 0).
 #Not sure why, but I also encountered SNPs that were not biallelic, so I also enforce that by setting the minimum and maximum  number of alleles to 2 (--min-alleles and --max-alleles)
-vcftools --gzvcf ${INTERMEDIATEDIR}/$(basename ${IND_VCF/vcf.gz/})_VersionChanged.vcf --minDP ${IND_MIN_RD} --max-missing-count 0 --min-alleles 2 --max-alleles 2 --recode --recode-INFO-all --stdout 2> ${INTERMEDIATEDIR}/vcftools.log | gzip -c > ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_RDfiltered.vcf.gz});
+vcftools --gzvcf ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/})_VersionChanged.vcf.gz --minDP ${IND_MIN_RD} --max-missing-count 0 --min-alleles 2 --max-alleles 2 --recode --recode-INFO-all --stdout 2> ${INTERMEDIATEDIR}/vcftools.log | gzip -c > ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_RDfiltered.vcf.gz})
 
 #Next, use vcftools again on the output data and create a file with allele frequencies. Seems ideal, but the format it comes in is quite annoying.
-vcftools --gzvcf ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_RDfiltered.vcf.gz}) --freq --out ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_AlleleFreq});   
+vcftools --gzvcf ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_RDfiltered.vcf.gz}) --freq --out ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_AlleleFreq})
 
 #This .freq file has a header that messes with R, so we remove it using tail and pipe it into a file with a better name.
 tail -n +2 ${INTERMEDIATEDIR}/$(basename ${IND_VCF/.vcf.gz/_AlleleFreq.frq}) > ${INTERMEDIATEDIR}/Processed_IndSeq_ForR.txt
