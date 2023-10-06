@@ -4,12 +4,21 @@
 mkdir -p ../results/VCF
 
 # declare variables
-BAM=../results/Test_VariantCall_Input
+BAM_LIST=/mnt/results/[PLACEHOLDER.txt]
 RESULTS=/mnt/results/VCF
 REF=../reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 THREADS=1
+
+#Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
+#First, remove any possible older versions of this file
+rm /mnt/results/SampleNaming_VCF.txt &&
+
+while read line; do 
+SAMPLE_NAME=$(basename ${line} | cut -d "." -f 1);
+printf "%s\n" ${SAMPLE_NAME} >> /mnt/results/SampleNaming_VCF.txt;
+done < ${BAM_LIST}
 
 # Create a mpileup file for each genomic region and call snps & indels together
 # Input: (i) Filtered BAM files, (ii) indexed reference genome
@@ -50,7 +59,7 @@ THREADS=1
 # to a scaffold then the resulting mpileup file will be empty and varscan will 
 # wait forever for input. However this is quite unlikely with real data.
 
-samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} ${BAM}/*Pl1-???.markdup.Q20.bam \
+samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${RESULTS}/${CHUNK_SHORT}_samtools.pileup \
 	2> ${RESULTS}/${CHUNK_SHORT}.mpileup.err &&
 
 java -jar /usr/share/java/varscan.jar mpileup2cns 
@@ -60,6 +69,7 @@ java -jar /usr/share/java/varscan.jar mpileup2cns
         --min-reads2 1 \
         --min-freq-for-hom 0.75 \
         --p-value 0.1 \
+	--vcf-sample-list /mnt/results/SampleNaming_VCF.txt \
         --output-vcf 1 \
         2> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.err \
         | bgzip --compress-level -1 2> ${RESULTS}/${CHUNK_SHORT}_Gzipping.err \
