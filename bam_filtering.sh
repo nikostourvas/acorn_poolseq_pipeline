@@ -2,7 +2,7 @@
 
 # declare variables
 IND=$1 #The individual that is processed
-BAM=../results/align_Batch1/${IND} #The location of the bam files, by individual.
+BAM=../results/align_Batch2/${IND} #The location of the bam files, by individual.
 
 # Remove PCR and optical duplicates with samtools markdup
 # This is the recommended way to mimic Picard tools MarkDuplicates with samtools
