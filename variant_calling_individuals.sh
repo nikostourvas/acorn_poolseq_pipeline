@@ -6,7 +6,7 @@
 #In the case of the ACORN project, these regions are arbitrarily made 'Chunks' of roughly equal size.
 #Much of this script was adapted from Nikolaos Tourvas' script 'variant_calling.sh', part of the acorn poolseq pipeline
 
-BAM_LIST_IND=/mnt/results/[PLACEHOLDER.txt]
+BAM_LIST_IND=/mnt/results/Test_VariantCall_Input/Four_Ind_Bamfiles_ForTests.txt
 OUTDIR=../results/indVCF
 REF=../reference/Qrob_PM1N.fa
 CHUNK=$1
