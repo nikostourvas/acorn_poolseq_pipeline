@@ -6,7 +6,7 @@
 #In the case of the ACORN project, these regions are arbitrarily made 'Chunks' of roughly equal size.
 #Much of this script was adapted from Nikolaos Tourvas' script 'variant_calling.sh', part of the acorn poolseq pipeline
 
-BAM_IN=../results/align_Batch1
+BAM_LIST_IND=/mnt/results/[PLACEHOLDER.txt]
 OUTDIR=../results/indVCF
 REF=../reference/Qrob_PM1N.fa
 CHUNK=$1
@@ -16,6 +16,15 @@ THREADS=1
 
 #Make sure the output directory is created.
 mkdir -p ${OUTDIR}
+
+#Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
+#First, remove any possible older versions of this file
+rm /mnt/results/SampleNaming_VCF_IND.txt &&
+
+while read line; do 
+SAMPLE_NAME=$(basename ${line} | cut -d "." -f 1);
+printf "%s\n" ${SAMPLE_NAME} >> /mnt/results/SampleNaming_VCF_IND.txt;
+done < ${BAM_LIST_IND}
 
 # Create a mpileup file for each genomic region and call snps & indels together
 # Input: (i) Filtered BAM files, (ii) indexed reference genome
@@ -48,7 +57,7 @@ mkdir -p ${OUTDIR}
 # stage though with the script "snp_indel_rm.sh".
 # --output-vcf: Set to 1, to produce VCF file instead of table of alleles
 
-samtools mpileup -B -q 20 -r ${CHUNK_LOCATION} -l ${CHUNK} -f ${REF} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup ${BAM_IN}/*Pl1-?????.markdup.Q20.bam \
+samtools mpileup -B -q 20 -r ${CHUNK_LOCATION} -l ${CHUNK} -f ${REF} -b ${BAM_LIST_IND} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup \
     2> ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err &&
     
 java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup\
@@ -57,6 +66,7 @@ java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samto
     --min-var-freq 0.025 \
     --min-reads2 1 \
     --min-freq-for-hom 0.85 \
+    --vcf-sample-list /mnt/results/SampleNaming_VCF_IND.txt \
     --p-value 0.1 \
     --output-vcf 1 \
     2> ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.err \
