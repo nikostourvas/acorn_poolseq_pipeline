@@ -7,8 +7,8 @@
 #Much of this script was adapted from Nikolaos Tourvas' script 'variant_calling.sh', part of the acorn poolseq pipeline
 
 BAM_LIST_IND=/mnt/results/Test_VariantCall_Input/Four_Ind_Bamfiles_ForTests.txt
-OUTDIR=../results/indVCF
-REF=../reference/Qrob_PM1N.fa
+OUTDIR=/mnt/results/indVCF
+REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 CHUNK_LOCATION=$(head -n 1 ${CHUNK} | awk '{ print $1 }')
@@ -19,11 +19,11 @@ mkdir -p ${OUTDIR}
 
 #Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
 #First, remove any possible older versions of this file
-rm /mnt/results/SampleNaming_VCF_IND.txt &&
+rm /mnt/results/SampleNaming_VCF_IND_{CHUNK_SHORT}.txt &&
 
 while read line; do 
 SAMPLE_NAME=$(basename ${line} | cut -d "." -f 1);
-printf "%s\n" ${SAMPLE_NAME} >> /mnt/results/SampleNaming_VCF_IND.txt;
+printf "%s\n" "${SAMPLE_NAME}" >> /mnt/results/SampleNaming_VCF_IND_${CHUNK_SHORT}.txt;
 done < ${BAM_LIST_IND}
 
 # Create a mpileup file for each genomic region and call snps & indels together
