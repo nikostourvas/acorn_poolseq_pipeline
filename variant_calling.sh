@@ -69,7 +69,7 @@ java -jar /usr/share/java/varscan.jar mpileup2cns
         --min-reads2 1 \
         --min-freq-for-hom 0.75 \
         --p-value 0.1 \
-	--vcf-sample-list /mnt/results/SampleNaming_VCF.txt \
+	--vcf-sample-list /mnt/results/SampleNaming_VCF_${CHUNK_SHORT}.txt \
         --output-vcf 1 \
         2> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.err \
         | bgzip --compress-level -1 2> ${RESULTS}/${CHUNK_SHORT}_Gzipping.err \
