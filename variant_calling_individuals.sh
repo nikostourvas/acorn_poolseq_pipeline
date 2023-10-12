@@ -6,7 +6,7 @@
 #In the case of the ACORN project, these regions are arbitrarily made 'Chunks' of roughly equal size.
 #Much of this script was adapted from Nikolaos Tourvas' script 'variant_calling.sh', part of the acorn poolseq pipeline
 
-BAM_LIST_IND=/mnt/results/Test_VariantCall_Input/Four_Ind_Bamfiles_ForTests.txt
+BAM_LIST_IND=/mnt/results/[PLACEHOLDER]
 OUTDIR=/mnt/results/indVCF
 REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
@@ -66,7 +66,7 @@ java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samto
     --min-var-freq 0.025 \
     --min-reads2 1 \
     --min-freq-for-hom 0.85 \
-    --vcf-sample-list /mnt/results/SampleNaming_VCF_IND.txt \
+    --vcf-sample-list /mnt/results/SampleNaming_VCF_IND_${CHUNK_SHORT}.txt \
     --p-value 0.1 \
     --output-vcf 1 \
     2> ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.err \
