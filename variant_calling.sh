@@ -66,7 +66,6 @@ samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${RESULTS}/${C
 	2> ${RESULTS}/${CHUNK_SHORT}.mpileup.err &&
 
 java -jar /usr/share/java/varscan.jar mpileup2cns 
-	--vcf-sample-list inds \
 	--min-coverage 30 \
 	--min-var-freq 0.025 \
         --min-reads2 1 \
