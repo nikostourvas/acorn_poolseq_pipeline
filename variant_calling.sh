@@ -5,13 +5,13 @@ mkdir -p ../results/VCF
 
 # declare variables
 BAM_LIST=/data/genetics_tmp/variant_calling_tmp_storage_all_pools/AllPoolBams_TechnicalDupesRm_FastStorage.txt
-RESULTS=/data/genetics_tmp/VCF_AllPools
+OUTDIR=/data/genetics_tmp/VCF_AllPools
 REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 THREADS=1
 
-mkdir -p ${RESULTS}
+mkdir -p ${OUTDIR}
 
 #Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
 #First, remove any possible older versions of this file
@@ -62,8 +62,8 @@ done < ${BAM_LIST}
 # to a scaffold then the resulting mpileup file will be empty and varscan will 
 # wait forever for input. However this is quite unlikely with real data.
 
-samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${RESULTS}/${CHUNK_SHORT}_samtools.pileup \
-	2> ${RESULTS}/${CHUNK_SHORT}.mpileup.err &&
+samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup \
+	2> ${OUTDIR}/${CHUNK_SHORT}.mpileup.err &&
 
 java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup\
 	--min-coverage 30 \
@@ -73,44 +73,44 @@ java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samto
         --p-value 0.1 \
 	--vcf-sample-list /mnt/results/SampleNaming_VCF_${CHUNK_SHORT}.txt \
         --output-vcf 1 \
-        2> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.err \
-        | bgzip --compress-level -1 2> ${RESULTS}/${CHUNK_SHORT}_Gzipping.err \
-				> ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz &&
+        2> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.err \
+        | bgzip --compress-level -1 2> ${OUTDIR}/${CHUNK_SHORT}_Gzipping.err \
+				> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz &&
 
 # index vcfs
-bcftools index ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
+bcftools index ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
     --threads ${THREADS} \
-    2> ${RESULTS}/${CHUNK_SHORT}.bcftools_index.snpindel.vcf.err
+    2> ${OUTDIR}/${CHUNK_SHORT}.bcftools_index.snpindel.vcf.err
 
 # extract snps and save them in a separate compressed VCF
 bcftools view -v snps --threads ${THREADS} \
-    ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
-    -Oz -o ${RESULTS}/${CHUNK_SHORT}.varScan.snp.vcf.gz \
-    2> ${RESULTS}/${CHUNK_SHORT}.bcftools_view.snp.vcf.err \
+    ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
+    -Oz -o ${OUTDIR}/${CHUNK_SHORT}.varScan.snp.vcf.gz \
+    2> ${OUTDIR}/${CHUNK_SHORT}.bcftools_view.snp.vcf.err \
 
 # extract indels and save them in a separate compressed VCF
 bcftools view -v indels --threads ${THREADS} \
-    ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
-    -Oz -o ${RESULTS}/${CHUNK_SHORT}.varScan.indel.vcf.gz \
-    2> ${RESULTS}/${CHUNK_SHORT}.bcftools.indel.vcf.err
+    ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
+    -Oz -o ${OUTDIR}/${CHUNK_SHORT}.varScan.indel.vcf.gz \
+    2> ${OUTDIR}/${CHUNK_SHORT}.bcftools.indel.vcf.err
 
 # remove redundant files for storage efficiency
-rm ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
-   ${RESULTS}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz.csi
+rm ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
+   ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz.csi
 
 # some scaffolds will have no snps/indels
 # delete the empty vcf files originating from these scaffolds
-# find ${RESULTS}/${CHUNK_SHORT}*.gz -maxdepth 1 -type f -empty -print -delete
+# find ${OUTDIR}/${CHUNK_SHORT}*.gz -maxdepth 1 -type f -empty -print -delete
 #Defunct, but useful for any necessary benchmarking in the future. 
 
 # index newly created VCFs
-bcftools index ${RESULTS}/${CHUNK_SHORT}.varScan.snp.vcf.gz \
+bcftools index ${OUTDIR}/${CHUNK_SHORT}.varScan.snp.vcf.gz \
     --threads ${THREADS} \   
-    2> ${RESULTS}/${CHUNK_SHORT}.bcftools_index.snp.vcf.err
+    2> ${OUTDIR}/${CHUNK_SHORT}.bcftools_index.snp.vcf.err
 
-bcftools index ${RESULTS}/${CHUNK_SHORT}.varScan.indel.vcf.gz \
+bcftools index ${OUTDIR}/${CHUNK_SHORT}.varScan.indel.vcf.gz \
     --threads ${THREADS} \
-    2> ${RESULTS}/${CHUNK_SHORT}.bcftools_index.indel.vcf.err &&
+    2> ${OUTDIR}/${CHUNK_SHORT}.bcftools_index.indel.vcf.err &&
 
 echo -e "All log files for ${CHUNK_SHORT/.bed/}\n\n#####\n\nSamtools mpileup\n\n">${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
 cat ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
