@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# create output directory
-mkdir -p ../results/VCF
-
 # declare variables
 BAM_LIST=/data/genetics_tmp/variant_calling_tmp_storage_all_pools/AllPoolBams_TechnicalDupesRm_FastStorage.txt
 OUTDIR=/data/genetics_tmp/VCF_AllPools
@@ -16,11 +13,11 @@ mkdir -p ${OUTDIR}
 #Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
 #First, remove any possible older versions of this file
 
-rm /mnt/results/SampleNaming_VCF_{CHUNK_SHORT}.txt &&
+rm /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt &&
 
 while read line; do 
 SAMPLE_NAME=$(basename ${line} | cut -d "." -f 1);
-printf "%s\n" "${SAMPLE_NAME}" >> /mnt/results/SampleNaming_VCF_${CHUNK_SHORT}.txt;
+printf "%s\n" "${SAMPLE_NAME}" >> /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt;
 done < ${BAM_LIST}
 
 # Create a mpileup file for each genomic region and call snps & indels together
@@ -62,10 +59,10 @@ done < ${BAM_LIST}
 # to a scaffold then the resulting mpileup file will be empty and varscan will 
 # wait forever for input. However this is quite unlikely with real data.
 
-samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup \
+samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup \
 	2> ${OUTDIR}/${CHUNK_SHORT}.mpileup.err &&
 
-java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup\
+java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup\
 	--min-coverage 30 \
 	--min-var-freq 0.025 \
         --min-reads2 1 \
@@ -74,8 +71,8 @@ java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samto
 	--vcf-sample-list /mnt/results/SampleNaming_VCF_${CHUNK_SHORT}.txt \
         --output-vcf 1 \
         2> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.err \
-        | bgzip --compress-level -1 2> ${OUTDIR}/${CHUNK_SHORT}_Gzipping.err \
-				> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz &&
+        	| bgzip --compress-level -1 2> ${OUTDIR}/${CHUNK_SHORT}_Gzipping.err \
+		> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz &&
 
 # index vcfs
 bcftools index ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
