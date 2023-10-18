@@ -4,15 +4,18 @@
 mkdir -p ../results/VCF
 
 # declare variables
-BAM_LIST=/mnt/results/[PLACEHOLDER.txt]
-RESULTS=/mnt/results/VCF
+BAM_LIST=/mnt/results/AllPoolBams_TechnicalDupesRm.txt
+RESULTS=/mnt/results/VCF_AllPools
 REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 THREADS=1
 
+mkdir -p ${RESULTS}
+
 #Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
 #First, remove any possible older versions of this file
+
 rm /mnt/results/SampleNaming_VCF_{CHUNK_SHORT}.txt &&
 
 while read line; do 
@@ -127,3 +130,4 @@ cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLo
 
 rm ${OUTDIR}/${CHUNK_SHORT}*.err 
 rm ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup
+rm /mnt/results/SampleNaming_VCF_${CHUNK_SHORT}.txt
