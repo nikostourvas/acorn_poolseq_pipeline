@@ -4,7 +4,7 @@
 mkdir -p ../results/VCF
 
 # declare variables
-BAM_LIST=/mnt/results/AllPoolBams_TechnicalDupesRm.txt
+BAM_LIST=/data/genetics_tmp/variant_calling_tmp_storage_all_pools/AllPoolBams_TechnicalDupesRm_FastStorage.txt
 RESULTS=/mnt/results/VCF_AllPools
 REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
