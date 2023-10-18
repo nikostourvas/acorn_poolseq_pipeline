@@ -65,7 +65,7 @@ done < ${BAM_LIST}
 samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${RESULTS}/${CHUNK_SHORT}_samtools.pileup \
 	2> ${RESULTS}/${CHUNK_SHORT}.mpileup.err &&
 
-java -jar /usr/share/java/varscan.jar mpileup2cns 
+java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup\
 	--min-coverage 30 \
 	--min-var-freq 0.025 \
         --min-reads2 1 \
