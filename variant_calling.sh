@@ -126,4 +126,3 @@ cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLo
 
 rm ${OUTDIR}/${CHUNK_SHORT}*.err 
 rm ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup
-rm /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt
