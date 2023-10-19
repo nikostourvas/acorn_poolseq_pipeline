@@ -2,7 +2,7 @@
 
 # declare variables
 SNP_VCF=$1
-INDEL_VCF=${SNP_VCF/_SNP.vcf.gz/_INDEL.vcf.gz}
+INDEL_VCF=${SNP_VCF/_SNP.vcf/_INDEL.vcf}
 OUTDIR=$(dirname ${SNP_VCF})
 REF=../reference/Qrob_PM1N.fa
 
@@ -11,7 +11,7 @@ java -jar /usr/share/java/varscan.jar filter ${SNP_VCF} \
     --min-var-freq 0.025 --p-value 0.05 --min-avg-qual 20 \
     --min-coverage 30 --min-reads2 1 \
     --indel-file ${INDEL_VCF} \
-    --output-file ${OUTDIR}/$(basename ${SNP_VCF/_SNP.vcf.gz/IndelFilteredSNPs.vcf.gz}) \
+    --output-file ${OUTDIR}/$(basename ${SNP_VCF/_SNP.vcf.gz/IndelFilteredSNPs.vcf}) \
     2> ${OUTDIR}/varscan_SNP_filter.err
 
 # OPTIONAL TODO!
