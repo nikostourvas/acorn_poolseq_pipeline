@@ -63,12 +63,12 @@ samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${OUTDIR}/${CH
 	2> ${OUTDIR}/${CHUNK_SHORT}.mpileup.err &&
 
 java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup\
+	--vcf-sample-list /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt \
 	--min-coverage 30 \
 	--min-var-freq 0.025 \
         --min-reads2 1 \
         --min-freq-for-hom 0.75 \
         --p-value 0.1 \
-	--vcf-sample-list /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt \
         --output-vcf 1 \
         2> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.err \
         	| bgzip --compress-level -1 2> ${OUTDIR}/${CHUNK_SHORT}_Gzipping.err \
