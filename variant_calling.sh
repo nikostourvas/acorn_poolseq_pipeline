@@ -68,7 +68,7 @@ java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samto
         --min-reads2 1 \
         --min-freq-for-hom 0.75 \
         --p-value 0.1 \
-	--vcf-sample-list /mnt/results/SampleNaming_VCF_${CHUNK_SHORT}.txt \
+	--vcf-sample-list /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt \
         --output-vcf 1 \
         2> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.err \
         	| bgzip --compress-level -1 2> ${OUTDIR}/${CHUNK_SHORT}_Gzipping.err \
@@ -125,5 +125,5 @@ echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_S
 cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log &&
 
 rm ${OUTDIR}/${CHUNK_SHORT}*.err 
-rm ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup
-rm /mnt/results/SampleNaming_VCF_${CHUNK_SHORT}.txt
+rm ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup
+rm /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt
