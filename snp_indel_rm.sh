@@ -1,16 +1,18 @@
 #!/bin/bash
 
 # declare variables
-RESULTS=../results/VCF
+SNP_VCF=$1
+INDEL_VCF=${SNP_VCF/_SNP.vcf.gz/_INDEL.vcf.gz}
+OUTDIR=$(dirname ${SNP_VCF})
 REF=../reference/Qrob_PM1N.fa
 
 # Remove SNPs close to InDels & perform further SNP filtering
-java -jar /usr/share/java/varscan.jar filter $RESULTS/Qrob_total.snp.vcf \
+java -jar /usr/share/java/varscan.jar filter ${SNP_VCF} \
     --min-var-freq 0.025 --p-value 0.05 --min-avg-qual 20 \
     --min-coverage 30 --min-reads2 1 \
-    --indel-file $RESULTS/Qrob_total.indel.vcf \
-    --output-file $RESULTS/Qrob_total_filter.snp.vcf \
-    2> $RESULTS/varscan_SNP_filter.err
+    --indel-file ${INDEL_VCF} \
+    --output-file ${OUTDIR}/$(basename ${SNP_VCF/_SNP.vcf.gz/IndelFilteredSNPs.vcf.gz}\
+    2> ${OUTDIR}/varscan_SNP_filter.err
 
 # OPTIONAL TODO!
 # Use VarScan false positive filter
