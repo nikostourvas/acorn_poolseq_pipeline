@@ -11,7 +11,7 @@ java -jar /usr/share/java/varscan.jar filter ${SNP_VCF} \
     --min-var-freq 0.025 --p-value 0.05 --min-avg-qual 20 \
     --min-coverage 30 --min-reads2 1 \
     --indel-file ${INDEL_VCF} \
-    --output-file ${OUTDIR}/$(basename ${SNP_VCF/_SNP.vcf.gz/IndelFilteredSNPs.vcf.gz} \
+    --output-file ${OUTDIR}/$(basename ${SNP_VCF/_SNP.vcf.gz/IndelFilteredSNPs.vcf.gz}) \
     2> ${OUTDIR}/varscan_SNP_filter.err
 
 # OPTIONAL TODO!
