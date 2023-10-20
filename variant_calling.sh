@@ -13,7 +13,7 @@ mkdir -p ${OUTDIR}
 #Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
 #First, remove any possible older versions of this file
 
-rm /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt &&
+rm /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt
 
 while read line; do 
 SAMPLE_NAME=$(basename ${line} | cut -d "." -f 1);
