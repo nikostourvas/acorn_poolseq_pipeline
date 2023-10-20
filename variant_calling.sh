@@ -11,13 +11,17 @@ THREADS=1
 mkdir -p ${OUTDIR}
 
 #Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
-#First, remove any possible older versions of this file
+#First, create a directory to store the sample naming lists in.
 
-rm /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt
+mkdir -p ${OUTDIR}/SampleNamingFiles
+
+#Then, remove any possible older versions of this file
+
+rm ${OUTDIR}/SampleNamingFiles/SampleNaming_VCF_${CHUNK_SHORT}.txt
 
 while read line; do 
 SAMPLE_NAME=$(basename ${line} | cut -d "." -f 1);
-printf "%s\n" "${SAMPLE_NAME}" >> /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt;
+printf "%s\n" "${SAMPLE_NAME}" >> ${OUTDIR}/SampleNamingFiles/SampleNaming_VCF_${CHUNK_SHORT}.txt;
 done < ${BAM_LIST}
 
 # Create a mpileup file for each genomic region and call snps & indels together
@@ -63,7 +67,7 @@ samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${OUTDIR}/${CH
 	2> ${OUTDIR}/${CHUNK_SHORT}.mpileup.err &&
 
 java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup\
-	--vcf-sample-list /data/genetics_tmp/variant_calling_tmp_storage_all_pools/SampleNaming_VCF_${CHUNK_SHORT}.txt \
+	--vcf-sample-list ${OUTDIR}/SampleNamingFiles/SampleNaming_VCF_${CHUNK_SHORT}.txt \
 	--min-coverage 30 \
 	--min-var-freq 0.025 \
         --min-reads2 1 \
