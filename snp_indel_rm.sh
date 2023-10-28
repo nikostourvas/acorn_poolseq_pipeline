@@ -7,7 +7,7 @@ OUTDIR=$(dirname ${SNP_VCF})
 REF=/mnt/reference/Qrob_PM1N.fa
 
 # Remove SNPs close to InDels & perform further SNP filtering
-java -jar /usr/share/java/varscan.jar filter ${SNP_VCF} \
+java -Xmx128g -jar /usr/share/java/varscan.jar filter ${SNP_VCF} \
     --min-var-freq 0.025 --p-value 0.05 --min-avg-qual 20 \
     --min-coverage 30 --min-reads2 1 \
     --indel-file ${INDEL_VCF} \
