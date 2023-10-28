@@ -4,7 +4,7 @@
 SNP_VCF=$1
 INDEL_VCF=${SNP_VCF/_SNP.vcf/_INDEL.vcf}
 OUTDIR=$(dirname ${SNP_VCF})
-REF=../reference/Qrob_PM1N.fa
+REF=/mnt/reference/Qrob_PM1N.fa
 
 # Remove SNPs close to InDels & perform further SNP filtering
 java -jar /usr/share/java/varscan.jar filter ${SNP_VCF} \
