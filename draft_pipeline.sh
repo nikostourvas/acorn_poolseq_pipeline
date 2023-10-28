@@ -44,12 +44,12 @@ parallel --verbose -j 7 \
 bash Simplified_Chunks.sh ../reference/Qrob_PM1N.fa.fai 2000000
 
 # Variant calling
-parallel --verbose -j 19 \
-	'bash variant_calling.sh {}' :::: ../reference/ChunkFiles/Locations_Of_Chunk_Beds.txt
+parallel --verbose -j 90 \
+	'bash variant_calling.sh {}' :::: /mnt/reference/ChunkFiles/Locations_Of_Chunk_Beds.txt
 
 # Merge the multiple small VCF files that were produced in the previous step
 # into one large VCF
-bash Concatenate_VCFs.sh ../results/[VCF_DIRECTORY] [PREFIX_CONCATENATED_VCF]
+bash Concatenate_VCFs.sh ../results/[VCF_DIRECTORY] [PREFIX_CONCATENATED_VCF] [THREADS]
 
 # Filter SNPs detected close to INDELs, as suggested by VarScan manual
 bash snp_indel_rm.sh
