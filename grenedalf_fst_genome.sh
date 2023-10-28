@@ -1,22 +1,25 @@
 #!/bin/bash
 
-mkdir -p ../results/frequencies
-
 # declare variables
-OUTPUT=../results/frequencies
-SYNC=../results/frequencies/simulate.sync.gz
-POOLSIZES=pool_sizes_sim
+OUTDIR=/data/genetics_tmp/grenedalf_3species
+BAM=/data/genetics_tmp/variant_calling_tmp_storage_all_pools/AllPoolBams_TechnicalDupesRm_NoOutgroups_Sorted_FastStorage.txt
+POOLSIZES=/data/genetics_tmp/variant_calling_tmp_storage_all_pools/Allpools_3species_poolsizes.txt
+REFERENCE=/mnt/reference/Qrob_PM1N.fa
+THREADS=12
+
+mkdir -p ${OUTDIR} 
 
 grenedalf fst \
     --window-type genome \
     --method unbiased-nei \
-    --pool-sizes $OUTPUT/$POOLSIZES \
+    --pool-sizes $OUTDIR/$POOLSIZES \
     --filter-sample-min-count 8 \
     --filter-sample-max-coverage 500 \
-    --filter-sample-min-coverage 8 \
+    --filter-sample-min-coverage 30 \
     --filter-total-only-biallelic-snps \
-    --sync-path $SYNC \
-    --out-dir $OUTPUT \
-    --log-file $OUTPUT/grenedalf_fst_genome_log.txt \
+    --reference-genome-fasta-file $REFERENCE\
+    --sam-path $BAM \
+    --out-dir $OUTDIR \
+    --log-file $OUTDIR/grenedalf_fst_genome_log.txt \
     --allow-file-overwriting \
-    --threads 4
+    --threads $THREADS
