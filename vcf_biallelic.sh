@@ -2,8 +2,8 @@
 
 # declare variables
 INPUT_VCF=$1
-REF=../reference/Qrob_PM1N.fa
-THREADS=12
+REF=/mnt/reference/Qrob_PM1N.fa
+THREADS=60
 OUTDIR=$(dirname ${INPUT_VCF})
 
 # keep only biallelic SNPs
