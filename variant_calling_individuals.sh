@@ -11,7 +11,6 @@ OUTDIR=/data/genetics_tmp/VCF_Individuals
 REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
-CHUNK_LOCATION=$(head -n 1 ${CHUNK} | awk '{ print $1 }')
 THREADS=1
 
 #Make sure the output directory is created.
@@ -62,7 +61,7 @@ done < ${BAM_LIST_IND}
 # stage though with the script "snp_indel_rm.sh".
 # --output-vcf: Set to 1, to produce VCF file instead of table of alleles
 
-samtools mpileup -B -q 20 -r ${CHUNK_LOCATION} -l ${CHUNK} -f ${REF} -b ${BAM_LIST_IND} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup \
+samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST_IND} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup \
     2> ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err &&
     
 java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup\
@@ -128,4 +127,4 @@ echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_S
 cat ${OUTDIR}/${CHUNK_SHORT}_ind.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log &&
 
 rm ${OUTDIR}/${CHUNK_SHORT}*.err 
-rm ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup
+rm ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup
