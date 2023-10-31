@@ -6,8 +6,8 @@
 #In the case of the ACORN project, these regions are arbitrarily made 'Chunks' of roughly equal size.
 #Much of this script was adapted from Nikolaos Tourvas' script 'variant_calling.sh', part of the acorn poolseq pipeline
 
-BAM_LIST_IND=/mnt/results/[PLACEHOLDER]
-OUTDIR=/mnt/results/indVCF
+BAM_LIST_IND=/data/genetics_tmp/variant_calling_tmp_storage_individuals/AllIndBams_Sorted_FastStorage.txt #For downstream convenience, we recommend that this list of bams is sorted in a logical order.
+OUTDIR=/data/genetics_tmp/VCF_Individuals
 REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
@@ -17,9 +17,14 @@ THREADS=1
 #Make sure the output directory is created.
 mkdir -p ${OUTDIR}
 
+
 #Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
-#First, remove any possible older versions of this file
-rm /mnt/results/SampleNaming_VCF_IND_{CHUNK_SHORT}.txt &&
+#First, create a directory to store the sample naming lists in.
+
+mkdir -p ${OUTDIR}/SampleNamingFiles
+
+#Then, remove any possible older versions of this file
+rm ${OUTDIR}/SampleNamingFiles/SampleNaming_VCF_IND_${CHUNK_SHORT}.txt
 
 while read line; do 
 SAMPLE_NAME=$(basename ${line} | cut -d "." -f 1);
@@ -57,10 +62,10 @@ done < ${BAM_LIST_IND}
 # stage though with the script "snp_indel_rm.sh".
 # --output-vcf: Set to 1, to produce VCF file instead of table of alleles
 
-samtools mpileup -B -q 20 -r ${CHUNK_LOCATION} -l ${CHUNK} -f ${REF} -b ${BAM_LIST_IND} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup \
+samtools mpileup -B -q 20 -r ${CHUNK_LOCATION} -l ${CHUNK} -f ${REF} -b ${BAM_LIST_IND} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup \
     2> ${OUTDIR}/${CHUNK_SHORT}_ind.mpileup.err &&
     
-java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.pileup\
+java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup\
     --min-coverage 5 \
     --min-var-freq 0.025 \
     --min-reads2 1 \
@@ -69,8 +74,8 @@ java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samto
     --p-value 0.1 \
     --output-vcf 1 \
     2> ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.err \
-    | bgzip --compress-level -1 \
-        > ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz
+    | bgzip --compress-level -1 2> ${OUTDIR}/${CHUNK_SHORT}_Gzipping.err\
+        > ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz &&
 
 # index vcfs
 bcftools index ${OUTDIR}/${CHUNK_SHORT}_ind.varScan.snpindel.vcf.gz \
