@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # declare variables
-BAM_LIST=/data/genetics_tmp/variant_calling_tmp_storage_all_pools/AllPoolBams_TechnicalDupesRm_NoOutgroups_Sorted_FastStorage.txt
-OUTDIR=/data/genetics_tmp/VCF_AllPools_3Species
+BAM_LIST=/data/genetics_tmp/VCF_Qpetraea_Pools/SampleList_Qpetraea_Sorted_FastStorage.txt
+OUTDIR=/data/genetics_tmp/VCF_Qpetraea_Pools
 REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
