@@ -16,8 +16,8 @@ mkdir -p ${OUTDIR}
 mkdir -p ${OUTDIR}/SampleNamingFiles
 
 #Then, remove any possible older versions of this file
-
-rm ${OUTDIR}/SampleNamingFiles/SampleNaming_VCF_${CHUNK_SHORT}.txt
+#we use -f to avoid printing an error message for not finding any file to delete
+rm -f ${OUTDIR}/SampleNamingFiles/SampleNaming_VCF_${CHUNK_SHORT}.txt
 
 while read line; do 
 SAMPLE_NAME=$(basename ${line} | cut -d "." -f 1);
@@ -75,7 +75,7 @@ java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samto
         --p-value 0.1 \
         --output-vcf 1 \
         2> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.err \
-        	| bgzip --compress-level -1 2> ${OUTDIR}/${CHUNK_SHORT}_Gzipping.err \
+        	| bgzip --compress-level -1 \
 		> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz &&
 
 # index vcfs
@@ -128,5 +128,5 @@ cat ${OUTDIR}/${CHUNK_SHORT}.bcftools_index.snp.vcf.err >> ${OUTDIR}/AllLogFiles
 echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
 cat ${OUTDIR}/${CHUNK_SHORT}.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log &&
 
-rm ${OUTDIR}/${CHUNK_SHORT}*.err 
+rm ${OUTDIR}/${CHUNK_SHORT}.*.err 
 rm ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup
