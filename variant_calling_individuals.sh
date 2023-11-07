@@ -6,8 +6,8 @@
 #In the case of the ACORN project, these regions are arbitrarily made 'Chunks' of roughly equal size.
 #Much of this script was adapted from Nikolaos Tourvas' script 'variant_calling.sh', part of the acorn poolseq pipeline
 
-BAM_LIST_IND=/data/genetics_tmp/variant_calling_tmp_storage_individuals/AllIndBams_Sorted_FastStorage.txt #For downstream convenience, we recommend that this list of bams is sorted in a logical order.
-OUTDIR=/data/genetics_tmp/VCF_Individuals
+BAM_LIST_IND=/data/genetics_tmp/VCF_Qpubescens_Pools/Qpubescens_poolBams_sorted_FastStorage.txt #For downstream convenience, we recommend that this list of bams is sorted in a logical order.
+OUTDIR=/data/genetics_tmp/VCF_Qpubescens_Pools/
 REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
