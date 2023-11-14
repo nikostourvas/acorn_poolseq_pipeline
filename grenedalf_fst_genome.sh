@@ -19,6 +19,7 @@ grenedalf fst \
     --filter-total-only-biallelic-snps \
     --reference-genome-fasta-file $REFERENCE\
     --frequency-table-path $TABLE \
+    --frequency-table-separator-char tab \
     --out-dir $OUTDIR \
     --log-file $OUTDIR/grenedalf_fst_genome_log.txt \
     --allow-file-overwriting \
