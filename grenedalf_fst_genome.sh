@@ -12,13 +12,13 @@ mkdir -p ${OUTDIR}
 grenedalf fst \
     --window-type genome \
     --method unbiased-nei \
-    --pool-sizes $OUTDIR/$POOLSIZES \
+    --pool-sizes $POOLSIZES \
     --filter-sample-min-count 8 \
     --filter-sample-max-coverage 500 \
     --filter-sample-min-coverage 40 \
     --filter-total-only-biallelic-snps \
     --reference-genome-fasta-file $REFERENCE\
-    --vcf-path $TABLE \
+    --frequency-table-path $TABLE \
     --out-dir $OUTDIR \
     --log-file $OUTDIR/grenedalf_fst_genome_log.txt \
     --allow-file-overwriting \
