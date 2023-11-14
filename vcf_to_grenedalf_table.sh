@@ -20,15 +20,16 @@ OUTPUT=${2}
 # -H: include header
 # -f: extract FORMAT columns
 bcftools query -Hf '%CHROM\t%POS\t%REF\t%ALT[\t%RD][\t%AD]\n' ${VCF} \
-    | awk 'BEGIN{OFS=FS="\t"} NR==1 {gsub(/\[|\]/, "", $1); \
-        $1="chrom"; $2="pos"; $3="ref"; $4="alt"; \
-        for (i=5; i<=NF; i++){ \
-            gsub(/\[|\]/, "", $i); \
-            gsub(/:RD$/, ".ref.cnt", $i); \
-            gsub(/:AD$/, ".alt.cnt", $i)
-        }; \
-            print; next} \
+    | awk 'BEGIN{OFS=FS="\t"} 
+        NR==1 {
+            $1="chrom"; $2="pos"; $3="ref"; $4="alt"; 
+            for (i=5; i<=NF; i++){ 
+                gsub(/\[[^]]*\]/, "", $i); 
+                gsub(/:RD$/, ".ref.cnt", $i); 
+                gsub(/:AD$/, ".alt.cnt", $i)
+            };
+        print; next} 
         NR>1 {for (i=2; i<=NF; i++) 
-            gsub(/\./, 0, $i); print\
+            gsub(/\./, 0, $i); print
         }' \
-        > ${OUTPUT}.txt
+    > ${OUTPUT}.txt
