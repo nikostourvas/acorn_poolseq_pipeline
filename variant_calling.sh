@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # declare variables
-BAM_LIST=/data/genetics_tmp/VCF_Qrobur_Pools_TechnicalDuplicates/Qrobur_AllPoolBams_TechnicalDupes_sorted.txt #For downstream convenience, we recommend that this list of bams is sorted in a logical order.
-OUTDIR=/data/genetics_tmp/VCF_Qrobur_Pools_TechnicalDuplicates
+BAM_LIST=/data/genetics_tmp/VCF_Qrobur_Pools/Qrobur_PoolBams_Sorted_FastStorage.txt #For downstream convenience, we recommend that this list of bams is sorted in a logical order.
+OUTDIR=/data/genetics_tmp/VCF_Qrobur_Pools
 REF=/mnt/reference/Qrob_PM1N.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
@@ -68,8 +68,8 @@ samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${OUTDIR}/${CH
 
 java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup\
 	--vcf-sample-list ${OUTDIR}/SampleNamingFiles/SampleNaming_VCF_${CHUNK_SHORT}.txt \
-	--min-coverage 30 \
-	--min-var-freq 0.025 \
+	--min-coverage 8 \
+	--min-var-freq 0.00 \
         --min-reads2 1 \
         --min-freq-for-hom 0.75 \
         --p-value 0.1 \
