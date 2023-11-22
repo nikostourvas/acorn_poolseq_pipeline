@@ -68,10 +68,10 @@ samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${OUTDIR}/${CH
 
 java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup\
 	--vcf-sample-list ${OUTDIR}/SampleNamingFiles/SampleNaming_VCF_${CHUNK_SHORT}.txt \
-	--min-coverage 8 \
+	--min-coverage 20 \
 	--min-var-freq 0.00 \
         --min-reads2 1 \
-        --min-freq-for-hom 0.75 \
+        --min-freq-for-hom 0.8 \
         --p-value 0.1 \
         --output-vcf 1 \
         2> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.err \

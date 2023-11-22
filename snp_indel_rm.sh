@@ -9,7 +9,7 @@ REF=/mnt/reference/Qrob_PM1N.fa
 # Remove SNPs close to InDels & perform further SNP filtering
 java -Xmx128g -jar /usr/share/java/varscan.jar filter ${SNP_VCF} \
     --min-var-freq 0.00 --p-value 0.05 --min-avg-qual 20 \
-    --min-coverage 8 --min-reads2 1 \
+    --min-coverage 20 --min-reads2 1 \
     --indel-file ${INDEL_VCF} \
     --output-file ${OUTDIR}/$(basename ${SNP_VCF/_SNP.vcf/IndelFilteredSNPs.vcf}) \
     2> ${OUTDIR}/varscan_SNP_filter.err
