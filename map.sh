@@ -26,7 +26,7 @@ OUTPUT=../results/align_Batch2/${IND}
 # samtools flagstat is run afterwards 
 
 bwa mem -R ${RG} -M -t 1 ${REF} ${FORWARD} ${REVERSE} 2> ${OUTPUT}.bwa-mem.err \
-    | samtools view --threads 1 -h -b -o ${OUTPUT}.raw.bam 2> ${OUTPUT}.sam-view.err
+    | samtools view --threads 15 -h -b -o ${OUTPUT}.raw.bam 2> ${OUTPUT}.sam-view.err
 
 # gather statistics
 samtools flagstat -@ 1 ${OUTPUT}.raw.bam > ${OUTPUT}.raw.flagstat
