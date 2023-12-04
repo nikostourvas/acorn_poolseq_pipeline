@@ -5,7 +5,7 @@ mkdir -p ../results/align_Batch2
 
 # declare variables
 IND=${1}
-REF=../reference/Qrob_PM1N.fa
+REF=../TEST_LL/REFERENCE/Qrob_PM1N_Organelles.fa
 FORWARD=../results/trimmed_fastq_Batch2/${IND}_1.trim.fastq.gz
 REVERSE=../results/trimmed_fastq_Batch2/${IND}_2.trim.fastq.gz
 RG="@RG\tID:${IND}\tPL:Illumina\tSM:${IND}"
