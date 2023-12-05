@@ -25,7 +25,7 @@ OUTPUT=../mapping_tests/results/${IND}
 # (e.g. 2c BWA + 1c samtools = 3 cores in total)
 # samtools flagstat is run afterwards 
 
-bwa mem -R ${RG} -M -t 1 ${REF} ${FORWARD} ${REVERSE} 2> ${OUTPUT}.bwa-mem.err \
+bwa mem -R ${RG} -M -t 15 ${REF} ${FORWARD} ${REVERSE} 2> ${OUTPUT}.bwa-mem.err \
     | samtools view --threads 15 -h -b -o ${OUTPUT}.raw.bam 2> ${OUTPUT}.sam-view.err
 
 # gather statistics
