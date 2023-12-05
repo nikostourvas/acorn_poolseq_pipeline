@@ -8,10 +8,10 @@
 #Directories mentioned below need to be updated manually. There is no practical way to take this all as command line arguments.
 SAMPLE=${1}
 REF=../TEST_LL/REFERENCE/Qrob_PM1N_Organelles.fa
-FORWARD=../mapping_tests/${IND}_1.trim.fastq.gz
-REVERSE=../mapping_tests/${IND}_2.trim.fastq.gz
-RG="@RG\tID:${IND}\tPL:Illumina\tSM:${IND}"
-OUTPUT=../mapping_tests/results/${IND}_minimap
+FORWARD=../mapping_tests/${SAMPLE}_1.trim.fastq.gz
+REVERSE=../mapping_tests/${SAMPLE}_2.trim.fastq.gz
+RG="@RG\tID:${IND}\tPL:Illumina\tSM:${SAMPLE}"
+OUTPUT=../mapping_tests/results/${SAMPLE}_minimap
 THREADS=15
 MEMORY=$((${THREADS}*4))
 
