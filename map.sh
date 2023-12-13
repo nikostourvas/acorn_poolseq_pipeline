@@ -5,11 +5,11 @@ mkdir -p ../results/align_Batch2
 
 # declare variables
 IND=${1}
-REF=../TEST_LL/REFERENCE/Qrob_PM1N_Organelles.fa
+REF=../TEST_LL/REFERENCE/Qrob_Darwin.fa
 FORWARD=../mapping_tests/${IND}_1.trim.fastq.gz
 REVERSE=../mapping_tests/${IND}_2.trim.fastq.gz
 RG="@RG\tID:${IND}\tPL:Illumina\tSM:${IND}"
-OUTPUT=../mapping_tests/results/${IND}
+OUTPUT=../mapping_tests/results/${IND}_Darwin
 
 # Align to reference genome and export raw bam file
 
