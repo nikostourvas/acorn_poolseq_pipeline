@@ -12,10 +12,11 @@ library(viridis)
 library(parallel)
 ```
 
-# Load data
+# Standard samtools markdup
+Load data
 ```{r}
 # Inds data
-inds305 <- read.table("../data/Final_AlleleFreqTables/ACORN_VCF_Individual_Pool305_AlleleFreqs.frq", sep="\t", header=TRUE, 
+inds305 <- read.table("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/AF_tables/ACORN_VCF_Individual_Pool305_AlleleFreqs.frq", header=TRUE, 
                    row.names = NULL, na.strings = "-nan")
 
 colnames(inds305) <- c("chrom", "pos", "alleles", "read_depth", "ref_ind", "alt_ind")
@@ -23,23 +24,11 @@ inds305 <- inds305 %>%
   unite(site, chrom, pos, sep="_")
 
 ## Filter for coverage
-indsfrq <- inds305 %>% 
+inds305 <- inds305 %>% 
   filter(read_depth >= 40) %>% 
   select(site, alt_ind)
 
-# Pool data
-pool305 <- read.table("../data/Final_AlleleFreqTables/ACORN_VCF_Qrobur_Pool305_minCov20IndelFilteredSNPs_Biallelic_miss0.1_ADP104_AlleleFrequencyTable.txt", sep = "\t", header=TRUE)
-colnames(pool305) <- c("site", "alt_pool")
-pool305 <- na.omit(pool305)
-
-# Make consensus data set
-consensus305 <- inner_join(indsfrq, pool305)
-
-
-
-
-# Inds data
-inds312 <- read.table("../data/Final_AlleleFreqTables/ACORN_VCF_Individual_Pool312_AlleleFreqs.frq", sep="\t", header=TRUE, 
+inds312 <- read.table("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/AF_tables/ACORN_VCF_Individual_Pool312_AlleleFreqs.frq", sep="\t", header=TRUE, 
                    row.names = NULL, na.strings = "-nan")
 
 colnames(inds312) <- c("chrom", "pos", "alleles", "read_depth", "ref_ind", "alt_ind")
@@ -47,22 +36,28 @@ inds312 <- inds312 %>%
   unite(site, chrom, pos, sep="_")
 
 ## Filter for coverage
-indsfrq <- inds312 %>% 
+inds312 <- inds312 %>% 
   filter(read_depth >= 40) %>% 
   select(site, alt_ind)
 
 # Pool data
-pool312 <- read.table("../data/Final_AlleleFreqTables/ACORN_VCF_Qrobur_Pool312_minCov20IndelFilteredSNPs_Biallelic_miss0.1_ADP104_AlleleFrequencyTable.txt", sep = "\t", header=TRUE)
-colnames(pool312) <- c("site", "alt_pool")
-pool312 <- na.omit(pool312)
+pooldata_markdup <- read.table("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/AF_tables/validationIndelFilteredSNPs_Biallelic_markdup_miss0.1_ADP100_AlleleFrequencyTable.txt", sep = "\t", header=TRUE)
+pool305_markdup <- pooldata_markdup %>% 
+                   select(chrom_pos, X305_markdup)
+colnames(pool305_markdup) <- c("site", "alt_pool")
+
+pool312_markdup <- pooldata_markdup %>% 
+                   select(chrom_pos, X312_markdup)
+colnames(pool312_markdup) <- c("site", "alt_pool")
 
 # Make consensus data set
-consensus312 <- inner_join(indsfrq, pool312)
+consensus305_markdup <- inner_join(inds305, pool305_markdup)
+consensus312_markdup <- inner_join(inds312, pool312_markdup)
 
-poplist <- list(consensus305, consensus312)
+poplist <- list(consensus305_markdup, consensus312_markdup)
 ```
 
-# Calculate statistics
+Statistics
 ```{r}
 error_stats <- function(ind_freq, pool_freq){
     # Fit a linear regression model
@@ -92,15 +87,15 @@ error_stats <- function(ind_freq, pool_freq){
 }
 
 # Apply the error_stats function to each element of poplist using parallel processing
-results <- mclapply(poplist, function(x) {
+results_markdup <- mclapply(poplist, function(x) {
   error_stats(x$alt_ind, x$alt_pool)
 }, mc.cores = detectCores() - 1)
 
 # print the results
-cat(results[[1]], results[[2]])
+cat(results_markdup[[1]], results_markdup[[2]])
 ```
 
-# Plots
+Plots
 ```{r fig.width=7, fig.height=14}
 hist2d <- function(dataset, alt_ind=alt_ind, alt_pool=alt_pool){
 #Create the 2D histogram plot:
@@ -141,14 +136,14 @@ histALTfreq <- function(dataset, alt_ind=alt_ind, alt_pool=alt_pool){
 #   hist2d(dataset=x)
 # }, mc.cores = detectCores() - 1)
 
-res_ALTfreq <- mclapply(poplist, function(x){
+res_ALTfreq_markdup <- mclapply(poplist, function(x){
   histALTfreq(dataset=x)
 }, mc.cores = detectCores() - 1)
 
 # res_hist2d[[1]]
 # res_hist2d[[2]]
 
-res_ALTfreq[[1]] / res_ALTfreq[[2]] + plot_annotation(tag_levels = 'A')
+res_ALTfreq_markdup[[1]] / res_ALTfreq_markdup[[2]] + plot_annotation(tag_levels = 'A')
 ```
 
 Barplot of AF
@@ -160,3 +155,103 @@ Barplot of AF
 #   geom_histogram(position = "dodge", bins = 41) +
 #   theme(legend.position = c(.9, .9))
 ```
+
+# Deduplication by identifying duplicate sequences with fastp
+Load data
+```{r}
+# Pool data
+pooldata_dedup <- read.table("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/AF_tables/validationIndelFilteredSNPs_Biallelic_dedup_NOmarkdup_miss0.1_ADP100_AlleleFrequencyTable.txt", sep = "\t", header=TRUE)
+pool305_dedup <- pooldata_dedup %>% 
+                   select(chrom_pos, X305_dedup_NOmarkdup)
+colnames(pool305_dedup) <- c("site", "alt_pool")
+
+pool312_dedup <- pooldata_dedup %>% 
+                   select(chrom_pos, X312_dedup_NOmarkdup)
+colnames(pool312_dedup) <- c("site", "alt_pool")
+
+# Make consensus data set
+consensus305_dedup <- inner_join(inds305, pool305_dedup)
+consensus312_dedup <- inner_join(inds312, pool312_dedup)
+
+poplist <- list(consensus305_dedup, consensus312_dedup)
+```
+
+Statistics
+```{r}
+# Apply the error_stats function to each element of poplist using parallel processing
+results_dedup <- mclapply(poplist, function(x) {
+  error_stats(x$alt_ind, x$alt_pool)
+}, mc.cores = detectCores() - 1)
+
+# print the results
+cat(results_dedup[[1]], results_dedup[[2]])
+```
+
+Plots
+```{r fig.width=7, fig.height=14}
+# res_hist2d <- mclapply(poplist, function(x){
+#   hist2d(dataset=x)
+# }, mc.cores = detectCores() - 1)
+
+res_ALTfreq_dedup <- mclapply(poplist, function(x){
+  histALTfreq(dataset=x)
+}, mc.cores = detectCores() - 1)
+
+# res_hist2d[[1]]
+# res_hist2d[[2]]
+
+res_ALTfreq_dedup[[1]] / res_ALTfreq_dedup[[2]] + plot_annotation(tag_levels = 'A')
+```
+
+# Deduplication by identifying duplicate sequences with fastp and with the alignment-based method implemented in samtools
+Load data
+```{r}
+# Pool data
+pooldata_dedup_markdup <- read.table("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/AF_tables/validationIndelFilteredSNPs_Biallelic_dedup_markdup_miss0.1_ADP100_AlleleFrequencyTable.txt", sep = "\t", header=TRUE)
+pool305_dedup_markdup <- pooldata_dedup_markdup %>% 
+                   select(chrom_pos, X305_dedup_markdup)
+colnames(pool305_dedup_markdup) <- c("site", "alt_pool")
+
+pool312_dedup_markdup <- pooldata_dedup_markdup %>% 
+                   select(chrom_pos, X312_dedup_markdup)
+colnames(pool312_dedup_markdup) <- c("site", "alt_pool")
+
+# Make consensus data set
+consensus305_dedup_markdup <- inner_join(inds305, pool305_dedup_markdup)
+consensus312_dedup_markdup <- inner_join(inds312, pool312_dedup_markdup)
+
+poplist <- list(consensus305_dedup_markdup, consensus312_dedup_markdup)
+```
+
+Statistics
+```{r}
+# Apply the error_stats function to each element of poplist using parallel processing
+results_dedup_markdup <- mclapply(poplist, function(x) {
+  error_stats(x$alt_ind, x$alt_pool)
+}, mc.cores = detectCores() - 1)
+
+# print the results
+cat(results_dedup_markdup[[1]], results_dedup_markdup[[2]])
+```
+
+Plots
+```{r fig.width=7, fig.height=14}
+# res_hist2d <- mclapply(poplist, function(x){
+#   hist2d(dataset=x)
+# }, mc.cores = detectCores() - 1)
+
+res_ALTfreq_dedup_markdup <- mclapply(poplist, function(x){
+  histALTfreq(dataset=x)
+}, mc.cores = detectCores() - 1)
+
+# res_hist2d[[1]]
+# res_hist2d[[2]]
+
+res_ALTfreq_dedup_markdup[[1]] / res_ALTfreq_dedup_markdup[[2]] + plot_annotation(tag_levels = 'A')
+```
+
+Save data for later referencing
+```{r}
+#save.image(file = "/data/genetics_tmp/mapping_tests/results_NT/AF_validation.Rdata")
+```
+
