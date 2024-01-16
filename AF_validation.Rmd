@@ -1,0 +1,162 @@
+---
+title: "AF validation"
+output: html_notebook
+---
+
+Load libraries
+```{r}
+library(Metrics)
+library(tidyverse)
+library(patchwork)
+library(viridis)
+library(parallel)
+```
+
+# Load data
+```{r}
+# Inds data
+inds305 <- read.table("../data/Final_AlleleFreqTables/ACORN_VCF_Individual_Pool305_AlleleFreqs.frq", sep="\t", header=TRUE, 
+                   row.names = NULL, na.strings = "-nan")
+
+colnames(inds305) <- c("chrom", "pos", "alleles", "read_depth", "ref_ind", "alt_ind")
+inds305 <- inds305 %>% 
+  unite(site, chrom, pos, sep="_")
+
+## Filter for coverage
+indsfrq <- inds305 %>% 
+  filter(read_depth >= 40) %>% 
+  select(site, alt_ind)
+
+# Pool data
+pool305 <- read.table("../data/Final_AlleleFreqTables/ACORN_VCF_Qrobur_Pool305_minCov20IndelFilteredSNPs_Biallelic_miss0.1_ADP104_AlleleFrequencyTable.txt", sep = "\t", header=TRUE)
+colnames(pool305) <- c("site", "alt_pool")
+pool305 <- na.omit(pool305)
+
+# Make consensus data set
+consensus305 <- inner_join(indsfrq, pool305)
+
+
+
+
+# Inds data
+inds312 <- read.table("../data/Final_AlleleFreqTables/ACORN_VCF_Individual_Pool312_AlleleFreqs.frq", sep="\t", header=TRUE, 
+                   row.names = NULL, na.strings = "-nan")
+
+colnames(inds312) <- c("chrom", "pos", "alleles", "read_depth", "ref_ind", "alt_ind")
+inds312 <- inds312 %>% 
+  unite(site, chrom, pos, sep="_")
+
+## Filter for coverage
+indsfrq <- inds312 %>% 
+  filter(read_depth >= 40) %>% 
+  select(site, alt_ind)
+
+# Pool data
+pool312 <- read.table("../data/Final_AlleleFreqTables/ACORN_VCF_Qrobur_Pool312_minCov20IndelFilteredSNPs_Biallelic_miss0.1_ADP104_AlleleFrequencyTable.txt", sep = "\t", header=TRUE)
+colnames(pool312) <- c("site", "alt_pool")
+pool312 <- na.omit(pool312)
+
+# Make consensus data set
+consensus312 <- inner_join(indsfrq, pool312)
+
+poplist <- list(consensus305, consensus312)
+```
+
+# Calculate statistics
+```{r}
+error_stats <- function(ind_freq, pool_freq){
+    # Fit a linear regression model
+    model <- lm(ind_freq ~ pool_freq)
+    
+    # Extract R-squared value from the model summary
+    Rsquared<- paste0("R squared = ",summary(model)$r.squared)
+    
+    # rmse
+    rmse <- paste0("RMSE = ",rmse(ind_freq, pool_freq))
+    
+    # mae
+    mae <- paste0("MAE = ",mae(ind_freq, pool_freq))
+    
+    # mape (Mean Absolute Percentage Error)
+    mape <- function(y_true, y_pred) {
+      non_zero_indices <- which(y_true != 0)
+      if (length(non_zero_indices) > 0) {
+        mean(abs((y_true[non_zero_indices] - y_pred[non_zero_indices]) / y_true[non_zero_indices])) * 100
+      } else {
+        NA
+      }
+    }
+    mape_res <- paste0("MAPE = ",mape(ind_freq, pool_freq))
+  out <- paste("\n", Rsquared, rmse, mae, mape_res, sep="\n")
+  return(out)
+}
+
+# Apply the error_stats function to each element of poplist using parallel processing
+results <- mclapply(poplist, function(x) {
+  error_stats(x$alt_ind, x$alt_pool)
+}, mc.cores = detectCores() - 1)
+
+# print the results
+cat(results[[1]], results[[2]])
+```
+
+# Plots
+```{r fig.width=7, fig.height=14}
+hist2d <- function(dataset, alt_ind=alt_ind, alt_pool=alt_pool){
+#Create the 2D histogram plot:
+  p <- ggplot(dataset, aes(x=alt_ind, y=alt_pool)) + 
+       geom_bin2d(bins=41) + 
+       scale_fill_viridis(trans='log10') +
+       theme_minimal() + 
+       labs(x="Ind-Seq ALT frequency",
+            y="Pool-Seq ALT frequency",
+            fill="Log10 Density") + 
+       theme(legend.position = c(1.2, 1.15))
+  
+  #Create marginal histograms:
+  px <- ggplot(dataset, aes(x=alt_ind)) + geom_histogram(bins=41) + theme_void()
+  py <- ggplot(dataset, aes(x=alt_pool)) + geom_histogram(bins=41) + theme_void() +
+                coord_flip()
+  
+  #Arrange the plots together:
+  px + plot_spacer() + p + py +
+    plot_layout(
+      ncol = 2, nrow = 2,
+      widths = c(4,1), heights = c(1,4)
+    )
+}
+
+histALTfreq <- function(dataset, alt_ind=alt_ind, alt_pool=alt_pool){
+  ggplot(dataset) +
+  geom_histogram(aes(x=alt_ind, after_stat(density)), bins = 41,
+                 fill = "lightblue", color = "black") +
+  geom_density(aes(x=alt_pool), color="darkred", size=1) +
+  geom_vline(xintercept = .05, color="black", linetype="dashed") +
+  theme_minimal() +  
+  labs(x="ALT frequency", y="Density",
+       title=paste())
+}
+
+# res_hist2d <- mclapply(poplist, function(x){
+#   hist2d(dataset=x)
+# }, mc.cores = detectCores() - 1)
+
+res_ALTfreq <- mclapply(poplist, function(x){
+  histALTfreq(dataset=x)
+}, mc.cores = detectCores() - 1)
+
+# res_hist2d[[1]]
+# res_hist2d[[2]]
+
+res_ALTfreq[[1]] / res_ALTfreq[[2]] + plot_annotation(tag_levels = 'A')
+```
+
+Barplot of AF
+```{r, eval=FALSE}
+# consensus_tidy <- pivot_longer(consensus, names_to="seq_type", 
+#                                values_to = "freq", !site)
+# 
+# ggplot(consensus_tidy, aes(x=freq, fill=seq_type))+
+#   geom_histogram(position = "dodge", bins = 41) +
+#   theme(legend.position = c(.9, .9))
+```
