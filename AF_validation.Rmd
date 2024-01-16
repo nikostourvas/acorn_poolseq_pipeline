@@ -51,8 +51,8 @@ pool312_markdup <- pooldata_markdup %>%
 colnames(pool312_markdup) <- c("site", "alt_pool")
 
 # Make consensus data set
-consensus305_markdup <- inner_join(inds305, pool305_markdup)
-consensus312_markdup <- inner_join(inds312, pool312_markdup)
+consensus305_markdup <- na.omit(inner_join(inds305, pool305_markdup))
+consensus312_markdup <- na.omit(inner_join(inds312, pool312_markdup))
 
 poplist <- list(consensus305_markdup, consensus312_markdup)
 ```
@@ -170,8 +170,8 @@ pool312_dedup <- pooldata_dedup %>%
 colnames(pool312_dedup) <- c("site", "alt_pool")
 
 # Make consensus data set
-consensus305_dedup <- inner_join(inds305, pool305_dedup)
-consensus312_dedup <- inner_join(inds312, pool312_dedup)
+consensus305_dedup <- na.omit(inner_join(inds305, pool305_dedup))
+consensus312_dedup <- na.omit(inner_join(inds312, pool312_dedup))
 
 poplist <- list(consensus305_dedup, consensus312_dedup)
 ```
@@ -217,8 +217,8 @@ pool312_dedup_markdup <- pooldata_dedup_markdup %>%
 colnames(pool312_dedup_markdup) <- c("site", "alt_pool")
 
 # Make consensus data set
-consensus305_dedup_markdup <- inner_join(inds305, pool305_dedup_markdup)
-consensus312_dedup_markdup <- inner_join(inds312, pool312_dedup_markdup)
+consensus305_dedup_markdup <- na.omit(inner_join(inds305, pool305_dedup_markdup))
+consensus312_dedup_markdup <- na.omit(inner_join(inds312, pool312_dedup_markdup))
 
 poplist <- list(consensus305_dedup_markdup, consensus312_dedup_markdup)
 ```
