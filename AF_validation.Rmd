@@ -63,6 +63,9 @@ error_stats <- function(ind_freq, pool_freq){
     # Fit a linear regression model
     model <- lm(ind_freq ~ pool_freq)
     
+    # Pearson's r
+    r <- paste0("r = ", cor(ind_freq, pool_freq, method = "pearson"))
+
     # Extract R-squared value from the model summary
     Rsquared<- paste0("R squared = ",summary(model)$r.squared)
     
@@ -82,7 +85,7 @@ error_stats <- function(ind_freq, pool_freq){
       }
     }
     mape_res <- paste0("MAPE = ",mape(ind_freq, pool_freq))
-  out <- paste("\n", Rsquared, rmse, mae, mape_res, sep="\n")
+  out <- paste("\n", r, Rsquared, rmse, mae, mape_res, sep="\n")
   return(out)
 }
 
