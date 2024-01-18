@@ -72,3 +72,5 @@ sed -e 's/-nan/NA/g' ${OUTPUT}_small.txt | tail +2 >> ${OUTPUT}_AlleleFrequencyT
 #clean up intermediate files
 rm ${OUTPUT}_buffer.txt
 rm ${OUTPUT}_intermediate.txt
+rm ${OUTPUT}_big.txt
+rm ${OUTPUT}_small.txt 
