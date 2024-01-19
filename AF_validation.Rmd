@@ -1,6 +1,15 @@
 ---
-title: "AF validation"
-output: html_notebook
+title: "ACORN Pool-Seq Allele frequencies validation"
+author: "Nikolaos Tourvas"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+output: 
+  html_document:
+    code_download: yes
+    code_folding: show
+    theme: default
+    toc: yes
+    toc_float: yes
+    keep_md: no
 ---
 
 Load libraries
@@ -275,7 +284,7 @@ results_dedup <- mclapply(poplist, function(x) {
   error_stats(x$alt_ind, x$alt_pool)
 }, mc.cores = detectCores() - 1)
 
-title <- "Standard duplicate removal"
+title <- "Deduplication with fastp"
 # print the results
 cat(paste0(title,results_dedup[[1]], results_dedup[[2]]))
 ```
