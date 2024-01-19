@@ -131,8 +131,8 @@ hist2dmaf <- function(dataset, maf_ind, maf_pool){
        theme(legend.position = c(1.2, 1.15))
   
   #Create marginal histograms:
-  px <- ggplot(dataset, aes(x=maf_ind)) + geom_histogram(bins=20) + theme_void()
-  py <- ggplot(dataset, aes(x=maf_pool)) + geom_histogram(bins=20) + theme_void() +
+  px <- ggplot(dataset, aes(x=maf_ind)) + geom_histogram(bins=21) + theme_void()
+  py <- ggplot(dataset, aes(x=maf_pool)) + geom_histogram(bins=21) + theme_void() +
                 coord_flip()
   
   #Arrange the plots together:
@@ -156,7 +156,7 @@ rawdiffplot <- function(dataset){
   #Create marginal histograms:
   px <- ggplot(dataset, aes(x=alt_pool - alt_ind)) + 
           geom_histogram(bins=100) + theme_void()
-  py <- ggplot(dataset, aes(x=maf_pool)) + geom_histogram(bins=20) + theme_void() +
+  py <- ggplot(dataset, aes(x=maf_pool)) + geom_histogram(bins=21) + theme_void() +
                 coord_flip()
   
   #Arrange the plots together:
@@ -170,7 +170,7 @@ rawdiffplot <- function(dataset){
   
 histALTfreq <- function(dataset, alt_ind, alt_pool, title=""){
   ggplot(dataset) +
-  geom_histogram(aes(x=alt_ind, after_stat(density)), bins = 40,
+  geom_histogram(aes(x=alt_ind, after_stat(density)), bins = 41,
                  fill = "lightblue", color = "black") +
   geom_density(aes(x=alt_pool), color="darkred", linewidth=1) +
   geom_vline(xintercept = .05, color="black", linetype="dashed") +
@@ -186,7 +186,7 @@ histMAFfreq <- function(dataset, maf_ind, maf_pool, title=""){
   geom_density(aes(x=maf_pool), color="darkred", linewidth=1) +
   geom_vline(xintercept = .05, color="black", linetype="dashed") +
   theme_minimal() +  
-  labs(x="ALT frequency", y="Density",
+  labs(x="Minor Allele Frequency", y="Density",
        title=title)
 }
 ```
@@ -312,6 +312,48 @@ mclapply(poplist, function(x){
 }, mc.cores = detectCores() - 1)
 ```
 
+# Deduplication with fastp and DP>=30
+Load pool data
+```{r}
+# Pool data
+poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100_DP30_AlleleFrequencyTable.txt", "305_dedup", "312_dedup")
+poplist_dedup <- poplist
+```
+
+Statistics for AF
+```{r}
+# Apply the error_stats function to each element of poplist using parallel processing
+results_dedup <- mclapply(poplist, function(x) {
+  error_stats(x$alt_ind, x$alt_pool)
+}, mc.cores = detectCores() - 1)
+
+title <- "Deduplication with fastp RD>=30"
+# print the results
+cat(paste0(title,results_dedup[[1]], results_dedup[[2]]))
+```
+
+Plots
+```{r fig.width=6, fig.height=6}
+mclapply(poplist, function(x){
+  hist2d(dataset=x)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  hist2dmaf(dataset=x)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  histALTfreq(dataset=x, title=title)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  histMAFfreq(dataset=x, title=title)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  rawdiffplot(dataset=x)
+}, mc.cores = detectCores() - 1)
+```
 Save data for later referencing
 ```{r}
 #save.image(file = "/data/genetics_tmp/mapping_tests/results_NT/AF_validation.Rdata")
