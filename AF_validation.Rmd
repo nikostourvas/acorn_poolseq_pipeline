@@ -408,7 +408,7 @@ mclapply(poplist, function(x){
 Load pool data
 ```{r}
 # Pool data
-poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100_DP30_AlleleFrequencyTable.txt", "305_dedup", "312_dedup")
+poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100_bcftoolsDP30_AlleleFrequencyTable.txt", "305_dedup", "312_dedup")
 poplist_dedup <- poplist
 ```
 
