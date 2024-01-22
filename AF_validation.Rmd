@@ -70,7 +70,7 @@ getpooldata <- function(tablepath, pool1, pool2){
 
 error_stats <- function(ind_freq, pool_freq){
     # Fit a linear regression model
-    model <- lm(ind_freq ~ pool_freq)
+    #model <- lm(ind_freq ~ pool_freq)
     
     # Pearson's r
     r <- paste0("r = ", cor(ind_freq, pool_freq, method = "pearson"))
@@ -316,7 +316,95 @@ mclapply(poplist, function(x){
 }, mc.cores = detectCores() - 1)
 ```
 
-# Deduplication with fastp and DP>=30
+# Standard samtools markdup RD>=30
+Load pool data
+```{r}
+# Pool data
+poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_markdup_30/validationIndelFilteredSNPs_Biallelic_500kb_ADP100_AlleleFrequencyTable.txt", "305", "312")
+poplist_markdup <- poplist
+```
+
+Statistics for AF
+```{r}
+# Apply the error_stats function to each element of poplist using parallel processing
+results_markdup <- mclapply(poplist, function(x) {
+  error_stats(x$alt_ind, x$alt_pool)
+}, mc.cores = detectCores() - 1)
+
+title <- "Standard duplicate removal RD>=30"
+# print the results
+cat(paste0(title,results_markdup[[1]], results_markdup[[2]]))
+```
+
+Plots
+```{r fig.width=6, fig.height=6}
+mclapply(poplist, function(x){
+  hist2d(dataset=x)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  hist2dmaf(dataset=x)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  histALTfreq(dataset=x, title=title)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  histMAFfreq(dataset=x, title=title)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  rawdiffplot(dataset=x)
+}, mc.cores = detectCores() - 1)
+```
+
+
+# Deduplication with fastp RD>=30
+Load pool data
+```{r}
+# Pool data
+poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup_30/validationIndelFilteredSNPs_Biallelic_500kb_ADP100_AlleleFrequencyTable.txt", "305_dedup", "312_dedup")
+poplist_dedup <- poplist
+```
+
+Statistics for AF
+```{r}
+# Apply the error_stats function to each element of poplist using parallel processing
+results_dedup <- mclapply(poplist, function(x) {
+  error_stats(x$alt_ind, x$alt_pool)
+}, mc.cores = detectCores() - 1)
+
+title <- "Deduplication with fastp RD=30"
+# print the results
+cat(paste0(title,results_dedup[[1]], results_dedup[[2]]))
+```
+
+Plots
+```{r fig.width=6, fig.height=6}
+mclapply(poplist, function(x){
+  hist2d(dataset=x)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  hist2dmaf(dataset=x)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  histALTfreq(dataset=x, title=title)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  histMAFfreq(dataset=x, title=title)
+}, mc.cores = detectCores() - 1)
+
+mclapply(poplist, function(x){
+  rawdiffplot(dataset=x)
+}, mc.cores = detectCores() - 1)
+```
+
+
+# Deduplication with fastp and bcftools DP>=30
 Load pool data
 ```{r}
 # Pool data
@@ -331,7 +419,7 @@ results_dedup <- mclapply(poplist, function(x) {
   error_stats(x$alt_ind, x$alt_pool)
 }, mc.cores = detectCores() - 1)
 
-title <- "Deduplication with fastp RD>=30"
+title <- "Deduplication with fastp (bcftools DP>=30)"
 # print the results
 cat(paste0(title,results_dedup[[1]], results_dedup[[2]]))
 ```
