@@ -237,6 +237,24 @@ poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_fi
 poplist_markdup <- poplist
 ```
 
+Data set size
+```{bash, eval=FALSE}
+bcftools stats --threads 10 --fasta-ref /data/genetics_tmp/TEST_LL/REFERENCE/Qrob_PM1N_Organelles.fa \
+    /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_markdup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf.gz \
+    > /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_markdup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf_stats.txt
+```
+
+Number of SNPs in the Pool VCF (populations 305 and 312):
+```{bash}
+grep "number of SNPs:" /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_markdup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf_stats.txt
+```
+
+Number of SNPs in the Consensus data sets (per population inner join of Ind VCF and Pool VCF):
+```{r}
+paste0("Number of SNPs in consensus data set of population 305 = ", nrow(poplist[[1]]) )
+paste0("Number of SNPs in consensus data set of population 312 = ", nrow(poplist[[2]]) )
+```
+
 Statistics for AF
 ```{r}
 # Apply the error_stats function to each element of poplist using parallel processing
@@ -281,6 +299,24 @@ poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_fi
 poplist_dedup <- poplist
 ```
 
+Data set size
+```{bash, eval=FALSE}
+bcftools stats --threads 10 --fasta-ref /data/genetics_tmp/TEST_LL/REFERENCE/Qrob_PM1N_Organelles.fa \
+    /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf.gz \
+    > /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf_stats.txt
+```
+
+Number of SNPs in the Pool VCF (populations 305 and 312):
+```{bash}
+grep "number of SNPs:" /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf_stats.txt
+```
+
+Number of SNPs in the Consensus data sets (per population inner join of Ind VCF and Pool VCF):
+```{r}
+paste0("Number of SNPs in consensus data set of population 305 = ", nrow(poplist[[1]]) )
+paste0("Number of SNPs in consensus data set of population 312 = ", nrow(poplist[[2]]) )
+```
+
 Statistics for AF
 ```{r}
 # Apply the error_stats function to each element of poplist using parallel processing
@@ -322,6 +358,24 @@ Load pool data
 # Pool data
 poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_markdup_30/validationIndelFilteredSNPs_Biallelic_500kb_ADP100_AlleleFrequencyTable.txt", "305", "312")
 poplist_markdup <- poplist
+```
+
+Data set size
+```{bash, eval=FALSE}
+bcftools stats --threads 10 --fasta-ref /data/genetics_tmp/TEST_LL/REFERENCE/Qrob_PM1N_Organelles.fa \
+    /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_markdup_30/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf.gz \
+    > /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_markdup_30/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf_stats.txt
+```
+
+Number of SNPs in the Pool VCF (populations 305 and 312):
+```{bash}
+grep "number of SNPs:" /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_markdup_30/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf_stats.txt
+```
+
+Number of SNPs in the Consensus data sets (per population inner join of Ind VCF and Pool VCF):
+```{r}
+paste0("Number of SNPs in consensus data set of population 305 = ", nrow(poplist[[1]]) )
+paste0("Number of SNPs in consensus data set of population 312 = ", nrow(poplist[[2]]) )
 ```
 
 Statistics for AF
@@ -368,6 +422,24 @@ poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_fi
 poplist_dedup <- poplist
 ```
 
+Data set size
+```{bash, eval=FALSE}
+bcftools stats --threads 10 --fasta-ref /data/genetics_tmp/TEST_LL/REFERENCE/Qrob_PM1N_Organelles.fa \
+    /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup_30/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf.gz \
+    > /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup_30/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf_stats.txt
+```
+
+Number of SNPs in the Pool VCF (populations 305 and 312):
+```{bash}
+grep "number of SNPs:" /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup_30/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf_stats.txt
+```
+
+Number of SNPs in the Consensus data sets (per population inner join of Ind VCF and Pool VCF):
+```{r}
+paste0("Number of SNPs in consensus data set of population 305 = ", nrow(poplist[[1]]) )
+paste0("Number of SNPs in consensus data set of population 312 = ", nrow(poplist[[2]]) )
+```
+
 Statistics for AF
 ```{r}
 # Apply the error_stats function to each element of poplist using parallel processing
@@ -410,6 +482,24 @@ Load pool data
 # Pool data
 poplist <- getpooldata("/data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100_bcftoolsDP30_AlleleFrequencyTable.txt", "305_dedup", "312_dedup")
 poplist_dedup <- poplist
+```
+
+Data set size
+```{bash, eval=FALSE}
+bcftools stats --threads 10 --fasta-ref /data/genetics_tmp/TEST_LL/REFERENCE/Qrob_PM1N_Organelles.fa \
+    /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100_bcftoolsDP30.vcf.gz \
+    > /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100_bcftoolsDP30.vcf_stats.txt
+```
+
+Number of SNPs in the Pool VCF (populations 305 and 312):
+```{bash}
+grep "number of SNPs:" /data/genetics_tmp/mapping_tests/results_NT/duplicate_filtering_AF_validation/VCF_dedup/validationIndelFilteredSNPs_Biallelic_500kb_ADP100.vcf_stats.txt
+```
+
+Number of SNPs in the Consensus data sets (per population inner join of Ind VCF and Pool VCF):
+```{r}
+paste0("Number of SNPs in consensus data set of population 305 = ", nrow(poplist[[1]]) )
+paste0("Number of SNPs in consensus data set of population 312 = ", nrow(poplist[[2]]) )
 ```
 
 Statistics for AF
