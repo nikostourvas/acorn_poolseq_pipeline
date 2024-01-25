@@ -315,7 +315,7 @@ Number of SNPs in the Consensus data sets after MAF>0.05 (per population inner j
 ```{r}
 poplist <- poplist
 for (i in 1:2){
-  poplist[[i]][,c(2,3)][poplist[[i]][,c(2,3)] < 0.05] <- NA
+  poplist[[i]][,c(4,5)][poplist[[i]][,c(4,5)] < 0.05] <- NA
   poplist[[i]] <- na.omit(poplist[[i]])
 }
 
@@ -427,7 +427,7 @@ Number of SNPs in the Consensus data sets after MAF>0.05 (per population inner j
 ```{r}
 poplist <- poplist
 for (i in 1:2){
-  poplist[[i]][,c(2,3)][poplist[[i]][,c(2,3)] < 0.05] <- NA
+  poplist[[i]][,c(4,5)][poplist[[i]][,c(4,5)] < 0.05] <- NA
   poplist[[i]] <- na.omit(poplist[[i]])
 }
 
@@ -539,7 +539,7 @@ Number of SNPs in the Consensus data sets after MAF>0.05 (per population inner j
 ```{r}
 poplist <- poplist
 for (i in 1:2){
-  poplist[[i]][,c(2,3)][poplist[[i]][,c(2,3)] < 0.05] <- NA
+  poplist[[i]][,c(4,5)][poplist[[i]][,c(4,5)] < 0.05] <- NA
   poplist[[i]] <- na.omit(poplist[[i]])
 }
 
@@ -651,7 +651,7 @@ Number of SNPs in the Consensus data sets after MAF>0.05 (per population inner j
 ```{r}
 poplist <- poplist
 for (i in 1:2){
-  poplist[[i]][,c(2,3)][poplist[[i]][,c(2,3)] < 0.05] <- NA
+  poplist[[i]][,c(4,5)][poplist[[i]][,c(4,5)] < 0.05] <- NA
   poplist[[i]] <- na.omit(poplist[[i]])
 }
 
