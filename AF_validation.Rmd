@@ -46,22 +46,22 @@ getpooldata <- function(tablepath, pool1, pool2){
   consensuspool1 <- inner_join(inds305, pool1)
   consensuspool2 <- inner_join(inds312, pool2)
   
-  # # Add minor allele frequency (MAF) column 
-  # consensuspool1$maf_ind <- ifelse(
-  #   consensuspool1$alt_ind <= 0.5,
-  #   consensuspool1$alt_ind, 1 - consensuspool1$alt_ind)
-  # 
-  # consensuspool2$maf_ind <- ifelse(
-  #   consensuspool2$alt_ind <= 0.5,
-  #   consensuspool2$alt_ind, 1 - consensuspool2$alt_ind)
-  # 
-  # consensuspool1$maf_pool <- ifelse(
-  #   consensuspool1$alt_pool <= 0.5,
-  #   consensuspool1$alt_pool, 1 - consensuspool1$alt_pool)
-  # 
-  # consensuspool2$maf_pool <- ifelse(
-  #   consensuspool2$alt_pool <= 0.5,
-  #   consensuspool2$alt_pool, 1 - consensuspool2$alt_pool)
+  # Add minor allele frequency (MAF) column
+  consensuspool1$maf_ind <- ifelse(
+    consensuspool1$alt_ind <= 0.5,
+    consensuspool1$alt_ind, 1 - consensuspool1$alt_ind)
+
+  consensuspool2$maf_ind <- ifelse(
+    consensuspool2$alt_ind <= 0.5,
+    consensuspool2$alt_ind, 1 - consensuspool2$alt_ind)
+
+  consensuspool1$maf_pool <- ifelse(
+    consensuspool1$alt_pool <= 0.5,
+    consensuspool1$alt_pool, 1 - consensuspool1$alt_pool)
+
+  consensuspool2$maf_pool <- ifelse(
+    consensuspool2$alt_pool <= 0.5,
+    consensuspool2$alt_pool, 1 - consensuspool2$alt_pool)
 
   poplist <- list(consensuspool1, consensuspool2)
   
@@ -110,8 +110,8 @@ hist2d <- function(dataset, alt_ind, alt_pool, bins=39){
        theme(legend.position = c(1.2, 1.15))
   
   #Create marginal histograms:
-  px <- ggplot(dataset, aes(x=alt_ind)) + geom_histogram(bins=41) + theme_void()
-  py <- ggplot(dataset, aes(x=alt_pool)) + geom_histogram(bins=41) + theme_void() +
+  px <- ggplot(dataset, aes(x=alt_ind)) + geom_histogram(bins=bins) + theme_void()
+  py <- ggplot(dataset, aes(x=alt_pool)) + geom_histogram(bins=bins) + theme_void() +
                 coord_flip()
   
   #Arrange the plots together:
@@ -148,19 +148,19 @@ hist2d <- function(dataset, alt_ind, alt_pool, bins=39){
 #     plot_annotation(title = title)
 # }
 
-rawdiffplot <- function(dataset){
-  p <- ggplot(dataset, aes(x=alt_pool - alt_ind, y=alt_pool)) +
+rawdiffplot <- function(dataset, bins=37){
+  p <- ggplot(dataset, aes(x=alt_pool - alt_ind, y=maf_pool)) +
        geom_bin2d(bins=100) + 
        scale_fill_viridis(trans='log10') +
        theme_minimal() + 
        labs(x="Raw AF differences (Pool AF - Ind AF)",
-            y="Pool-Seq Allele Frequency (AF)",
+            y="Pool-Seq Minor Allele Frequency",
             fill="Log10 Density") + 
        theme(legend.position = c(1.2, 1.15))
   #Create marginal histograms:
   px <- ggplot(dataset, aes(x=alt_pool - alt_ind)) + 
           geom_histogram(bins=100) + theme_void()
-  py <- ggplot(dataset, aes(x=alt_ind)) + geom_histogram(bins=41) + theme_void() +
+  py <- ggplot(dataset, aes(x=alt_ind)) + geom_histogram(bins=bins) + theme_void() +
                 coord_flip()
   
   #Arrange the plots together:
@@ -195,6 +195,7 @@ histALTfreq <- function(dataset, alt_ind, alt_pool, title="", bins=41){
 # }
 
 AF_barplot <- function(dataset, title="", bins=41){
+  dataset <- dataset[ ,-c(4,5)]
   colnames(dataset) <- c("site", "Ind-Seq", "Pool-Seq")
   dataset_tidy <- pivot_longer(dataset, names_to="seq_type",
                                  values_to = "freq", !site)
@@ -291,9 +292,9 @@ mclapply(poplist, function(x){
 #   hist2dmaf(dataset=x)
 # }, mc.cores = detectCores() - 1)
 
-mclapply(poplist, function(x){
-  histALTfreq(dataset=x, title=title)
-}, mc.cores = detectCores() - 1)
+# mclapply(poplist, function(x){
+#   histALTfreq(dataset=x, title=title)
+# }, mc.cores = detectCores() - 1)
 
 # mclapply(poplist, function(x){
 #   histMAFfreq(dataset=x, title=title)
@@ -337,21 +338,21 @@ cat(paste0(title,results_markdup[[1]], results_markdup[[2]]))
 Plots
 ```{r fig.width=6, fig.height=6}
 mclapply(poplist, function(x){
-  hist2d(dataset=x, bins=39)
+  hist2d(dataset=x, bins=36)
 }, mc.cores = detectCores() - 1)
 
-mclapply(poplist, function(x){
-  histALTfreq(dataset=x, title=title, bins = 39)
-}, mc.cores = detectCores() - 1)
+# mclapply(poplist, function(x){
+#   histALTfreq(dataset=x, title=title, bins = 39)
+# }, mc.cores = detectCores() - 1)
 
 mclapply(poplist, function(x){
-  rawdiffplot(dataset=x)
+  rawdiffplot(dataset=x, bins=37)
 }, mc.cores = detectCores() - 1)
 ```
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x, bins=39)
+  AF_barplot(dataset=x, bins=37)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -403,9 +404,9 @@ mclapply(poplist, function(x){
 #   hist2dmaf(dataset=x)
 # }, mc.cores = detectCores() - 1)
 
-mclapply(poplist, function(x){
-  histALTfreq(dataset=x, title=title)
-}, mc.cores = detectCores() - 1)
+# mclapply(poplist, function(x){
+#   histALTfreq(dataset=x, title=title)
+# }, mc.cores = detectCores() - 1)
 
 # mclapply(poplist, function(x){
 #   histMAFfreq(dataset=x, title=title)
@@ -449,21 +450,21 @@ cat(paste0(title,results_markdup[[1]], results_markdup[[2]]))
 Plots
 ```{r fig.width=6, fig.height=6}
 mclapply(poplist, function(x){
-  hist2d(dataset=x, bins=39)
+  hist2d(dataset=x, bins=36)
 }, mc.cores = detectCores() - 1)
 
-mclapply(poplist, function(x){
-  histALTfreq(dataset=x, title=title, bins = 39)
-}, mc.cores = detectCores() - 1)
+# mclapply(poplist, function(x){
+#   histALTfreq(dataset=x, title=title, bins = 39)
+# }, mc.cores = detectCores() - 1)
 
 mclapply(poplist, function(x){
-  rawdiffplot(dataset=x)
+  rawdiffplot(dataset=x, bins=37)
 }, mc.cores = detectCores() - 1)
 ```
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x, bins=39)
+  AF_barplot(dataset=x, bins=37)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -515,9 +516,9 @@ mclapply(poplist, function(x){
 #   hist2dmaf(dataset=x)
 # }, mc.cores = detectCores() - 1)
 
-mclapply(poplist, function(x){
-  histALTfreq(dataset=x, title=title)
-}, mc.cores = detectCores() - 1)
+# mclapply(poplist, function(x){
+#   histALTfreq(dataset=x, title=title)
+# }, mc.cores = detectCores() - 1)
 
 # mclapply(poplist, function(x){
 #   histMAFfreq(dataset=x, title=title)
@@ -561,21 +562,21 @@ cat(paste0(title,results_markdup[[1]], results_markdup[[2]]))
 Plots
 ```{r fig.width=6, fig.height=6}
 mclapply(poplist, function(x){
-  hist2d(dataset=x, bins=39)
+  hist2d(dataset=x, bins=36)
 }, mc.cores = detectCores() - 1)
 
-mclapply(poplist, function(x){
-  histALTfreq(dataset=x, title=title, bins = 39)
-}, mc.cores = detectCores() - 1)
+# mclapply(poplist, function(x){
+#   histALTfreq(dataset=x, title=title, bins = 39)
+# }, mc.cores = detectCores() - 1)
 
 mclapply(poplist, function(x){
-  rawdiffplot(dataset=x)
+  rawdiffplot(dataset=x, bins=37)
 }, mc.cores = detectCores() - 1)
 ```
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x, bins=39)
+  AF_barplot(dataset=x, bins=37)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -627,9 +628,9 @@ mclapply(poplist, function(x){
 #   hist2dmaf(dataset=x)
 # }, mc.cores = detectCores() - 1)
 
-mclapply(poplist, function(x){
-  histALTfreq(dataset=x, title=title)
-}, mc.cores = detectCores() - 1)
+# mclapply(poplist, function(x){
+#   histALTfreq(dataset=x, title=title)
+# }, mc.cores = detectCores() - 1)
 
 # mclapply(poplist, function(x){
 #   histMAFfreq(dataset=x, title=title)
@@ -673,20 +674,20 @@ cat(paste0(title,results_markdup[[1]], results_markdup[[2]]))
 Plots
 ```{r fig.width=6, fig.height=6}
 mclapply(poplist, function(x){
-  hist2d(dataset=x, bins=39)
+  hist2d(dataset=x, bins=36)
 }, mc.cores = detectCores() - 1)
 
-mclapply(poplist, function(x){
-  histALTfreq(dataset=x, title=title, bins = 39)
-}, mc.cores = detectCores() - 1)
+# mclapply(poplist, function(x){
+#   histALTfreq(dataset=x, title=title, bins = 39)
+# }, mc.cores = detectCores() - 1)
 
 mclapply(poplist, function(x){
-  rawdiffplot(dataset=x)
+  rawdiffplot(dataset=x bins=37)
 }, mc.cores = detectCores() - 1)
 ```
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x, bins=39)
+  AF_barplot(dataset=x, bins=37)
 }, mc.cores = detectCores() - 1)
 ```
