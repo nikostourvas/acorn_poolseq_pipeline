@@ -682,7 +682,7 @@ mclapply(poplist, function(x){
 # }, mc.cores = detectCores() - 1)
 
 mclapply(poplist, function(x){
-  rawdiffplot(dataset=x bins=37)
+  rawdiffplot(dataset=x, bins=37)
 }, mc.cores = detectCores() - 1)
 ```
 
