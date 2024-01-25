@@ -1,6 +1,6 @@
 ---
 title: "ACORN Pool-Seq Allele frequencies validation"
-author: "Nikolaos Tourvas"
+author: "Nikolaos Tourvas & Lars Littmann"
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 output: 
   html_document:
@@ -110,8 +110,8 @@ hist2d <- function(dataset, alt_ind, alt_pool, bins=39){
        theme(legend.position = c(1.2, 1.15))
   
   #Create marginal histograms:
-  px <- ggplot(dataset, aes(x=alt_ind)) + geom_histogram() + theme_void()
-  py <- ggplot(dataset, aes(x=alt_pool)) + geom_histogram() + theme_void() +
+  px <- ggplot(dataset, aes(x=alt_ind)) + geom_histogram(bins=41) + theme_void()
+  py <- ggplot(dataset, aes(x=alt_pool)) + geom_histogram(bins=41) + theme_void() +
                 coord_flip()
   
   #Arrange the plots together:
@@ -160,7 +160,7 @@ rawdiffplot <- function(dataset){
   #Create marginal histograms:
   px <- ggplot(dataset, aes(x=alt_pool - alt_ind)) + 
           geom_histogram(bins=100) + theme_void()
-  py <- ggplot(dataset, aes(x=alt_ind)) + geom_histogram() + theme_void() +
+  py <- ggplot(dataset, aes(x=alt_ind)) + geom_histogram(bins=41) + theme_void() +
                 coord_flip()
   
   #Arrange the plots together:
@@ -194,7 +194,7 @@ histALTfreq <- function(dataset, alt_ind, alt_pool, title="", bins=41){
 #        title=title)
 # }
 
-AF_barplot <- function(dataset, title="", bins=40){
+AF_barplot <- function(dataset, title="", bins=41){
   colnames(dataset) <- c("site", "Ind-Seq", "Pool-Seq")
   dataset_tidy <- pivot_longer(dataset, names_to="seq_type",
                                  values_to = "freq", !site)
