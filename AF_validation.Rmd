@@ -309,7 +309,7 @@ mclapply(poplist, function(x){
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x)
+  AF_barplot(dataset=x, title=title)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -354,7 +354,7 @@ mclapply(poplist, function(x){
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x, bins=37)
+  AF_barplot(dataset=x, bins=37, title=title)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -421,7 +421,7 @@ mclapply(poplist, function(x){
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x)
+  AF_barplot(dataset=x, title=title)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -460,7 +460,7 @@ mclapply(poplist, function(x){
 # }, mc.cores = detectCores() - 1)
 
 mclapply(poplist, function(x){
-  rawdiffplot(dataset=x, bins=37)
+  rawdiffplot(dataset=x, bins=37, title=title)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -533,7 +533,7 @@ mclapply(poplist, function(x){
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x)
+  AF_barplot(dataset=x, title=title)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -578,7 +578,7 @@ mclapply(poplist, function(x){
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x, bins=37)
+  AF_barplot(dataset=x, bins=37, title)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -645,7 +645,7 @@ mclapply(poplist, function(x){
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x)
+  AF_barplot(dataset=x, title=title)
 }, mc.cores = detectCores() - 1)
 ```
 
@@ -690,6 +690,6 @@ mclapply(poplist, function(x){
 
 ```{r fig.width=12, fig.height=6}
 mclapply(poplist, function(x){
-  AF_barplot(dataset=x, bins=37)
+  AF_barplot(dataset=x, bins=37, title=title)
 }, mc.cores = detectCores() - 1)
 ```
