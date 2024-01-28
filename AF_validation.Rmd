@@ -111,9 +111,9 @@ hist2d <- function(dataset, alt_ind, alt_pool, bins=39){
   
   #Create marginal histograms:
   px <- ggplot(dataset, aes(x=alt_ind)) + 
-    geom_density(color="black", fill="lightgrey", adjust=0.5) + theme_void()
+    geom_density(color="black", fill="lightgrey") + theme_void()
   py <- ggplot(dataset, aes(x=alt_pool)) +
-    geom_density(color="black", fill="lightgrey", adjust=0.5) + theme_void() +
+    geom_density(color="black", fill="lightgrey") + theme_void() +
                 coord_flip()
   
   #Arrange the plots together:
@@ -161,9 +161,9 @@ rawdiffplot <- function(dataset, bins=37){
        theme(legend.position = c(1.2, 1.15))
   #Create marginal histograms:
   px <- ggplot(dataset, aes(x=alt_pool - alt_ind)) + 
-          geom_density(color="black", fill="lightgrey", adjust=0.5) + theme_void()
+          geom_density(color="black", fill="lightgrey") + theme_void()
   py <- ggplot(dataset, aes(x=alt_ind)) + 
-          geom_density(color="black", fill="lightgrey", adjust=0.5) + theme_void() + coord_flip()
+          geom_density(color="black", fill="lightgrey") + theme_void() + coord_flip()
   
   #Arrange the plots together:
   px + plot_spacer() + p + py +
