@@ -40,7 +40,7 @@ fastp --stdin --interleaved_in \
       --length_required 50 \
       --thread 2 \
       --html "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_trim.html" \
-      --html "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_trim.json" \
+      --json "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_trim.json" \
       --out1 ${OUT_DIR}/${SAMPLE/Sample_/}_1.trim.dedup.fastq.gz --out2 ${OUT_DIR}/${SAMPLE/Sample_/}_2.trim.dedup.fastq.gz
 
 
