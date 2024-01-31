@@ -33,7 +33,7 @@ fastp --in1 ${INPUT_DIR}/${SAMPLE}/${SAMPLE/Sample_/}_R1_clipped.fastq.gz --in2 
       --thread 2 \
       --stdout |
 fastp --stdin \
-      --cut_right --cut_right_window_size 4 --cut_right_mean 20 \
+      --cut_right --cut_right_window_size 4 --cut_right_mean_quality 20 \
       --length_required 50 \
       --thread 2 \
       --html --report_title "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_trim.html" \
