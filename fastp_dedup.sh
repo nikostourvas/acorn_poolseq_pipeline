@@ -7,7 +7,7 @@
 # variables
 SAMPLE=$1 #The names of directories that contain the fastq-file pairs, as provided by LGC.
 INPUT_DIR=../Acorn_SeqData/AdapterClipped_Batch2 #The directory that contains all untrimmed fastq files
-OUT_DIR=../results/fastp_dedup_trim #Directory in which to place all deduped and trimmed outputs.
+OUT_DIR=/data/genetics_tmp/results/fastp_dedup_trim #Directory in which to place all deduped and trimmed outputs.
 
 mkdir -p ${OUT_DIR} #Make sure that the output directory exhists before running.
 
