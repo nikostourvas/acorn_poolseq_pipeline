@@ -6,7 +6,7 @@
 
 # variables
 SAMPLE=$1 #The names of directories that contain the fastq-file pairs, as provided by LGC.
-INPUT_DIR=../AcornSeqData/AdapterClipped_Batch2 #The directory that contains all untrimmed fastq files
+INPUT_DIR=../Acorn_SeqData/AdapterClipped_Batch2 #The directory that contains all untrimmed fastq files
 OUT_DIR=../results/fastp_dedup_trim #Directory in which to place all deduped and trimmed outputs.
 
 mkdir -p ${OUT_DIR} #Make sure that the output directory exhists before running.
@@ -29,14 +29,18 @@ fastp --in1 ${INPUT_DIR}/${SAMPLE}/${SAMPLE/Sample_/}_R1_clipped.fastq.gz --in2 
       --disable_adapter_trimming \
       --dedup --dup_calc_accuracy 3 \
       --correction \
-      --html --report_title "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_dedup.html" \
+      --html "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_dedup.html" \
+      --json "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_dedup.json" \
       --thread 2 \
       --stdout |
-fastp --stdin \
+fastp --stdin --interleaved_in \
+      --disable_adapter_trimming \
+      --dont_eval_duplication \
       --cut_right --cut_right_window_size 4 --cut_right_mean_quality 20 \
       --length_required 50 \
       --thread 2 \
-      --html --report_title "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_trim.html" \
+      --html "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_trim.html" \
+      --html "${OUT_DIR}/${SAMPLE/Sample_/}_fastp_trim.json" \
       --out1 ${OUT_DIR}/${SAMPLE/Sample_/}_1.trim.dedup.fastq.gz --out2 ${OUT_DIR}/${SAMPLE/Sample_/}_2.trim.dedup.fastq.gz
 
 
