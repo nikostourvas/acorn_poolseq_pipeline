@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # create output directory
-mkdir -p ../results/align_Batch2
+mkdir -p /data/genetics_tmp/results/align
 
 # declare variables
 IND=${1}
-REF=../TEST_LL/REFERENCE/Qrob_Darwin.fa
-FORWARD=../mapping_tests/${IND}_1.trim.fastq.gz
-REVERSE=../mapping_tests/${IND}_2.trim.fastq.gz
+REF=/mnt/reference/Qrob_PM1N_with_cp_mt.fa
+FORWARD=/data/genetics_tmp/results/fastp_dedup_trim/${IND}_1.trim.fastq.gz
+REVERSE=/data/genetics_tmp/results/fastp_dedup_trim/${IND}_2.trim.fastq.gz
 RG="@RG\tID:${IND}\tPL:Illumina\tSM:${IND}"
-OUTPUT=../mapping_tests/results/${IND}_Darwin
+OUTPUT=/data/genetics_tmp/results/align/${IND}
+BWAMEM2=/usr/local/bin/bwa-mem2/bwa-mem2
 
 # Align to reference genome and export raw bam file
 
@@ -25,8 +26,8 @@ OUTPUT=../mapping_tests/results/${IND}_Darwin
 # (e.g. 2c BWA + 1c samtools = 3 cores in total)
 # samtools flagstat is run afterwards 
 
-bwa mem -R ${RG} -M -t 15 ${REF} ${FORWARD} ${REVERSE} 2> ${OUTPUT}.bwa-mem.err \
-    | samtools view --threads 15 -h -b -o ${OUTPUT}.raw.bam 2> ${OUTPUT}.sam-view.err
+${BWAMEM2} mem -R ${RG} -M -t 1 ${REF} ${FORWARD} ${REVERSE} 2> ${OUTPUT}.bwa-mem.err \
+    | samtools view --threads 1 -h -b -o ${OUTPUT}.raw.bam 2> ${OUTPUT}.sam-view.err
 
 # gather statistics
 samtools flagstat -@ 1 ${OUTPUT}.raw.bam > ${OUTPUT}.raw.flagstat
