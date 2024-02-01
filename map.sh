@@ -5,7 +5,7 @@ mkdir -p /data/genetics_tmp/results/mapped_reads
 
 # declare variables
 IND=${1}
-REF=/mnt/reference/Qrob_PM1N_Organelles.fa
+REF=/data/genetics_tmp/REFERENCE/Qrob_PM1N_Organelles.fa
 FORWARD=/data/genetics_tmp/results/fastp_dedup_trim/${IND}_1.trim.dedup.fastq.gz
 REVERSE=/data/genetics_tmp/results/fastp_dedup_trim/${IND}_2.trim.dedup.fastq.gz
 RG="@RG\tID:${IND}\tPL:Illumina\tSM:${IND}"
