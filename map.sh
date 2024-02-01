@@ -1,20 +1,20 @@
 #!/bin/bash
 
 # create output directory
-mkdir -p /data/genetics_tmp/results/align
+mkdir -p /data/genetics_tmp/results/mapped_reads
 
 # declare variables
 IND=${1}
-REF=/mnt/reference/Qrob_PM1N_with_cp_mt.fa
+REF=/mnt/reference/Qrob_PM1N_Organelles.fa
 FORWARD=/data/genetics_tmp/results/fastp_dedup_trim/${IND}_1.trim.fastq.gz
 REVERSE=/data/genetics_tmp/results/fastp_dedup_trim/${IND}_2.trim.fastq.gz
 RG="@RG\tID:${IND}\tPL:Illumina\tSM:${IND}"
-OUTPUT=/data/genetics_tmp/results/align/${IND}
-BWAMEM2=/usr/local/bin/bwa-mem2/bwa-mem2
+OUTPUT=/data/genetics_tmp/results/mapped_reads/${IND}
+BWAMEM2=/usr/local/bin/bwa-mem2/bwa-mem2 #path to executable needs to be explicit
 
 # Align to reference genome and export raw bam file
 
-# BWA mem arguments
+# BWA mem2 arguments
 # -M mark shorter split hits as secondary
 # -t how many cores to use PER SAMPLE for mapping
 
