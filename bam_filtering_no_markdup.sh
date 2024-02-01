@@ -8,10 +8,6 @@ BAM=/data/genetics_tmp/results/mapped_reads/${IND} #The location of the bam file
 # This version of the script does NOT remove duplicates!
 
 # Quick explanation of what individual commands do:
-# collate: groups the reads by read name in the bam file. This puts the read 
-# pairs close together so that fixmate can work 
-# fixmate: fix read-mates so that they both have the same sets of attributes for
-# the subsequent preprocessing
 # sort: sort reads again based on genomic coordinates and
 # Then produce filtered BAM files with samtools view and the following arguments
 # -@ number of threads to use (not necessary)
@@ -22,9 +18,7 @@ BAM=/data/genetics_tmp/results/mapped_reads/${IND} #The location of the bam file
 # -F 0x0004 remove reads that are not mapped
 # -F 0x0008 remove reads with an un-mapped mate
 # -F 0x100 remove secondary alignments
-samtools collate -O -u ${BAM}.raw.bam 2> ${BAM}.collate.err \
-    | samtools fixmate -m -u - - 2> ${BAM}.fixmate.err \
-    | samtools sort -u - 2> ${BAM}.sort.err \
+samtools sort -u ${BAM}.raw.bam 2> ${BAM}.sort.err \
     | samtools view -h -b \
         -L /data/genetics_tmp/REFERENCE/contigsover500kb.bed \
         -q 20 \
