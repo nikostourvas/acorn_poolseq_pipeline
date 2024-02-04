@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # declare variables
-BAM_LIST=/data/genetics_tmp/VCF_Qrobur_Pools_NewVarscan/Qrobur_PoolBams_Sorted_FastStorage.txt #For downstream convenience, we recommend that this list of bams is sorted in a logical order.
-OUTDIR=/data/genetics_tmp/VCF_Qrobur_Pools_NewVarscan/
-REF=/mnt/reference/Qrob_PM1N.fa
+BAM_LIST=/data/genetics_tmp/results/vcf/Qrobur_PoolBams_Sorted_FastStorage.txt #For downstream convenience, we recommend that this list of bams is sorted in a logical order.
+OUTDIR=/data/genetics_tmp/vcf/VCF_Qrobur_nomarkdup/
+REF=/data/genetics_tmp/REFERENCE/Qrob_PM1N_Organelles.fa
 CHUNK=$1
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 THREADS=1
