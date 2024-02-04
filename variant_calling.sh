@@ -64,7 +64,7 @@ done < ${BAM_LIST}
 # wait forever for input. However this is quite unlikely with real data.
 
 samtools mpileup -B -q 20 -l ${CHUNK} -f ${REF} -b ${BAM_LIST} -o ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup \
-	2> ${OUTDIR}/${CHUNK_SHORT}.mpileup.err &&
+	2> ${OUTDIR}/${CHUNK_SHORT}.mpileup.err
 
 java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup\
 	--vcf-sample-list ${OUTDIR}/SampleNamingFiles/SampleNaming_VCF_${CHUNK_SHORT}.txt \
@@ -76,7 +76,7 @@ java -jar /usr/share/java/varscan.jar mpileup2cns ${OUTDIR}/${CHUNK_SHORT}_samto
         --output-vcf 1 \
         2> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.err \
         	| bgzip --compress-level -1 \
-		> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz &&
+		> ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz
 
 # index vcfs
 bcftools index ${OUTDIR}/${CHUNK_SHORT}.varScan.snpindel.vcf.gz \
