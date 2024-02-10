@@ -1,0 +1,142 @@
+---
+title: "PCA with PCAdapt"
+author: "Nikolaos Tourvas"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+output: 
+  html_document:
+    code_download: yes
+    code_folding: show
+    theme: default
+    toc: yes
+    toc_float: yes
+    keep_md: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(pcadapt)
+library(tidyverse)
+library(ggrepel)
+library(cowplot)
+```
+
+# Genetic Data input
+```{r}
+# Read the genetic data
+gen <- read.table(file="VCF_AllPools_OutgroupsIndelFilteredSNPs_Biallelic_no-miss_ADP100_thin-100000.vcf.4.2.gz_AlleleFrequencyTable.txt",
+                   header=TRUE,
+                   sep = "\t", check.names = FALSE)
+
+# Remove populations 460 & 500 (outgroups)
+# We do not need them for the PCA
+gen <- gen[, -c(460, 500)]
+
+# Transpose the data
+gen_lfmm <- t(gen)
+```
+
+# Tree data input
+```{r}
+# Read the tree data
+treedata <- read.csv("20240102_Tree_data.csv", header=TRUE)
+
+# Use only pools included for Poolseq 
+# more filters are possible (e.g. only Q. petraea)
+#   filter(Species_pop_level == "Q.petraea")
+treedata <- treedata %>% 
+  filter(Pool_seq == TRUE)
+
+# Transform the data so that there in only one line per pool
+popdata <- treedata[,-c(4,5,6,11:24,26,27,31,32)]
+popdata <- unique(popdata)
+
+popdata <- popdata[-c(35:36),]
+popdata$Plot_ID <- as.character(popdata$Plot_ID)
+```
+
+```{r}
+# Run the PCA
+filename <- read.pcadapt(gen_lfmm, type="pool")
+
+pca <- pcadapt(filename, pca.only = TRUE)
+plot(pca, option="screeplot")
+```
+
+```{r}
+popnames <- popdata$Plot_ID
+plot(pca, option="scores", pop=popnames)
+```
+
+```{r fig.width=7, fig.height=7, dpi=300}
+## make a scree plot
+pca.var.per <- round(pca$singular.values^2 * 100, 1)
+
+pca.var.per <- round(pca$singular.values/sum(pca$singular.values)*100, 1)
+
+## make a plot that shows the PCs and the variation:
+pca.data <- data.frame(Sample=popnames, 
+                       Region=popdata$Region,
+                       Site_description=popdata$Site_description,
+                       X=pca$scores[,1],
+                       Y=pca$scores[,2])
+ 
+pca_p <- ggplot(data=pca.data, aes(x=X, y=Y, label=Sample)) +
+  geom_point(aes(color=Site_description, shape=Region), size=3) +
+  theme_bw() +
+  xlab(paste("PC1 - ", pca.var.per[1], "%", sep="")) +
+  ylab(paste("PC2 - ", pca.var.per[2], "%", sep="")) +
+  # xlim(-0.67, 0.3) +
+  # ylim(-3, 4) +
+  geom_text_repel(size=2.5, seed =1, max.iter = 100000) +
+  # stat_ellipse(geom="polygon", aes(color = pop),
+                # alpha = 0, show.legend = FALSE, level = 0.95) +
+  # scale_color_manual(values = wong,
+  #                    breaks = c("C1", "C2", "C3", "C4", "C5")) +
+  # scale_fill_manual(values = wong,
+  #                   breaks = c("C1", "C2", "C3", "C4", "C5")) +
+  # scale_shape_manual(values = c(0, 1, 2, 8, 9),
+  #                    breaks = c("C1", "C2", "C3", "C4", "C5")) +
+  # coord_cartesian(xlim = c(-9, 6), ylim = c(-7, 10.5)) +
+  # coord_cartesian(xlim = c(-.29, .29), ylim = c(-.29, .29)) +
+  # theme(legend.title = element_text(colour = NA)) + 
+  # theme(legend.position = "none") +
+  theme(axis.title = element_text(size = 9))
+  
+pca_p
+```
+
+```{r fig.height=3, fig.width=3, dpi=300, include=F}
+pca.var.per.df <- as.data.frame(pca.var.per)
+pca.var.per.df$axis <- as.integer(rownames(pca.var.per.df))
+
+variance_pca_plot <- ggplot(head(pca.var.per.df, n = 15), 
+  aes(x=axis, y=pca.var.per))+
+  geom_line(group=1)+
+  geom_point(size=2)+
+  theme_bw() +
+  scale_x_continuous(breaks = seq(1, 15, 2)) +
+  xlab("Axis") +
+  ylab("Explained variance (%)")
+
+variance_pca_plot
+
+# ggsave(filename = "cultivars_pca-var_olive_low.png", 
+#        path = "../results/figs", dpi=300,
+#        width = 5, height = 4)
+```
+
+```{r fig.width=7, fig.height=7, dpi=300}
+pca_p_with_inset <-
+  ggdraw() +
+  draw_plot(pca_p) +
+  draw_plot(variance_pca_plot, x = .72, y = .68, width = .3, height = .3)
+
+pca_p_with_inset
+
+# ggsave(filename = "WGRS_pca.png",
+#        path = "../results/figs", dpi=300,
+#        width = 7, height = 7)
+```
