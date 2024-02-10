@@ -1,7 +1,7 @@
 library(dplyr)
 
 # Read the original data
-counts <- read.table("data/genetics_tmp/results/vcf/VCF_AllPools_Outgroups/VCF_AllPools_OutgroupsIndelFilteredSNPs_Biallelic_no-miss_ADP100_thin-15000_counts.txt",
+counts <- read.table("/data/genetics_tmp/results/vcf/VCF_AllPools_Outgroups/VCF_AllPools_OutgroupsIndelFilteredSNPs_Biallelic_no-miss_ADP100_thin-15000_counts.txt",
                      sep = ",", header = TRUE)
 original_data <- counts[ ,-c(1:2)]
 
@@ -22,6 +22,6 @@ for (pool_id in pool_ids) {
 }
 
 # Write the result to a new file
-write.table(result, "data/genetics_tmp/results/vcf/VCF_AllPools_Outgroups/VCF_AllPools_OutgroupsIndelFilteredSNPs_Biallelic_no-miss_ADP100_thin-15000_counts.txt", 
+write.table(result, "/data/genetics_tmp/results/vcf/VCF_AllPools_Outgroups/VCF_AllPools_OutgroupsIndelFilteredSNPs_Biallelic_no-miss_ADP100_thin-15000_counts.txt", 
             quote = FALSE, row.names = FALSE)
 
