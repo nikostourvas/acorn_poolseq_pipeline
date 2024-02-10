@@ -2,7 +2,7 @@ library(dplyr)
 
 # Read the original data
 counts <- read.table("/data/genetics_tmp/results/vcf/VCF_AllPools_Outgroups/VCF_AllPools_OutgroupsIndelFilteredSNPs_Biallelic_no-miss_ADP100_thin-15000_counts.txt",
-                     sep = ",", header = TRUE)
+                     sep = "\t", header = TRUE)
 original_data <- counts[ ,-c(1:4)]
 
 # List of unique pool IDs (e.g., "Pool_102")
