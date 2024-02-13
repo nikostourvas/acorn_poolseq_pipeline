@@ -28,14 +28,14 @@ parallel --verbose -j 90 \
 # Filter out contigs <500 kb
 
 parallel --verbose -j 90 \
-	'bash bam_filtering.sh {}' :::: ../AcornSeqdata/samplenames.txt
+	'bash bam_filtering_no_markdup.sh {}' :::: /data/genetics_tmp/results/fastp_dedup_trim/samplenames_bySize.txt
 
 # make list of all chromosomes & scaffolds for next step
 bash Simplified_Chunks.sh ../reference/Qrob_PM1N.fa.fai 2000000
 
 # Variant calling
-parallel --verbose -j 90 \
-	'bash variant_calling.sh {}' :::: /mnt/reference/ChunkFiles/Locations_Of_Chunk_Beds.txt
+parallel --verbose -j 80 \
+	'bash /mnt/acorn_poolseq_pipeline/variant_calling.sh {}' :::: /data/genetics_tmp/REFERENCE/ChunkFiles/Locations_Of_Chunk_Beds.txt
 
 # Merge the multiple small VCF files that were produced in the previous step
 # into one large VCF
