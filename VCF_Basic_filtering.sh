@@ -19,6 +19,7 @@ MISSINGNESS=$3
 
 #Specify further variables
 
+HD_MASK=/data/genetics_tmp/REFERENCE/MASKS/HDplot_Mask_D10_H06_Window5.bed
 FILENAME=$(basename ${VCF_IN/.vcf.gz/})
 OUT_DIR=$(dirname ${VCF_IN})
 INT_DIR=${OUT_DIR}/IntermediateFiles_${FILENAME}
@@ -56,6 +57,9 @@ vcftools --vcf ${INT_DIR}/${FILENAME}_V42.vcf --minDP ${MIN_RD} --maxDP ${MAX_RD
 bcftools view -i 'MIN(FMT/GQ)>15' ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxDP${MAX_RD_INT}.recode.vcf | \
 bcftools filter -e ${MISSINGNESS_STRING} > ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxDP${MAX_RD_INT}_Missingness${MISSINGNESS}.vcf
 
+#Finally, apply a mask created using HDplot output, that removes sites with excess heterozygosity.
+bedtools subtract -a ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxDP${MAX_RD_INT}_Missingness${MISSINGNESS}.vcf -b ${HD_MASK} > \
+${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxDP${MAX_RD_INT}_Missingness${MISSINGNESS}_HDplotMask.vcf
 
 #As I was writing this script, I got insanely distracted at some point and made this chicken. Enjoy.
 
