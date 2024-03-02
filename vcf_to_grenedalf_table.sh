@@ -67,7 +67,7 @@ cut -f1,$((6+(2*${N_SAMPLES})))-$((5+(3*${N_SAMPLES}))) ${OUTPUT}_big.txt > ${OU
 
 head -n 1 ${OUTPUT}_big.txt | cut -f1,6-$((5+${N_SAMPLES})) | sed -e 's/P01-...-ACORN-BOKU-...-//g' | sed -e 's/.ref.cnt//g' > ${OUTPUT}_AlleleFrequencyTable.txt
 
-sed -e 's/-nan/NA/g' ${OUTPUT}_small.txt | tail +2 >> ${OUTPUT}_AlleleFrequencyTable.txt #Make sure that NAs are noted correctly.
+sed -e 's/-nan/NA/g' ${OUTPUT}_small.txt | tail +2 >> ${OUTPUT}_temp_AlleleFrequencyTable.txt #Make sure that NAs are noted correctly.
 
 #clean up intermediate files
 rm ${OUTPUT}_buffer.txt
@@ -90,7 +90,7 @@ awk 'BEGIN{OFS=FS="\t"} {for(i=3;i<=NF;i++) if($i == "./.") $i="NA"; else $i="1"
 # Apply mask to allele frequency table
 awk 'BEGIN{OFS=FS="\t"}
     FNR==NR{for(i=3;i<=NF;i++) mask[FNR,i]=$i; next} 
-    {for(i=3;i<=NF;i++) if(mask[FNR,i]=="NA") $i="NA"; print $0}' ${OUTPUT}_mask.txt ${OUTPUT}_AlleleFrequencyTable.txt > ${OUTPUT}_AlleleFrequencyTable.txt
+    {for(i=3;i<=NF;i++) if(mask[FNR,i]=="NA") $i="NA"; print $0}' ${OUTPUT}_mask.txt ${OUTPUT}_temp_AlleleFrequencyTable.txt > ${OUTPUT}_AlleleFrequencyTable.txt
 
 # Clean up
-rm ${OUTPUT}_genotypes.txt ${OUTPUT}_mask.txt
+rm ${OUTPUT}_genotypes.txt ${OUTPUT}_mask.txt ${OUTPUT}_temp_AlleleFrequencyTable.txt
