@@ -65,7 +65,7 @@ done
 awk -F "\t" ' OFS = "\t" {chrompos=$1"_"$2; print chrompos, $0} ' ${OUTPUT}_intermediate.txt > ${OUTPUT}_big.txt #create a column that describes the genomic position in just one cell
 cut -f1,$((6+(2*${N_SAMPLES})))-$((5+(3*${N_SAMPLES}))) ${OUTPUT}_big.txt > ${OUTPUT}_small.txt #Extract only the columns that summarise the genomic position and all the allele frequencies.
 
-head -n 1 ${OUTPUT}_big.txt | cut -f1,6-$((5+${N_SAMPLES})) | sed -e 's/P01-...-ACORN-BOKU-...-//g' | sed -e 's/.ref.cnt//g' > ${OUTPUT}_AlleleFrequencyTable.txt
+head -n 1 ${OUTPUT}_big.txt | cut -f1,6-$((5+${N_SAMPLES})) | sed -e 's/P01-...-ACORN-BOKU-...-//g' | sed -e 's/.ref.cnt//g' > ${OUTPUT}_temp_AlleleFrequencyTable.txt
 
 sed -e 's/-nan/NA/g' ${OUTPUT}_small.txt | tail +2 >> ${OUTPUT}_temp_AlleleFrequencyTable.txt #Make sure that NAs are noted correctly.
 
