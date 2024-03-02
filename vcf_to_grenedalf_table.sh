@@ -74,3 +74,23 @@ rm ${OUTPUT}_buffer.txt
 rm ${OUTPUT}_intermediate.txt
 rm ${OUTPUT}_big.txt
 rm ${OUTPUT}_small.txt 
+
+# Per-sample quality filters set genotypes as missing (./.) when conditions are not met. This creates a problem for this script
+# as we extract information from the FORMAT field without evaluating the genotypes. We need to replace the allele frequencies for
+# the missing genotypes with NA.
+# To fix this, we will create a mask based on the presence of missing genotypes and filter with that our allele frequency table.
+
+# Print message to user
+echo "Applying mask for missing genotypes"
+
+# Extract genotypes from VCF
+bcftools query -f '%CHROM\t%POS[\t%GT]\n' ${VCF} > ${OUTPUT}_genotypes.txt
+# Create a mask for missing genotypes
+awk 'BEGIN{OFS=FS="\t"} {for(i=3;i<=NF;i++) if($i == "./.") $i="NA"; else $i="1"; print $0}' ${OUTPUT}_genotypes.txt > ${OUTPUT}_mask.txt
+# Apply mask to allele frequency table
+awk 'BEGIN{OFS=FS="\t"}
+    FNR==NR{for(i=3;i<=NF;i++) mask[FNR,i]=$i; next} 
+    {for(i=3;i<=NF;i++) if(mask[FNR,i]=="NA") $i="NA"; print $0}' ${OUTPUT}_mask.txt ${OUTPUT}_AlleleFrequencyTable.txt > ${OUTPUT}_AlleleFrequencyTable.txt
+
+# Clean up
+rm ${OUTPUT}_genotypes.txt ${OUTPUT}_mask.txt
