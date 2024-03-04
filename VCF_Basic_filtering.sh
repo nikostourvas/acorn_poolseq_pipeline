@@ -13,10 +13,10 @@
 
 #Read inputs from command line
 
-VCF_IN=$1
-MIN_RD=$2
-MISSINGNESS=$3
-MAF=$4
+VCF_IN=$1 #VCF can be either gzipped or full-fat
+MIN_RD=$2 #The minimum read depth. Integer
+MISSINGNESS=$3 # The maximum missingness allowed for a site, expressed as a decimal (ex. 0.1)
+MAF=$4 #The minimum allele frequency for a SNP to be included, expressed as a decimal (example 0.05)
 
 #Specify further variables
 
@@ -47,26 +47,30 @@ MAX_RD_FLOAT=$(awk -v awkMEAN="${MEAN}" -v awkSD="${SD}" ' BEGIN { THRESHOLD=awk
 MAX_RD_INT=$(echo ${MAX_RD_FLOAT} | awk '{print int($1+0.5)}')
 
 #Report the values in an intermediate file
-echo "The average read depth calculated using vcftools --site-mean-depth and the standard deviation are as follows:" > ReadDepthSummary.txt
-echo "Mean = ${MEAN}, SD = ${SD}" >> ReadDepthSummary.txt
-echo "Making the maximum read depth threshold (Mean+2xSD) = ${MAX_RD_FLOAT}, which is rounded to ${MAX_RD_INT}" >> ReadDepthSummary.txt
+echo "The average read depth calculated using vcftools --site-mean-depth and the standard deviation are as follows:" > ${INT_DIR}/ReadDepthSummary.txt
+echo "Mean = ${MEAN}, SD = ${SD}" >> ${INT_DIR}/ReadDepthSummary.txt
+echo "Making the maximum read depth threshold (Mean+2xSD) = ${MAX_RD_FLOAT}, which is rounded to ${MAX_RD_INT}" >> ${INT_DIR}/ReadDepthSummary.txt
 
 #Now that we have all the values we want, let's start filtering. First up is minimum and maximum read depth. We filter for this using VCFtools
 vcftools --vcf ${INT_DIR}/${FILENAME}_V42.vcf --minDP ${MIN_RD} --max-meanDP ${MAX_RD_INT} \
 --recode --recode-INFO-all --out ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}
 
 #Next up, we filter out sites with poor quality (which won't filter out much), and filter for missingness using bcftools
-bcftools +setGT ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT} -- -t q -n . -i 'GQ<15' | \
+bcftools +setGT ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}.vcf -- -t q -n . -i 'GQ<15' | \
 bcftools filter -e ${MISSINGNESS_STRING} > ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}.vcf
 
 # Filter for MAF>=5% in at least one population in the data set
-bcftools view ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}.vcf \	
-		-i ${MAF_STRING} -m2 \
-		> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}_MAF${MAF}.vcf
+bcftools view ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}.vcf \
+-i ${MAF_STRING} -m2 \
+> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}_MAF${MAF}.vcf
+
+#Create a .vcf file that contains only a header, and let bedtools write to this file. Bedtools doesn't output a header (for some reason).
+grep '#' ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}_MAF${MAF}.vcf \
+> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}_MAF${MAF}_HDplotMask.vcf
 
 #Finally, apply a mask created using HDplot output, that removes sites with excess heterozygosity.
-bedtools subtract -a ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}_MAF${MAF}.vcf -b ${HD_MASK} \
-> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}_MAF${MAF}_HDplotMask.vcf
+bedtools subtract -a ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}_MAF${MAF}.vcf -b ${HD_MASK} --header\
+>> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS}_MAF${MAF}_HDplotMask.vcf
 
 #As I was writing this script, I got insanely distracted at some point and made this chicken. Enjoy.
 
