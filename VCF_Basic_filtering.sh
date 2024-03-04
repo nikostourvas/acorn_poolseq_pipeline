@@ -39,10 +39,10 @@ vcftools --vcf ${INT_DIR}/${FILENAME}_V42.vcf --site-mean-depth --out ${INT_DIR}
 
 #use awk to get the mean and standard deviation in mean site read depth.
 MEAN=$(tail -n +2 ${INT_DIR}/ReadDepths.ldepth.mean | awk '{ sum += $3; n++ } END { if (n > 0) print sum / n; }')
-SD=$(tail -n +2 ${INT_DIR}/ReadDepths.ldepth.mean | awk '{sum+=$3; sumsq+=$3*$3}END{print sqrt(sumsq/NR - (sum/NR)*2)}')
+SD=$(tail -n +2 ${INT_DIR}/ReadDepths.ldepth.mean | awk '{sum+=$3; sumsq+=$3*$3}END{print sqrt(sumsq/NR - (sum/NR)^2)}')
 
 #Use the above values to calculate a threshold for maximum read depth filtering
-MAX_RD_FLOAT=$(awk -v awkMEAN="${MEAN}" -v awkSD="${SD}" ' BEGIN { THRESHOLD=awkMEAN+awkSD; print THRESHOLD } ')
+MAX_RD_FLOAT=$(awk -v awkMEAN="${MEAN}" -v awkSD="${SD}" ' BEGIN { THRESHOLD=awkMEAN+2*awkSD; print THRESHOLD } ')
 #This is not quite enough. bcftools can only take integers, so we need to round this number.
 MAX_RD_INT=$(echo ${MAX_RD_FLOAT} | awk '{print int($1+0.5)}')
 
