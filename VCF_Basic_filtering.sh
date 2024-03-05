@@ -48,9 +48,9 @@ MAX_RD_FLOAT=$(awk -v awkMEAN="${MEAN}" -v awkSD="${SD}" ' BEGIN { THRESHOLD=awk
 MAX_RD_INT=$(echo ${MAX_RD_FLOAT} | awk '{print int($1+0.5)}')
 
 #Report the values in an intermediate file
-#echo "The average read depth calculated using vcftools --site-mean-depth and the standard deviation are as follows:" > ${INT_DIR}/ReadDepthSummary.txt
-#echo "Mean = ${MEAN}, SD = ${SD}" >> ${INT_DIR}/ReadDepthSummary.txt
-#echo "Making the maximum read depth threshold (Mean+2xSD) = ${MAX_RD_FLOAT}, which is rounded to ${MAX_RD_INT}" >> ${INT_DIR}/ReadDepthSummary.txt
+echo "The average read depth calculated using vcftools --site-mean-depth and the standard deviation are as follows:" > ${INT_DIR}/ReadDepthSummary.txt
+echo "Mean = ${MEAN}, SD = ${SD}" >> ${INT_DIR}/ReadDepthSummary.txt
+echo "Making the maximum read depth threshold (Mean+2xSD) = ${MAX_RD_FLOAT}, which is rounded to ${MAX_RD_INT}" >> ${INT_DIR}/ReadDepthSummary.txt
 
 #Now that we have all the values we want, let's start filtering. First up is minimum and maximum read depth. We filter for this using VCFtools
 vcftools --vcf ${INT_DIR}/${FILENAME}_V42.vcf --minDP ${MIN_RD} --max-meanDP ${MAX_RD_INT} \
