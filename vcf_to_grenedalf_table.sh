@@ -70,7 +70,7 @@ cut -f1,$((6+(3*${N_SAMPLES})))-$((5+(4*${N_SAMPLES}))) ${OUTPUT}_big.txt > ${OU
 
 head -n 1 ${OUTPUT}_big.txt | cut -f1,6-$((5+${N_SAMPLES})) | sed -e 's/P01-...-ACORN-BOKU-...-//g' | sed -e 's/.ref.cnt//g' > ${OUTPUT}_temp_AlleleFrequencyTable.txt
 
-sed -e 's/-nan/NA/g' ${OUTPUT}_small.txt | tail +2 >> ${OUTPUT}_temp_AlleleFrequencyTable.txt #Make sure that NAs are noted correctly.
+sed -e 's/-nan/NA/g' ${OUTPUT}_small.txt | tail +2 >> ${OUTPUT}_AlleleFrequencyTable.txt #Make sure that NAs are noted correctly.
 
 #clean up intermediate files
 rm ${OUTPUT}_buffer.txt
