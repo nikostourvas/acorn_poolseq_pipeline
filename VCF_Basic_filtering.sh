@@ -23,12 +23,11 @@ MAF=$4 #The minimum allele frequency for a SNP to be included, expressed as a de
 HD_MASK=/data/genetics_tmp/REFERENCE/MASKS/HDplot_Mask_D10_H06_Window5.bed
 FILENAME=$(basename ${VCF_IN/.vcf.gz/})
 OUT_DIR=$(dirname ${VCF_IN})
-INT_DIR=${OUT_DIR}/IntermediateFiles_${FILENAME}
 MISSINGNESS_STRING="F_MISSING>${MISSINGNESS}" #bcftools does not allow you to place a variable inside a string. The solution is to place the variable in a pre-made string, and refering to that instead.
 MAF_STRING="MAX(AD/DP)>=${MAF} & MIN(AD/DP)<=$(echo ${MAF} | awk '{print int(1-$1)}')" #Same problem as the line above.
 MAF_FILE_STRING=$(echo ${MAF} | sed -e 's/\.//g') #Make a string that does not include a '.' to create clean file names.
 MISSINGNESS_FILE_STRING=$(echo ${MISSINGNESS} | sed -e 's/\.//g') #Make a string that does not include a '.' to create clean file names.
-
+INT_DIR=${OUT_DIR}/IntermediateFiles_${FILENAME}_${MIN_RD}_Missing${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}
 #Create intermediate directory
 mkdir -p ${INT_DIR}
 
@@ -48,9 +47,11 @@ MAX_RD_FLOAT=$(awk -v awkMEAN="${MEAN}" -v awkSD="${SD}" ' BEGIN { THRESHOLD=awk
 MAX_RD_INT=$(echo ${MAX_RD_FLOAT} | awk '{print int($1+0.5)}')
 
 #Report the values in an intermediate file
-echo "The average read depth calculated using vcftools --site-mean-depth and the standard deviation are as follows:" > ${INT_DIR}/ReadDepthSummary.txt
-echo "Mean = ${MEAN}, SD = ${SD}" >> ${INT_DIR}/ReadDepthSummary.txt
-echo "Making the maximum read depth threshold (Mean+2xSD) = ${MAX_RD_FLOAT}, which is rounded to ${MAX_RD_INT}" >> ${INT_DIR}/ReadDepthSummary.txt
+echo "The average read depth calculated using vcftools --site-mean-depth and the standard deviation are as follows:" > ${INT_DIR}/FilteringSummary.txt
+echo "Mean = ${MEAN}, SD = ${SD}" >> ${INT_DIR}/FilteringSummary.txt
+echo "Making the maximum read depth threshold (Mean+2xSD) = ${MAX_RD_FLOAT}, which is rounded to ${MAX_RD_INT}" >> ${INT_DIR}/FilteringSummary.txt
+echo "The maximum per-site missingness we are filtering for is ${MISSINGNESS}." >> ${INT_DIR}/FilteringSummary.txt
+echo "The minor allele frequency filtering threshold is set to ${MAF}." >> ${INT_DIR}/FilteringSummary.txt
 
 #Now that we have all the values we want, let's start filtering. First up is minimum and maximum read depth. We filter for this using VCFtools
 vcftools --vcf ${INT_DIR}/${FILENAME}_V42.vcf --minDP ${MIN_RD} --max-meanDP ${MAX_RD_INT} \
