@@ -26,7 +26,7 @@ OUT_DIR=$(dirname ${VCF_IN})
 INT_DIR=${OUT_DIR}/IntermediateFiles_${FILENAME}
 MISSINGNESS_STRING="F_MISSING>${MISSINGNESS}" #bcftools does not allow you to place a variable inside a string. The solution is to place the variable in a pre-made string, and refering to that instead.
 MAF_STRING="MAX(AD/DP)>=${MAF} & MIN(AD/DP)<=$(echo ${MAF} | awk '{print int(1-$1)}')" #Same problem as the line above.
-MAF_FILE_SRING=$(echo ${MAF} | sed -e 's/\.//g') #Make a string that does not include a '.' to create clean file names.
+MAF_FILE_STRING=$(echo ${MAF} | sed -e 's/\.//g') #Make a string that does not include a '.' to create clean file names.
 MISSINGNESS_FILE_STRING=$(echo ${MISSINGNESS} | sed -e 's/\.//g') #Make a string that does not include a '.' to create clean file names.
 
 #Create intermediate directory
