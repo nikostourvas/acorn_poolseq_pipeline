@@ -56,7 +56,7 @@ AD_POS=$((${RD_POS}+${N_SAMPLES}));
 GT_POS=$((${AD_POS}+${N_SAMPLES}));
 FREQ_POS=$((${GT_POS}+${N_SAMPLES})); #Tell awk in which column to place the allele frequency it calculates.
 awk -F '\t' -v awkRDpos="${RD_POS}" -v awkADpos="${AD_POS}" -v awkFREQpos="${FREQ_POS}" -v awkGTpos="${GT_POS}" \
-' OFS = "\t" {awkFREQvalue=$awkADpos/($awkRDpos+$awkADpos); if ($awkGTpos=="./.") $awkFREQpos="NA"; else  $awkFREQpos=awkFREQvalue; print $0, $awkFREQpos }' ${OUTPUT}_intermediate.txt \
+' OFS = "\t" {awkFREQvalue=$awkADpos/($awkRDpos+$awkADpos); if ($awkGTpos=="./.") $awkFREQpos="NA" print $0, $awkFREQpos; else  $awkFREQpos=awkFREQvalue print $0, $awkFREQpos }' ${OUTPUT}_intermediate.txt \
 > ${OUTPUT}_buffer.txt; #Write to an intermediate file so that awk does not try to write to the same file it is reading from
 cat ${OUTPUT}_buffer.txt > ${OUTPUT}_intermediate.txt; #Replace the table with the intermediate table we just created.
 echo ${n}; #print progress
