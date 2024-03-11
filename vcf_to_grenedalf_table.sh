@@ -10,6 +10,8 @@ VCF=${1}
 #Take the name of the input vcf without file type suffix.
 OUTPUT=${VCF/.vcf.gz/}
 
+rm ${OUTPUT}_AlleleFrequencyTable.txt #Make sure we remove any old versions of the allele frequency table before initiating this script.
+
 #Extract the number of samples found in the vcf.
 N_SAMPLES=$(bcftools query -l ${VCF} | wc -l)
 
@@ -56,7 +58,7 @@ AD_POS=$((${RD_POS}+${N_SAMPLES}));
 GT_POS=$((${AD_POS}+${N_SAMPLES}));
 FREQ_POS=$((${GT_POS}+${N_SAMPLES})); #Tell awk in which column to place the allele frequency it calculates.
 awk -F '\t' -v awkRDpos="${RD_POS}" -v awkADpos="${AD_POS}" -v awkFREQpos="${FREQ_POS}" -v awkGTpos="${GT_POS}" \
-' OFS = "\t" {awkFREQvalue=$awkADpos/($awkRDpos+$awkADpos); if ($awkGTpos=="./.") $awkFREQpos="NA" print $0, $awkFREQpos; else  $awkFREQpos=awkFREQvalue print $0, $awkFREQpos }' ${OUTPUT}_intermediate.txt \
+' OFS = "\t" { if ($awkGTpos=="./.") { $awkFREQpos="NA"; print $0, $awkFREQpos } else { $awkFREQpos=$awkADpos/($awkRDpos+$awkADpos); print $0, $awkFREQpos } }' ${OUTPUT}_intermediate.txt \
 > ${OUTPUT}_buffer.txt; #Write to an intermediate file so that awk does not try to write to the same file it is reading from
 cat ${OUTPUT}_buffer.txt > ${OUTPUT}_intermediate.txt; #Replace the table with the intermediate table we just created.
 echo ${n}; #print progress
@@ -68,7 +70,7 @@ done
 awk -F "\t" ' OFS = "\t" {chrompos=$1"_"$2; print chrompos, $0} ' ${OUTPUT}_intermediate.txt > ${OUTPUT}_big.txt #create a column that describes the genomic position in just one cell
 cut -f1,$((6+(3*${N_SAMPLES})))-$((5+(4*${N_SAMPLES}))) ${OUTPUT}_big.txt > ${OUTPUT}_small.txt #Extract only the columns that summarise the genomic position and all the allele frequencies.
 
-head -n 1 ${OUTPUT}_big.txt | cut -f1,6-$((5+${N_SAMPLES})) | sed -e 's/P01-...-ACORN-BOKU-...-//g' | sed -e 's/.ref.cnt//g' > ${OUTPUT}_temp_AlleleFrequencyTable.txt
+head -n 1 ${OUTPUT}_big.txt | cut -f1,6-$((5+${N_SAMPLES})) | sed -e 's/P01-...-ACORN-BOKU-...-//g' | sed -e 's/.ref.cnt//g' > ${OUTPUT}_AlleleFrequencyTable.txt
 
 sed -e 's/-nan/NA/g' ${OUTPUT}_small.txt | tail +2 >> ${OUTPUT}_AlleleFrequencyTable.txt #Make sure that NAs are noted correctly.
 
