@@ -20,14 +20,15 @@ MAF=$4 #The minimum allele frequency for a SNP to be included, expressed as a de
 
 #Specify further variables
 
-HD_MASK=/data/genetics_tmp/REFERENCE/MASKS/HDplot_Mask_D10_H06_Window5.bed
-FILENAME=$(basename ${VCF_IN/.vcf.gz/})
-OUT_DIR=$(dirname ${VCF_IN})
+HD_MASK=/data/genetics_tmp/REFERENCE/MASKS/HDplot_Mask_D10_H06_NoWindow.txt #Specify the location of a relevant mask generated using HDplot. Requires manual editing to change the mask.
+FILENAME=$(basename ${VCF_IN/.vcf.gz/}) #The base for output file names.
+OUT_DIR=$(dirname ${VCF_IN}) #Specify where to output. In this case, it is the same directory in which our vcf is.
 MISSINGNESS_STRING="F_MISSING>${MISSINGNESS}" #bcftools does not allow you to place a variable inside a string. The solution is to place the variable in a pre-made string, and refering to that instead.
 MAF_STRING="MAX(AD/DP)>=${MAF} & MIN(AD/DP)<=$(echo ${MAF} | awk '{print int(1-$1)}')" #Same problem as the line above.
 MAF_FILE_STRING=$(echo ${MAF} | sed -e 's/\.//g') #Make a string that does not include a '.' to create clean file names.
 MISSINGNESS_FILE_STRING=$(echo ${MISSINGNESS} | sed -e 's/\.//g') #Make a string that does not include a '.' to create clean file names.
-INT_DIR=${OUT_DIR}/IntermediateFiles_${FILENAME}_${MIN_RD}_Missing${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}
+INT_DIR=${OUT_DIR}/IntermediateFiles_${FILENAME}_${MIN_RD}_Missing${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING} #Use a whole lot of information to specify intermediate directories.
+
 #Create intermediate directory
 mkdir -p ${INT_DIR}
 
@@ -66,13 +67,22 @@ bcftools view ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missi
 -i "${MAF_STRING}" -m2 \
 > ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf
 
+#There are two possible masks that can be applied. Some are .bed files with three columns specifying regions. Some are .txt files with two columns specifying single basepair sites (usually SNP locations).
+#First, there are some lines that can apply a .txt mask. Then some lines that can apply .bed masks. Switching between them will necessitate editing this script.
+
+#Applying .txt masks:
+#Use bcftools to specify which sites to exclude.
+bcftools view -T ^${HD_MASK} ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf \
+> ${OUT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplotMask.vcf
+
+#Applying .bed masks:
 #Create a .vcf file that contains only a header, and let bedtools write to this file. Bedtools doesn't output a header (for some reason).
-grep '#' ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf \
-> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplotMask.vcf
+#grep '#' ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf \
+#> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplotMask.vcf
 
 #Finally, apply a mask created using HDplot output, that removes sites with excess heterozygosity.
-bedtools subtract -a ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf -b ${HD_MASK} \
->> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplotMask.vcf
+#bedtools subtract -a ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf -b ${HD_MASK} \
+#>> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplotMask.vcf
 
 #As I was writing this script, I got insanely distracted at some point and made this chicken. Enjoy.
 
