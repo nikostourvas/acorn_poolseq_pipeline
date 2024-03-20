@@ -88,6 +88,12 @@ vcftools --vcf ${OUT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss
 #bedtools subtract -a ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf -b ${HD_MASK} \
 #>> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplotMask.vcf
 
+#After all commands have run, clean up some unnecessary files left in the intermediate directory, and gzip up the useful intermediate vcfs.
+rm ${INT_DIR}/${FILENAME}_V42.vcf
+gzip ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}.recode.vcf
+gzip ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}.vcf
+gzip ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf
+
 #As I was writing this script, I got insanely distracted at some point and made this chicken. Enjoy.
 
 #   _\/_
