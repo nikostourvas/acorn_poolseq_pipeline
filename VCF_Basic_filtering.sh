@@ -60,24 +60,24 @@ vcftools --vcf ${INT_DIR}/${FILENAME}_V42.vcf --minDP ${MIN_RD} --max-meanDP ${M
 
 #Next up, we filter out sites with poor quality (which won't filter out much), and filter for missingness using bcftools
 bcftools +setGT ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}.recode.vcf -- -t q -n . -i 'GQ<15' | \
-bcftools filter -e "${MISSINGNESS_STRING}" > ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}.vcf
+bcftools filter -e "${MISSINGNESS_STRING}" > ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}.vcf
 
 # Filter for MAF>=5% in at least one population in the data set
 bcftools view ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}.vcf \
 -i "${MAF_STRING}" -m2 \
-> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf
+> ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf
 
 #There are two possible masks that can be applied. Some are .bed files with three columns specifying regions. Some are .txt files with two columns specifying single basepair sites (usually SNP locations).
 #First, there are some lines that can apply a .txt mask. Then some lines that can apply .bed masks. Switching between them will necessitate editing this script.
 
 #Applying .txt masks:
 #Use bcftools to specify which sites to exclude.
-bcftools view -T ^${HD_MASK} ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf \
-> ${OUT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplotMask.vcf
+bcftools view -T ^${HD_MASK} ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf \
+> ${OUT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplot.vcf
 
 # Produce summary of missingness per sample
-vcftools --vcf ${OUT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplotMask.vcf \
---missing-indv --out ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplotMask
+vcftools --vcf ${OUT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplot.vcf \
+--missing-indv --out ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}_HDplot
 
 #Applying .bed masks:
 #Create a .vcf file that contains only a header, and let bedtools write to this file. Bedtools doesn't output a header (for some reason).
@@ -91,8 +91,8 @@ vcftools --vcf ${OUT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss
 #After all commands have run, clean up some unnecessary files left in the intermediate directory, and gzip up the useful intermediate vcfs.
 rm ${INT_DIR}/${FILENAME}_V42.vcf
 gzip ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}.recode.vcf
-gzip ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}.vcf
-gzip ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf
+gzip ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}.vcf
+gzip ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf
 
 #As I was writing this script, I got insanely distracted at some point and made this chicken. Enjoy.
 
