@@ -38,9 +38,12 @@ zcat ${VCF_IN} | sed 's/##fileformat=VCFv4.3/##fileformat=VCFv4.2/g' > ${INT_DIR
 #Extract the mean depth across all pools per site using vcftools
 vcftools --vcf ${INT_DIR}/${FILENAME}_V42.vcf --site-mean-depth --out ${INT_DIR}/ReadDepths
 
+#Make sure that site depths with -nan read depth are ignored.
+awk '{ print $1, $2, $3 }' ${INT_DIR}/ReadDepths.ldepth.mean | grep -iv '-nan' > ReadDepthsCorrected.ldepth.mean
+
 #use awk to get the mean and standard deviation in mean site read depth.
-MEAN=$(tail -n +2 ${INT_DIR}/ReadDepths.ldepth.mean | awk '{ sum += $3; n++ } END { if (n > 0) print sum / n; }')
-SD=$(tail -n +2 ${INT_DIR}/ReadDepths.ldepth.mean | awk '{sum+=$3; sumsq+=$3*$3}END{print sqrt(sumsq/NR - (sum/NR)^2)}')
+MEAN=$(tail -n +2 ${INT_DIR}/ReadDepthsCorrected.ldepth.mean | awk '{ sum += $3; n++ } END { if (n > 0) print sum / n; }')
+SD=$(tail -n +2 ${INT_DIR}/ReadDepthsCorrected.ldepth.mean | awk '{sum+=$3; sumsq+=$3*$3}END{print sqrt(sumsq/NR - (sum/NR)^2)}')
 
 #Use the above values to calculate a threshold for maximum read depth filtering
 MAX_RD_FLOAT=$(awk -v awkMEAN="${MEAN}" -v awkSD="${SD}" ' BEGIN { THRESHOLD=awkMEAN+2*awkSD; print THRESHOLD } ')
