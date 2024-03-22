@@ -39,7 +39,7 @@ zcat ${VCF_IN} | sed 's/##fileformat=VCFv4.3/##fileformat=VCFv4.2/g' > ${INT_DIR
 vcftools --vcf ${INT_DIR}/${FILENAME}_V42.vcf --site-mean-depth --out ${INT_DIR}/ReadDepths
 
 #Make sure that site depths with -nan read depth are ignored.
-awk '{ print $1, $2, $3 }' ${INT_DIR}/ReadDepths.ldepth.mean | grep -iv '-nan' > ReadDepthsCorrected.ldepth.mean
+awk '{ print $1, $2, $3 }' ${INT_DIR}/ReadDepths.ldepth.mean | grep -iv 'nan' > ReadDepthsCorrected.ldepth.mean
 
 #use awk to get the mean and standard deviation in mean site read depth.
 MEAN=$(tail -n +2 ${INT_DIR}/ReadDepthsCorrected.ldepth.mean | awk '{ sum += $3; n++ } END { if (n > 0) print sum / n; }')
