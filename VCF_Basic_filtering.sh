@@ -66,7 +66,7 @@ bcftools +setGT ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}.rec
 bcftools filter -e "${MISSINGNESS_STRING}" > ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}.vcf
 
 # Filter for MAF>=5% in at least one population in the data set
-bcftools view ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Missingness${MISSINGNESS_FILE_STRING}.vcf \
+bcftools view ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}.vcf \
 -i "${MAF_STRING}" -m2 \
 > ${INT_DIR}/${FILENAME}_MinDP${MIN_RD}_MaxMeanDP${MAX_RD_INT}_Miss${MISSINGNESS_FILE_STRING}_MAF${MAF_FILE_STRING}.vcf
 
