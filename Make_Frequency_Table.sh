@@ -8,7 +8,7 @@
 VCF=${1}
 
 #Take the name of the input vcf without file type suffix.
-OUTPUT=${VCF/.vcf.gz/}
+OUTPUT=${VCF/.vcf/}
 
 rm ${OUTPUT}_AlleleFrequencyTable.txt #Make sure we remove any old versions of the allele frequency table before initiating this script.
 
