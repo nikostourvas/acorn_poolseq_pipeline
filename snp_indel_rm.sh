@@ -1,12 +1,23 @@
 #!/bin/bash
 
+#Nikos Tourvas
+#2023
+#Script removes SNPs from a VCF that are in close proximity to INDEL regions. The script takes in two VCFs; one that contains SNPs and one that contains INDELs.
+#Some additional SNP filtering is also performed in this script.
+#This script can be run by itself, or as part of the script post_variant_calling.sh
+#https://github.com/nikostourvas/acorn_poolseq_pipeline/blob/singularity/post_variant_calling.sh
+
 # declare variables
-SNP_VCF=$1
-INDEL_VCF=${SNP_VCF/_SNP.vcf/_INDEL.vcf}
-OUTDIR=$(dirname ${SNP_VCF})
-REF=/mnt/reference/Qrob_PM1N.fa
+SNP_VCF=$1 #Path to a vcf containing SNPs (tested on VarScan VCFs)
+INDEL_VCF=${SNP_VCF/_SNP.vcf/_INDEL.vcf} #Automatically find a VCF containing INDELs. This file should be in the same directory as the SNP vcf. 
+OUTDIR=$(dirname ${SNP_VCF}) #Specify an output directory. 
+REF=/mnt/reference/Qrob_PM1N.fa #The path to a reference sequence. In this case the Plomion et al (2018) Quercus robur reference genome with mitochondrial and chloroplast genomes added. 
 
 # Remove SNPs close to InDels & perform further SNP filtering
+# Remove SNPs that have been called in sites with low read quality (avg. Phred score <20).
+# Implement a minimum read depth threshold of 20 (in our case, might not be applicable for other projects).
+# Remove SNPs called with a p-value above 0.05. 
+# Remove SNPs for which the alt has fewer than one reads (practically this filter is redundant. Merely to make this fact explicit).
 java -Xmx128g -jar /usr/share/java/varscan.jar filter ${SNP_VCF} \
     --min-var-freq 0.00 --p-value 0.05 --min-avg-qual 20 \
     --min-coverage 20 --min-reads2 1 \
