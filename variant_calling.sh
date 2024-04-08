@@ -1,10 +1,21 @@
 #!/bin/bash
 
+#Nikos Tourvas & Lars Littmann
+#2023
+#Call variants for pool-sequenced data. Outputs both a SNP vcf and an INDEL vcf. 
+#This script is optimised for working on arbitrary, smaller subsections of a genome (Chunks). See the Simplified_Chunks.sh script.
+#https://github.com/nikostourvas/acorn_poolseq_pipeline/blob/singularity/Simplified_Chunks.sh
+#This variant calling script does not output one complete vcf, but one vcf per specified chunk. 
+#Though this script is very useful for massive parallelisation, it requires a bit more manual manipulation between runs.
+#Some variables need to be changed within the script before initiating a new variant calling event. These variables have been marked UPDATE BEFORE RUNNING
+#A parallel command that should be run in the command line is included at the bottom of this document. 
+
 # declare variables
-BAM_LIST=/data/genetics_tmp/results/vcf/Qrobur_PoolBams_Sorted_FastStorage.txt #For downstream convenience, we recommend that this list of bams is sorted in a logical order.
-OUTDIR=/data/genetics_tmp/results/vcf/VCF_Qrobur_nomarkdup
-REF=/data/genetics_tmp/REFERENCE/Qrob_PM1N_Organelles.fa
-CHUNK=$1
+BAM_LIST=/data/genetics_tmp/results/vcf/Qrobur_PoolBams_Sorted_FastStorage.txt 	#Textfile listing the paths to all BAMfiles that should be considered in the variant call.
+#										 For downstream convenience, we recommend that this list of bams is sorted in a logical order. UPDATE BEFORE RUNNING
+OUTDIR=/data/genetics_tmp/results/vcf/VCF_Qrobur_nomarkdup 			#Where to place output UPDATE BEFORE RUNNING
+REF=/data/genetics_tmp/REFERENCE/Qrob_PM1N_Organelles.fa 			#Path to the reference genome that the reads were aligned to. UPDATE BEFORE RUNNING
+CHUNK=$1 									#The chunk that is being considered in the current run. Basis for parallelisation of the variant calling.
 CHUNK_SHORT=$(basename ${CHUNK/.bed/})
 THREADS=1
 
@@ -12,7 +23,6 @@ mkdir -p ${OUTDIR}
 
 #Create a .txt file that contains the file names (without directory information or suffixes) found in the BAM_LIST.
 #First, create a directory to store the sample naming lists in.
-
 mkdir -p ${OUTDIR}/SampleNamingFiles
 
 #Then, remove any possible older versions of this file
@@ -113,6 +123,7 @@ bcftools index ${OUTDIR}/${CHUNK_SHORT}.varScan.indel.vcf.gz \
     --threads ${THREADS} \
     2> ${OUTDIR}/${CHUNK_SHORT}.bcftools_index.indel.vcf.err &&
 
+#The following commands are used to output a single, well-formatted log file for each of the chunks, to avoid overcrowding directories.
 echo -e "All log files for ${CHUNK_SHORT/.bed/}\n\n#####\n\nSamtools mpileup\n\n">${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
 cat ${OUTDIR}/${CHUNK_SHORT}.mpileup.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
 echo -e "\n\n#####\n\nvarScan.snpindel\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
@@ -128,5 +139,15 @@ cat ${OUTDIR}/${CHUNK_SHORT}.bcftools_index.snp.vcf.err >> ${OUTDIR}/AllLogFiles
 echo -e "\n\n#####\n\nbcftools index snp\n\n" >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log
 cat ${OUTDIR}/${CHUNK_SHORT}.bcftools_index.indel.vcf.err >> ${OUTDIR}/AllLogFiles_${CHUNK_SHORT}.log &&
 
+#Remove intermediate files.
 rm ${OUTDIR}/${CHUNK_SHORT}.*.err 
 rm ${OUTDIR}/${CHUNK_SHORT}_samtools.mpileup
+
+########################################################################
+#A handy way to run this script is as follows:
+#Create a .txt file that contains all the sample names of samples you wish to process. These sample names have to match with your file naming. 
+#Run the following parallel command. It initiates this bash script for each sample. As soon as one script finishes running, it starts the next until it has cycled through all file names in the .txt file.
+#These commands are not part of the script, but can be copied into the command line to run the script. 
+
+#parallel --verbose -j 80 \
+#	'bash /mnt/acorn_poolseq_pipeline/variant_calling.sh {}' :::: /data/genetics_tmp/REFERENCE/ChunkFiles/Locations_Of_Chunk_Beds.txt
