@@ -2,14 +2,18 @@
 
 #31.01.24
 #Nikos Tourvas & Lars Littmann
-#Process adapter-clipped fastq files. The script both removes duplicate reads and trims poor-quality reads or ends of reads. 
+#Process adapter-clipped fastq files. The script both removes duplicate reads and trims poor-quality reads or ends of reads.
+#The duplicate removal step implemented here differs in approach from the more conventionally used samtools or Picard. 
+#Instead of determining what reads are duplicates based on where they map along the reference genome, fastp produces a hash for every read. 
+#Fastp then checks whether the hashes are unique. If they are not, then the reads are marked as duplicates. 
+#After evaluating the quality of potential duplicates, it retains the best read.
 
 # variables
 SAMPLE=$1 #The names of directories that contain the fastq-file pairs, as provided by LGC.
 INPUT_DIR=../Acorn_SeqData/AdapterClipped_Batch2 #The directory that contains all untrimmed fastq files
 OUT_DIR=/data/genetics_tmp/results/fastp_dedup_trim #Directory in which to place all deduped and trimmed outputs.
 
-mkdir -p ${OUT_DIR} #Make sure that the output directory exhists before running.
+mkdir -p ${OUT_DIR} #Make sure that the output directory exists before running.
 
 #from top to bottom:
 #First implementation of fastp. Read the two fastq files for a particular pool/individual
@@ -44,5 +48,10 @@ fastp --stdin --interleaved_in \
       --out1 ${OUT_DIR}/${SAMPLE/Sample_/}_1.trim.dedup.fastq.gz --out2 ${OUT_DIR}/${SAMPLE/Sample_/}_2.trim.dedup.fastq.gz
 
 
+#####################################################################
+#A handy way to run this script is as follows. This command is not part of this script, but something you can paste in the command line to execute it.
+#The parallel command starts 42 instances of this script at a time and starts a new job as soon as one is finished until it runs out of fastq files to process.
+#You need to specify a full path to a fastq file per line in a .txt file (in this example, it is the fastqnames.txt file).
 
-      
+#parallel --verbose -j 42 \
+#	'bash fastp_dedup.sh  {}' :::: ../Acorn_SeqData/AdapterClipped_Batch2/fastqnames.txt 
