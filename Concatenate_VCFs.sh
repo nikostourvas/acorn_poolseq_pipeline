@@ -5,6 +5,8 @@
 #2023-09-04
 #Takes (gz)vcfs that contain the same samples and combines them into one file. In the ACORN project, this applies for VCFs that have been generated for
 #particular chunks of the reference genome and now require merging. Operates both on the indel and on the snp vcf files.
+#This file can be run as-is or by initiating the post_variant_calling.sh script
+#https://github.com/nikostourvas/acorn_poolseq_pipeline/blob/singularity/post_variant_calling.sh
 
 UNMERGED_VCF_DIR=$1 #The path to the directory in which all the unmerged VCF files are stored
 VCF_PREFIX=$2 #The name for the merged VCF
