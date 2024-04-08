@@ -1,11 +1,13 @@
 #!/bin/bash
 
+# Nikos Tourvas & Lars Littmann
+# 2023
+# Filter raw BAM files with samtools view
+# This version of the script does NOT remove duplicates!
+
 # declare variables
 IND=$1 #The individual that is processed
 BAM=/data/genetics_tmp/results/mapped_reads/${IND} #The location of the bam files, by individual.
-
-# Filter raw BAM files with samtools view
-# This version of the script does NOT remove duplicates!
 
 # Quick explanation of what individual commands do:
 # sort: sort reads again based on genomic coordinates and
@@ -34,3 +36,12 @@ samtools index -@ 1 ${BAM}.filtered.bam
 # gather statistics
 # -@ number of cores
 samtools flagstat -@ 1 ${BAM}.filtered.bam > ${BAM}.filtered.flagstat
+
+##################################################################
+#A handy way to run this script is as follows:
+#Create a .txt file that contains all the sample names of samples you wish to process. These sample names have to match with your file naming. 
+#Run the following parallel command. It initiates this bash script for each sample. As soon as one script finishes running, it starts the next until it has cycled through all file names in the .txt file.
+#These commands are not part of the script, but can be copied into the command line to run the script. 
+
+#parallel --verbose -j 90 \
+#	'bash bam_filtering_no_markdup.sh {}' :::: /data/genetics_tmp/results/fastp_dedup_trim/samplenames_bySize.txt
