@@ -12,3 +12,5 @@ mkdir -p ${OUTPUT_DIRECTORY} # Make sure that the output directory exists.
 # run fastqc
 # edit number of cores used with the "-t" option
 fastqc -t 4 -o ${OUTPUT_DIRECTORY} ${DIRECTORY_TO_QC}/*fastq.gz
+
+#Hello there
