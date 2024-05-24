@@ -64,7 +64,7 @@ AD_POS=$((${RD_POS}+${N_SAMPLES}));
 GT_POS=$((${AD_POS}+${N_SAMPLES}));
 FREQ_POS=$((${GT_POS}+${N_SAMPLES})); #Tell awk in which column to place the allele frequency it calculates.
 awk -F '\t' -v awkRDpos="${RD_POS}" -v awkADpos="${AD_POS}" -v awkFREQpos="${FREQ_POS}" -v awkGTpos="${GT_POS}" \
-' OFS = "\t" { if ($awkGTpos=="/") { $awkFREQpos="NA"; print $0, $awkFREQpos } else { $awkFREQpos=$awkADpos/($awkRDpos+$awkADpos); print $0, $awkFREQpos } }' ${OUTPUT}_intermediate.txt \
+' OFS = "\t" { if ($awkGTpos=="/") { $awkFREQpos="NA"; print $0, $awkFREQpos } else { $awkFREQpos=$awkADpos/($awkRDpos+$awkADpos); print $0, $awkFREQpos } }' ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_intermediate.txt \
 > ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_buffer.txt; #Write to an intermediate file so that awk does not try to write to the same file it is reading from
 cat ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_buffer.txt > ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_intermediate.txt; #Replace the table with the intermediate table we just created.
 echo ${n}; #print progress
@@ -74,11 +74,11 @@ done
 #Several final refinements to the table are necessary
 
 awk -F "\t" ' OFS = "\t" {chrompos=$1"_"$2; print chrompos, $0} ' ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_intermediate.txt > ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_big.txt #create a column that describes the genomic position in just one cell
-cut -f1,$((6+(3*${N_SAMPLES})))-$((5+(4*${N_SAMPLES}))) ${OUTPUT}_big.txt > ${OUTPUT}_small.txt #Extract only the columns that summarise the genomic position and all the allele frequencies.
+cut -f1,$((6+(3*${N_SAMPLES})))-$((5+(4*${N_SAMPLES}))) ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_big.txt > ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_small.txt #Extract only the columns that summarise the genomic position and all the allele frequencies.
 
 head -n 1 ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_big.txt | cut -f1,6-$((5+${N_SAMPLES})) | sed -e 's/P01-...-ACORN-BOKU-...-//g' | sed -e 's/.ref.cnt//g' > ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_AlleleFrequencyTable.txt
 
-sed -e 's/-nan/NA/g' ${OUTPUT}_small.txt | tail +2 >> ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_AlleleFrequencyTable.txt #Make sure that NAs are noted correctly.
+sed -e 's/-nan/NA/g' ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_small.txt | tail +2 >> ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_AlleleFrequencyTable.txt #Make sure that NAs are noted correctly.
 
 #clean up intermediate files
 rm ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_buffer.txt
