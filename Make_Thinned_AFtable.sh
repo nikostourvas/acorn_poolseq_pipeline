@@ -16,8 +16,8 @@ OLD_THINNED_AF_TABLE=${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_AlleleFrequencyTa
 rm ${OLD_THINNED_AF_TABLE} #Make sure we remove any old versions of the allele frequency table before initiating this script.
 
 #Thin the input VCF using VCFtools. Slow step, but we're going for quick and simple here.
-THINNED_VCF=${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp.vcf
-vcftools --vcf ${VCF} --thin ${THINNING_THRESHOLD} --stdout > ${THINNED_VCF}
+THINNED_VCF=${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp
+vcftools --vcf ${VCF} --thin ${THINNING_THRESHOLD} --recode --recode-INFOR-all --out ${THINNED_VCF}
 
 #Extract the number of samples found in the vcf.
 N_SAMPLES=$(bcftools query -l ${THINNED_VCF} | wc -l)
@@ -86,3 +86,4 @@ rm ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_buffer.txt
 rm ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_intermediate.txt
 rm ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_big.txt
 rm ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_small.txt 
+rm ${THINNED_VCF}
