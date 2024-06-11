@@ -6,8 +6,8 @@
 # Take a VCF produced by VarScan and output a table containing the allele frequencies for all samples per position.
 
 # declare variables
-VCF=${1}
-THINNING_THRESHOLD=${2}
+VCF=$1
+THINNING_THRESHOLD=$2
 
 #Take the name of the input vcf without file type suffix.
 OUTPUT=${VCF/.vcf/}
