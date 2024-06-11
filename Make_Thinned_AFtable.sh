@@ -11,8 +11,9 @@ THINNING_THRESHOLD=$2
 
 #Take the name of the input vcf without file type suffix.
 OUTPUT=${VCF/.vcf/}
+OLD_THINNED_AF_TABLE=${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_AlleleFrequencyTable.txt
 
-rm ${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp_AlleleFrequencyTable.txt #Make sure we remove any old versions of the allele frequency table before initiating this script.
+rm ${OLD_THINNED_AF_TABLE} #Make sure we remove any old versions of the allele frequency table before initiating this script.
 
 #Thin the input VCF using VCFtools. Slow step, but we're going for quick and simple here.
 THINNED_VCF=${OUTPUT}_Thinned_${THINNING_THRESHOLD}bp.vcf
