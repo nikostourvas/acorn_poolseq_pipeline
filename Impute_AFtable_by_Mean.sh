@@ -19,4 +19,6 @@ OUTPUT_TABLE=${INPUT_AF_TABLE/.txt/_Imputed_by_Mean.txt}
 #The second line replaces 'NA' values with the mean which is contained in the last column.
 #At the end of the second line, the column containing the mean values is removed. 
 awk -F "\t" ' OFS="\t" {sum = 0; j = 1; MEANpos = NF+1; for (i = 2; i <= NF; i++) if ($i=='NA') {j++} else (sum+=$i); sum /= (NF-j); $MEANpos=sum; print $0 }' ${INPUT_AF_TABLE} | \
-awk -F "\t" ' OFS="\t" {MEANpos= NF; for (i=2; i <= NF; i++) if ($i=="NA") {$i=$MEANpos}; $(NF--); print $0} ' > ${OUTPUT_TABLE}
+awk -F "\t" ' OFS="\t" {sum = 0; MEANpos=NF; VARpos=NF+1; for (i=2; i<=NF-1; i++) sum+=($1-$MEANpos)^2; $VARpos=sum; print $0 }' | \
+awk -F "\t" ' OFS="\t" {MEANpos= NF-1; VARpos=NF; for (i=2; i <= NF; i++) if ($i=="NA") {$i=$MEANpos}; if ($VARpos!=0) {print $0}} ' | \
+awk -F "\t" ' OFS="\t" {NF-=2}1' > ${OUTPUT_TABLE}
