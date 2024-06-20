@@ -11,6 +11,6 @@ HEADER=$(head -n 1 ${AF_TABLE})
 
 tail -n +2 ${AF_TABLE} > body.txt
 
-split -n l/30 --numeric-suffixes=01 --additional-suffix .txt body.txt ${AF_TABLE/.txt/}
+split -n l/30 --numeric-suffixes=01 --additional-suffix .txt body.txt ${AF_TABLE/.txt/_Chunk}
 
 sed -i "1i ${HEADER}" ${AF_TABLE/.txt/_Chunk??.txt}
