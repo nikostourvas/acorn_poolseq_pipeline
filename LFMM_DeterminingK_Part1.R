@@ -36,28 +36,16 @@ dat.env <- args[4] #Path to the environmental data
 max.k <- args [5] #The maximum number of K that the script should analyse.
 populations <- args [6] #The code for the subset (e.g. 1GA)
 chunk <- args [7] #The chunk (parallelisation) that is currently analysed.
-#How to set the species:
-#sp <- 1 # if running Pet
-#sp <- 2 # if running Pub
-#sp <- 3 # if running Rob
-
-#### Set variables ####
-labsp <- c("Quercus_petraea","Quercus_pubescens", "Quercus_robur")
-codesp <- c("petraea","pubescens", "robur")
-cols <- c("#E69F00","#0072B2", "green")
 
 #### Set the working directory ####
-print(dir.path)
-print(dat.gen)
 setwd(dir.path)
 getwd()
 
 #### Import the environmental dataset ####
 env.data <- read.table(paste(dat.env, sep=""), header=T, sep=",")
-#head(env.data)
+
 
 #decide which variables to test
-colnames(env.data)
 env <- env.data[c('bio1')]
 rownames(env) <- env.data$Plot_ID
 
