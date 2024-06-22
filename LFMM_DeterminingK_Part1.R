@@ -68,7 +68,7 @@ gen.matrix <- as.matrix(gen)
 colnames(gen.matrix) <- NULL
 rownames(gen.matrix) <- NULL
 dim(gen.matrix)
-write.table(gen.matrix, (paste(dir.path, "/res/", populations,"/", "genetic_data_", populations, "_Chunk_", chunk, ".lfmm", sep = "")), row.names = F, col.names = F, quote=F)
+#write.table(gen.matrix, (paste(dir.path, "/res/", populations,"/", "genetic_data_", populations, "_Chunk_", chunk, ".lfmm", sep = "")), row.names = F, col.names = F, quote=F)
 
 ####import the thinned genetic data ####
 gen.data.thin <- read.table(paste(dat.gen.thin, sep=""), header = T, sep = "\t", row.names = "chrom_pos")
@@ -80,7 +80,7 @@ snp.info.thin <- as.vector(colnames(gen.thin))
 gen.thin.matrix <- as.matrix(gen.thin)
 colnames(gen.thin.matrix) <- NULL
 rownames(gen.thin.matrix) <- NULL
-write.table(gen.thin.matrix, (paste("./res/", populations, "/", "gen_thinned_matrix", populations, "_Chunk_", chunk, ".lfmm", sep = "")), row.names = F, col.names = F, quote=F)
+#write.table(gen.thin.matrix, (paste("./res/", populations, "/", "gen_thinned_matrix", populations, "_Chunk_", chunk, ".lfmm", sep = "")), row.names = F, col.names = F, quote=F)
 
 #prepare
 X <- as.matrix(env) #for testing
