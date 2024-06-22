@@ -1,0 +1,71 @@
+#!/bin/bash
+
+#Lars Littmann
+#22.06.2024
+#Take an AF table, Thinned AF table, and parameters for an initial lfmm run
+#that can be used to determine the appropriate K for a main run.
+#FIRST Impute the AF table and the thinned AF table
+#SECOND Split up the AF table to enable parallel processing
+#THIRD Launch parallel lfmm jobs with all the specified parameters
+
+
+###FIRST STEP###
+#The imputation-inator
+#Imputes missing values in an allele frequency table by calculating the mean of the allele frequency values that are there.
+#Allele frequency tables are created using either Make_Frequency_Table.sh or Make_Thinned_AFtable.sh
+#For the calculation of the mean, NA fields are fully ignored.
+#Missingness per SNP should be kept below 10%, otherwise this imputation method is not reliable.
+
+# declare variables
+INPUT_AF_TABLE=$1
+INPUT_THINNED_AF_TABLE=${INPUT_AF_TABLE/AlleleFrequencyTable.txt/Thinned_500bp_AlleleFrequencyTable.txt}
+
+ENV_DATA=$2
+MAX_K=$3
+POPULATIONS=$4
+
+#Create a good filename for the output.
+IMPUTED_TABLE=${INPUT_AF_TABLE/.txt/_Imputed_by_Mean.txt}
+IMPUTED_THINNED_TABLE=${INPUT_THINNED_AF_TABLE/.txt/_Imputed_by_Mean.txt}
+
+#The first line creates a new column that contains the mean of all values. 
+#The second line replaces 'NA' values with the mean which is contained in the last column.
+#At the end of the second line, the column containing the mean values is removed. 
+awk -F "\t" ' OFS="\t" {sum = 0; j = 1; MEANpos = NF+1; for (i = 2; i <= NF; i++) if ($i=='NA') {j++} else (sum+=$i); sum /= (NF-j); $MEANpos=sum; print $0 }' ${INPUT_AF_TABLE} | \
+awk -F "\t" ' OFS="\t" {sum = 0; MEANpos=NF; VARpos=NF+1; for (i=2; i<=NF-1; i++) sum+=($1-$MEANpos)^2; $VARpos=sum; print $0 }' | \
+awk -F "\t" ' OFS="\t" {MEANpos= NF-1; VARpos=NF; for (i=2; i <= NF; i++) if ($i=="NA") {$i=$MEANpos}; if ($VARpos!=0) {print $0}} ' | \
+awk -F "\t" ' OFS="\t" {NF-=2}1' > ${IMPUTED_TABLE}
+
+#Repeat for the Thinned table
+awk -F "\t" ' OFS="\t" {sum = 0; j = 1; MEANpos = NF+1; for (i = 2; i <= NF; i++) if ($i=='NA') {j++} else (sum+=$i); sum /= (NF-j); $MEANpos=sum; print $0 }' ${INPUT_THINNED_AF_TABLE} | \
+awk -F "\t" ' OFS="\t" {sum = 0; MEANpos=NF; VARpos=NF+1; for (i=2; i<=NF-1; i++) sum+=($1-$MEANpos)^2; $VARpos=sum; print $0 }' | \
+awk -F "\t" ' OFS="\t" {MEANpos= NF-1; VARpos=NF; for (i=2; i <= NF; i++) if ($i=="NA") {$i=$MEANpos}; if ($VARpos!=0) {print $0}} ' | \
+awk -F "\t" ' OFS="\t" {NF-=2}1' > ${IMPUTED_THINNED_TABLE}
+
+###SECOND STEP###
+#The splitter-upper
+#Splits up the large, unthinned AFtable into 50 roughly equal-size tables.
+
+HEADER=$(head -n 1 ${IMPUTED_TABLE}) #Store the head line of the table in a string for later.
+tail -n +2 ${IMPUTED_TABLE} > body.txt #Create a file that contains the whole table EXCEPT for the header line.
+split -n l/50 --numeric-suffixes=01 --additional-suffix .txt body.txt ${IMPUTED_TABLE/.txt/_Chunk} #Split up the header-less table
+sed -i "1i ${HEADER}" ${IMPUTED_TABLE/.txt/_Chunk??.txt} #Insert the header line at the top of each split table
+rm body.txt #Remove the header-less table that we created.
+
+###THIRD STEP###
+#The R initiation-station
+#Start by creating a file that contains all the parameters for each job. Then use this file to instruct GNU parallel.
+
+realpath ${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt
+
+awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${IMPUTED_THINNED_TABLE}" \
+-v awk_environmental_data="${ENV_DATA}" -v awk_max_k="${MAX_K}" -v awk_populations="${POPULATIONS}" \
+' OFS=" " {print awk_working_directory, $0, awk_thinned_dataset, awk_environmental_data, awk_max_k, awk_populations, NR}' \
+LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt > LFMM_DeterminingK_Parameters_${POPULATIONS}.txt
+
+rm LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unneeded intermediate file.
+
+###THE GRANDE FINALE###
+#Actually launching the lfmm jobs
+
+parallel --verbose -j 50 'Rscript /data/genetics_tmp/acorn_poolseq_pipeline/LFMM_DeterminingK_Part1.R {}' :::: LFMM_DeterminingK_Parameters_${POPULATIONS}.txt
