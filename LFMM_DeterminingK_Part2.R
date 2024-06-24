@@ -44,7 +44,7 @@ for(i in 1:max.k) {
   results.df$pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE)
   
   #Distribution of p-values 
-   png(paste(dir.path, "/res/", populations, "/selectingK/Pvalue_distributions/PvalueDistribution_", populations, "_K", i, ".png", sep=""), units = "in", width=10, height=6)
+   png(paste(dir.path, "/res/", populations, "/selectingK/Pvalue_distributions/PvalueDistribution_", populations, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
     par(mfrow=c(1,2), mar=c(5, 5, 4, 1))
     hist(results.df$pvalues, col="red", main="P-value distribution")
     qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=.4)
