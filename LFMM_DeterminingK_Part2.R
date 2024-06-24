@@ -24,7 +24,7 @@ dir.create(paste(dir.path, "/res/", populations, "/selectingK/Pvalue_distributio
 for(i in 1:max.k) {
   merged.zscores<-read.csv(paste(dir.path, "/res/", populations, "/selectingK/K", i, "/LFMM_Zscores_", populations, "_K", i, "_Chunk_1.csv", sep=""), header = T, sep = ",")
   print(paste("K ", i,", Chunk 1", sep=""))
-  for(j in 2:30) {
+  for(j in 2:50) {
 #    if (j<10) {
 #      zscores.chunk<-read.csv(paste(dir.path, "/res/", populations, "/selectingK/K", i, "/LFMM_Zscores_", populations, "_K", i,"_Chunk_0", j, ".csv", sep="" ), header = T, sep = ",")
 #      print(paste("K ", i,", Chunk ", j, sep=""))  
@@ -44,7 +44,7 @@ for(i in 1:max.k) {
   results.df$pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE)
   
   #Distribution of p-values 
-   pdf(paste(dir.path, "/res/", populations, "/selectingK/Pvalue_distributions/PvalueDistribution_", populations, "_K", i, ".pdf", sep=""), width=10, height=6)
+   png(paste(dir.path, "/res/", populations, "/selectingK/Pvalue_distributions/PvalueDistribution_", populations, "_K", i, ".png", sep=""), units = "in", width=10, height=6)
     par(mfrow=c(1,2), mar=c(5, 5, 4, 1))
     hist(results.df$pvalues, col="red", main="P-value distribution")
     qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=.4)
