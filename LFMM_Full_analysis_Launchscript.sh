@@ -57,16 +57,16 @@ rm body.txt #Remove the header-less table that we created.
 #The R initiation-station
 #Start by creating a file that contains all the parameters for each job. Then use this file to instruct GNU parallel.
 
-realpath ${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt
+realpath ${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt
 
 awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${IMPUTED_THINNED_TABLE}" \
--v awk_environmental_data="${ENV_DATA}" -v awk_max_k="${MAX_K}" -v awk_populations="${POPULATIONS}" -v awk_environmental_factors=${ENV_VARIABLES}\
+-v awk_environmental_data="${ENV_DATA}" -v awk_max_k="${MAX_K}" -v awk_populations="${POPULATIONS}" -v awk_environmental_factors=${ENV_VARIABLES} \
 ' OFS=" " {print awk_working_directory, $0, awk_thinned_dataset, awk_environmental_data, awk_max_k, awk_populations, NR, awk_environmental_factors}' \
-LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt > LFMM_DeterminingK_Parameters_${POPULATIONS}.txt
+LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt > LFMM_Full_Analysis_Parameters_${POPULATIONS}.txt
 
-rm LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unneeded intermediate file.
+rm LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unneeded intermediate file.
 
 ###THE GRANDE FINALE###
 #Actually launching the lfmm jobs
 
-parallel --verbose -j 50 'Rscript /data/genetics_tmp/acorn_poolseq_pipeline/LFMM_Full_analysis_Part1.R {}' :::: LFMM_DeterminingK_Parameters_${POPULATIONS}.txt
+parallel --verbose -j 50 'Rscript /data/genetics_tmp/acorn_poolseq_pipeline/LFMM_Full_analysis_Part1.R {}' :::: LFMM_Full_Analysis_Parameters_${POPULATIONS}.txt
