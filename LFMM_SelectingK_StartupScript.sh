@@ -62,7 +62,7 @@ rm body.txt #Remove the header-less table that we created.
 
 realpath ${OUTPUT_DIR}/${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt
 
-awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${IMPUTED_THINNED_TABLE}" \
+awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${OUTPUT_DIR}/${IMPUTED_THINNED_TABLE}" \
 -v awk_environmental_data="${ENV_DATA}" -v awk_max_k="${MAX_K}" -v awk_populations="${POPULATIONS}" \
 ' OFS=" " {print awk_working_directory, $0, awk_thinned_dataset, awk_environmental_data, awk_max_k, awk_populations, NR}' \
 LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt > LFMM_DeterminingK_Parameters_${POPULATIONS}.txt
