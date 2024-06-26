@@ -51,7 +51,6 @@ print(env.variables)
 
 env <- env.data[c(env.variables)]
 rownames(env) <- env.data$Plot_ID
-print("Check1")
 
 #### Import the genetic dataset ####
 
@@ -68,14 +67,11 @@ env.reduced <- env[rownames(env) %in% rownames(gen),]
 env <- env.reduced
 identical(as.character(rownames(env)),as.character(rownames(gen)))#check NAs
 
-print("Check2")
-
 gen.matrix <- as.matrix(gen)
 colnames(gen.matrix) <- NULL
 rownames(gen.matrix) <- NULL
 dim(gen.matrix)
 
-print("Check3")
 #write.table(gen.matrix, (paste(dir.path, "/res/", populations,"/", "genetic_data_", populations, "_Chunk_", chunk, ".lfmm", sep = "")), row.names = F, col.names = F, quote=F)
 
 ####import the thinned genetic data ####
@@ -90,7 +86,6 @@ colnames(gen.thin.matrix) <- NULL
 rownames(gen.thin.matrix) <- NULL
 #write.table(gen.thin.matrix, (paste("./res/", populations, "/", "gen_thinned_matrix", populations, "_Chunk_", chunk, ".lfmm", sep = "")), row.names = F, col.names = F, quote=F)
 
-print("Check4")
 #prepare
 X <- as.matrix(env) #for testing
 Y <- gen.matrix #The SNPs we are analysing in this implementation of the script
@@ -112,13 +107,10 @@ nb.asso.q <- matrix(0,nrow=1, ncol=length(fdr.thres))
 rownames(nb.asso.q) <- "value"
 colnames(nb.asso.q) <- c("q0.05","q0.01","q0.001")
 
-print("Check5")
-
 nb.asso.k <- matrix(0, nrow=NCOL(X), ncol=as.integer(Ks))
 rownames(nb.asso.k) <- colnames(X)
 colnames(nb.asso.k) <- paste("K", 1:Ks, sep="")
 
-print("Check6")
 #### Fit an LFMM based on ridge estimates, i.e, compute B, U, V estimates ####
 for (j in 1:NCOL(X)) {
   for (i in 1:Ks) {
