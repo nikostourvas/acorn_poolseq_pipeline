@@ -71,12 +71,12 @@ rm LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unneeded inter
 echo ${ENV_VARIABLES} | tr -s ',' '\n' > LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt
 
 awk -F " " -v awk_working_directory="${PWD}" -v awk_populations="${POPULATIONS}" -v awk_max_k="${MAX_K}" \
-'OFS=" " {print awk_working_directory, awk_populations, awk_max_k, $0}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > LFMM_Full_Analysis_Part2_${POPULATIONS}.txt
+'OFS=" " {print awk_working_directory, awk_populations, awk_max_k, $0}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > LFMM_Full_Analysis_Part2_Parameters_${POPULATIONS}.txt
 
 rm LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt
 
 ###THE GRANDE FINALE###
 #Actually launching the first round of lfmm jobs
 
-parallel --verbose -j 50 'Rscript /data/genetics_tmp/acorn_poolseq_pipeline/LFMM_Full_analysis_Part1.R {}' :::: LFMM_Full_Analysis_Parameters_${POPULATIONS}.txt
+parallel --verbose -j 50 'Rscript /data/genetics_tmp/acorn_poolseq_pipeline/LFMM_Full_analysis_Part1.R {}' :::: LFMM_Full_Analysis_Part1_Parameters_${POPULATIONS}.txt
 
