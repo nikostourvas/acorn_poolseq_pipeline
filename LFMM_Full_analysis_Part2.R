@@ -10,7 +10,7 @@ library(scales)
 library(qvalue)
 rm(list = ls())
 
-args=commandArgs(trailingOnly = TRUE)
+args=scan(text=commandArgs(trailingOnly = TRUE),what="")
 dir.path <- args[1] #First string to receive is the output directory
 populations <- args[2] #Path to the thinned genomic dataset. Needs to be imputed first.
 max.k <- as.numeric(args[3]) #Maximum number of Ks.
@@ -59,7 +59,7 @@ for(i in 1:max.k) {
   #write.table(results.df, paste("LFMM_AllResults_env_", env.variable, "_K", i, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F) # save all information per SNP
 
   #Distribution of p-values 
-   png(paste("/PvalueDistribution_", populations, "_environment_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
+   png(paste(dir.path, "/res/", populations, "/environment_", env.variable, "/K", i, "/PvalueDistribution_", populations, "_environment_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
     par(mfrow=c(1,2), mar=c(5, 5, 4, 1))
     hist(results.df$pvalues, col="red", main="P-value distribution")
     qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=1)
@@ -73,7 +73,7 @@ for(i in 1:max.k) {
       v <- qv.lfmm2$qvalues
       w <- which(sort(v) <= q)
       
-      print(paste(Assessing candidates for K=", i, ", and fdr threshold ", q, sep=""))
+      print(paste("Assessing candidates for K=", i, ", and fdr threshold ", q, sep=""))
 
       candidate <- order(results.df$qvalues, decreasing=F)[w]
       png(paste("ManhattanPlot_env", env.variable, "_K", i, "_q", q, ".png", sep=""), units="px", width=2500, height=1500)
