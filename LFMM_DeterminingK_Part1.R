@@ -103,14 +103,6 @@ gif <- matrix(0, nrow=1, ncol=as.integer(Ks))
 rownames(gif) <- colnames(X)
 colnames(gif) <- paste("K", 1:Ks, sep="")
 
-nb.asso.q <- matrix(0,nrow=1, ncol=length(fdr.thres))
-rownames(nb.asso.q) <- "value"
-colnames(nb.asso.q) <- c("q0.05","q0.01","q0.001")
-
-nb.asso.k <- matrix(0, nrow=1, ncol=as.integer(Ks))
-rownames(nb.asso.k) <- colnames(X)
-colnames(nb.asso.k) <- paste("K", 1:Ks, sep="")
-
 #### Fit an LFMM based on ridge estimates, i.e, compute B, U, V estimates ####
 
 for (i in 1:Ks) {
