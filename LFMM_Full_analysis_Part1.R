@@ -7,11 +7,13 @@
 
 ####README####
 
-#This version of the script should be run first.
 #This script can be used to output raw z-scores from lfmm.
 #The script loops for several Ks; from 1 to the maximum K set by the user.
+#Additionally, for each K, it loops through all environmental factors the user specifies. 
 #The script can in principle take on large genomic datasets (Millions),
 #but for the sake of speed and RAM usage,it is best to limit it to chunks of 1M SNPs.
+#The model for structure is constructed using a thinned dataset, which has to be provided seperately.
+#This thinned dataset should be the same across all the chunks of genomic data, if run in parallel.
 
 
 #### Load packages ####
@@ -42,13 +44,14 @@ setwd(dir.path)
 getwd()
 
 #### Import the environmental dataset ####
+
 env.data <- read.table(paste(dat.env, sep=""), header=T, sep=",")
 
-
-#decide which variables to test
+#extract only the selected environmental variables from the full environmental dataset.
 env.variables<-scan(text=selected.env, what= "")
 print(env.variables)
 
+#Make the population names (Plot_ID) the row names of the environmental dataset.
 env <- env.data[c(env.variables)]
 rownames(env) <- env.data$Plot_ID
 
@@ -59,19 +62,22 @@ gen.data <- read.table(paste(dat.gen, sep=""), header=T, sep="\t", row.names = "
 #transpose dataframe
 gen <- as.data.frame(t(gen.data))
 
+#Store the names of all the SNPs in a vector.
 snp.info <- as.vector(colnames(gen))
 
-#reduce the env set to the gen set
-rownames(gen) <- gsub("X","",rownames(gen))
+#reduce the env set to the gen set. Only the populations that occur in both the environmental and genetic dataset remain. 
+rownames(gen) <- gsub("X","",rownames(gen)) #Accounts for a difference in the formating of the population names. 
 env.reduced <- env[rownames(env) %in% rownames(gen),] 
 env <- env.reduced
-identical(as.character(rownames(env)),as.character(rownames(gen)))#check NAs
+identical(as.character(rownames(env)),as.character(rownames(gen)))#check NAs.
 
+#Change from a dataframe to a matrix.
 gen.matrix <- as.matrix(gen)
 colnames(gen.matrix) <- NULL
 rownames(gen.matrix) <- NULL
 dim(gen.matrix)
 
+#OPTIONAL: At this stage, output an lfmm file for future use to avoid re-processing the data up to this point. Currently disabled to save disk space.
 #write.table(gen.matrix, (paste(dir.path, "/res/", populations,"/", "genetic_data_", populations, "_Chunk_", chunk, ".lfmm", sep = "")), row.names = F, col.names = F, quote=F)
 
 ####import the thinned genetic data ####
@@ -81,17 +87,21 @@ gen.data.thin <- read.table(paste(dat.gen.thin, sep=""), header = T, sep = "\t",
 gen.thin <- as.data.frame(t(gen.data.thin))
 snp.info.thin <- as.vector(colnames(gen.thin))
 
+#Store as matrix
 gen.thin.matrix <- as.matrix(gen.thin)
 colnames(gen.thin.matrix) <- NULL
 rownames(gen.thin.matrix) <- NULL
+
+#OPTIONAL: At this stage, output an lfmm file for future use to avoid re-processing the data up to this point. Currently disabled to save disk space.
 #write.table(gen.thin.matrix, (paste("./res/", populations, "/", "gen_thinned_matrix", populations, "_Chunk_", chunk, ".lfmm", sep = "")), row.names = F, col.names = F, quote=F)
 
-#prepare
-X <- as.matrix(env) #for testing
+#Rename datasets for easier shorthand. 
+X <- as.matrix(env) #The environmental data
 Y <- gen.matrix #The SNPs we are analysing in this implementation of the script
 Z <- gen.thin.matrix #The thinned, genome-wide SNPs that we use to account for structure.
-Ks <- max.k #Kmax
+Ks <- max.k #The maximum value of K we want the script to loop to (loop goes from 1 to max.k)
 
+#Prepare the necessary directories. Is ignored if they already exist.
 dir.create(paste(dir.path, "/res/", populations, sep=""), recursive=F)
 for (i in 1:NCOL(X)) {
   dir.create(paste(dir.path, "/res/", populations, "/environment_", env.variables[i], sep=""), recursive=F)
