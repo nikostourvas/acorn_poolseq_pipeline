@@ -2,8 +2,7 @@
 
 #Lars Littmann
 #22.06.2024
-#Take an AF table, Thinned AF table, and parameters for an initial lfmm run
-#that can be used to determine the appropriate K for a main run.
+#Take an AF table, Thinned AF table, and parameters for a full LFMM run that loops through multiple Ks and environmental factors. 
 #FIRST Impute the AF table and the thinned AF table
 #SECOND Split up the AF table to enable parallel processing
 #THIRD Launch parallel lfmm jobs with all the specified parameters
