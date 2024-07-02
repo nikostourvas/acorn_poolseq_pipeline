@@ -14,7 +14,6 @@
 #The script can in principle take on large genomic datasets (Millions),
 #but for the sake of speed and RAM usage,it is best to limit it to chunks of 1M SNPs.
 
-
 #### Load packages ####
 #install.packages("BiocManager")
 #BiocManager::install("LEA")
@@ -36,6 +35,7 @@ dat.env <- args[4] #Path to the environmental data
 max.k <- args [5] #The maximum number of K that the script should analyse.
 populations <- args [6] #The code for the subset (e.g. 1GA)
 chunk <- args [7] #The chunk (parallelisation) that is currently analysed.
+selected.env <- gsub(",", " ", args[8]) #A list of the environmental factors that should be analysed.
 
 #### Set the working directory ####
 setwd(dir.path)
@@ -44,19 +44,20 @@ getwd()
 #### Import the environmental dataset ####
 env.data <- read.table(paste(dat.env, sep=""), header=T, sep=",")
 
+#extract only the selected environmental variables from the full environmental dataset.
+env.variables<-scan(text=selected.env, what= "")
+print(env.variables)
 
-#decide which variables to test
-env <- env.data[c('bio1')]
-rownames(env) <- env.data$Plot_ID
+#Make the population names (Plot_ID) the row names of the environmental dataset.
+env <- env.data[c(env.variables)]
 
 #### Import the genetic dataset ####
-
 gen.data <- read.table(paste(dat.gen, sep=""), header=T, sep="\t", row.names = "chrom_pos")
 
 #transpose dataframe
 gen <- as.data.frame(t(gen.data))
 
-snp.info <- as.vector(colnames(gen))
+snp.info <- as.vector(colnames(gen)) #Store the name of each of the SNPs as a vector.
 
 #reduce the env set to the gen set
 rownames(gen) <- gsub("X","",rownames(gen))
@@ -82,47 +83,48 @@ colnames(gen.thin.matrix) <- NULL
 rownames(gen.thin.matrix) <- NULL
 #write.table(gen.thin.matrix, (paste("./res/", populations, "/", "gen_thinned_matrix", populations, "_Chunk_", chunk, ".lfmm", sep = "")), row.names = F, col.names = F, quote=F)
 
-#prepare
+#prepare a bunch of variable names and directories.
 X <- as.matrix(env) #for testing
 Y <- gen.matrix #The SNPs we are analysing in this implementation of the script
 Z <- gen.thin.matrix #The thinned, genome-wide SNPs that we use to account for structure.
 Ks <- max.k #Kmax
 
+#Create directories for this analysis.
 dir.create(paste(dir.path, "/res/", populations, sep=""), recursive=F)
 dir.create(paste(dir.path, "/res/", populations, "/selectingK", sep=""), recursive=F)
+
+#Create directories for each environmental factor, and directories for each K within those environmental variable directories.
 for (i in 1:NCOL(X)) {
   setwd(paste(dir.path, "/res/", populations, "/selectingK", sep=""))
+  dir.create(paste("/EnvironmentalFactor_" env.variables[i], sep=""))
   for (j in 1:Ks) {
-    dir.create(paste("K", j, "/", sep=""), recursive=F)
+    setwd((paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variables[i], "/", sep="")))
+    dir.create(paste("/K", j, "/", sep=""), recursive=F)
   }
-} # delete envX folders before running the script
-fdr.thres <- c(0.05,0.01,0.001)
-fdr.output <- 0.05
-
-gif <- matrix(0, nrow=1, ncol=as.integer(Ks))
-rownames(gif) <- colnames(X)
-colnames(gif) <- paste("K", 1:Ks, sep="")
+} 
 
 #### Fit an LFMM based on ridge estimates, i.e, compute B, U, V estimates ####
 
-for (i in 1:Ks) {
+for (i in 1:NCOL(env)) {
+  for (j in 1:Ks){
 
-  print(paste("Generating Z-scores for K = ", i, sep=""))
+  print(paste("Generating Z-scores for environmental factor ", env.variables[i], " and K= ", j, sep=""))
 
-  setwd(paste(dir.path, "/res/", populations, "/selectingK", "/K", i, "/", sep=""))
-  res <- matrix(nrow=NCOL(Y), ncol=2); rownames(res) <- colnames(Y); colnames(res) <- c("SNPid","zscore")
+  setwd(paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variables[i] "/K", j, sep="")) #Set the working directory for this environmental variable and K.
+  
+  res <- matrix(nrow=NCOL(Y), ncol=2); rownames(res) <- colnames(Y); colnames(res) <- c("SNPid","zscore") #Create a matrix to store lfmm results.
+
+  #Make sure the model starts fresh.
   mod.lfmm2 <- NULL; stats.lfmm2 <- NULL
     
   #Estimate latent factors and environmental effects using the regularised least-squares problem "ridge estimates"
-
-  mod.lfmm2 <- lfmm2(input=Z, env=X[,1], K=i, lambda=1e-5, effect.sizes=T)
+  mod.lfmm2 <- lfmm2(input=Z, env=X[,i], K=j, lambda=1e-5, effect.sizes=T)
     
   # Statistical tests on genotypic data with imputed missing dat
-  stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,1], full=F, genomic.control=F) 
-  res[,"SNPid"] <- snp.info #"SNPid" #res[,"SNPid"] <- snp.info$SNPid
+  stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=F) 
+  res[,"SNPid"] <- snp.info 
   res[,"zscore"] <- stats.lfmm2$zscores
 
-  # res[,"qvalue"] <- p.adjust(as.vector(stats.lfmm2$pvalues), method="fdr", n=length(stats.lfmm2$pvalues))
-  write.table(res, paste("LFMM_Zscores_", populations, "_K", i, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F) # save all information per SNP
+  write.table(res, paste("LFMM_Zscores_", populations, "_EnvironmentalFactor_", env.variables[i], "_K", j, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F) # save all information per SNP
   }
-
+}
