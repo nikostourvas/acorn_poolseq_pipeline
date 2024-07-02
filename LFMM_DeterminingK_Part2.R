@@ -14,22 +14,23 @@ args=commandArgs(trailingOnly = TRUE)
 dir.path <- args[1] #First string to receive is the output directory
 populations <- args[2] #Path to the thinned genomic dataset. Needs to be imputed first.
 max.k <- as.numeric(args[3]) #Maximum number of Ks.
+env.variable <- args[4]
 
 gif.matrix <- matrix(nrow = 1, ncol = max.k)
 rownames(gif.matrix) <- c("gif")
 colnames(gif.matrix) <- c(1:max.k)
 
-dir.create(paste(dir.path, "/res/", populations, "/selectingK/Pvalue_distributions/", sep=""), recursive = F)
+setwd(paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variable, "/", sep=""))
 
 for(i in 1:max.k) {
-  merged.zscores<-read.csv(paste(dir.path, "/res/", populations, "/selectingK/K", i, "/LFMM_Zscores_", populations, "_K", i, "_Chunk_1.csv", sep=""), header = T, sep = ",")
+  merged.zscores<-read.csv(paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variable, "/K", i, "/LFMM_Zscores_", populations, "_EnvironmentalFactor_", env.variable, "_K", i, "_Chunk_1.csv", sep=""), header = T, sep = ",")
   print(paste("K ", i,", Chunk 1", sep=""))
   for(j in 2:50) {
 #    if (j<10) {
 #      zscores.chunk<-read.csv(paste(dir.path, "/res/", populations, "/selectingK/K", i, "/LFMM_Zscores_", populations, "_K", i,"_Chunk_0", j, ".csv", sep="" ), header = T, sep = ",")
 #      print(paste("K ", i,", Chunk ", j, sep=""))  
 #  } else {
-      zscores.chunk<-read.csv(paste(dir.path, "/res/", populations, "/selectingK/K", i, "/LFMM_Zscores_", populations, "_K", i,"_Chunk_", j, ".csv", sep=""), sep=",", header=T)
+      zscores.chunk<-read.csv(paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variable, "/K", i, "/LFMM_Zscores_", populations, "_EnvironmentalFactor_", env.variable, "_K", i, "_Chunk_", j, ".csv", sep=""), sep=",", header=T)
       print(paste("K ", i,", Chunk ", j, sep=""))
     #}
     merged.zscores<-rbind(merged.zscores, zscores.chunk)
@@ -44,7 +45,7 @@ for(i in 1:max.k) {
   results.df$pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE)
   
   #Distribution of p-values 
-   png(paste(dir.path, "/res/", populations, "/selectingK/Pvalue_distributions/PvalueDistribution_", populations, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
+   png(paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variable, "/PvalueDistribution_", populations, "EnvironmentalFactor_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
     par(mfrow=c(1,2), mar=c(5, 5, 4, 1))
     hist(results.df$pvalues, col="red", main="P-value distribution")
     qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=.4)
@@ -52,6 +53,5 @@ for(i in 1:max.k) {
     dev.off()
   
 }
-
-write.table(gif.matrix, file = paste(dir.path, "/res/", populations, "/selectingK/", populations, "_GIFs.txt", sep = ""), sep = ",", quote = F, row.names = F, col.names = T)
+write.table(gif.matrix, file = paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variable, "/EnvironmentalFactor_", env.variable, "_GIFs.txt", sep = ""), sep = ",", quote = F, row.names = F, col.names = T)
 
