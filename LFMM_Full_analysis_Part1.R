@@ -34,7 +34,7 @@ dir.path <- args[1] #First string to receive is the output directory
 dat.gen <- args[2] #Path to genomic data under consideration. Needs to be imputed first.
 dat.gen.thin <- args[3] #Path to the thinned genomic dataset. Needs to be imputed first.
 dat.env <- args[4] #Path to the environmental data 
-max.k <- args [5] #The maximum number of K that the script should analyse.
+set.k <- args [5] #The K that the model should assume. NEEDS TO BE DETERMINED WITH ANOTHER SCRIPT.
 populations <- args [6] #The code for the subset (e.g. 1GA)
 chunk <- args [7] #The chunk (parallelisation) that is currently analysed.
 selected.env <- gsub(",", " ", args[8]) #A list of the environmental factors that should be analysed.
@@ -99,48 +99,32 @@ rownames(gen.thin.matrix) <- NULL
 X <- as.matrix(env) #The environmental data
 Y <- gen.matrix #The SNPs we are analysing in this implementation of the script
 Z <- gen.thin.matrix #The thinned, genome-wide SNPs that we use to account for structure.
-Ks <- max.k #The maximum value of K we want the script to loop to (loop goes from 1 to max.k)
+Ks <- set.k #The maximum value of K we want the script to loop to (loop goes from 1 to max.k)
 
-#Prepare the necessary directories. Is ignored if they already exist.
+#Prepare the necessary directories. These commands are ignored if the directories already exist.
 dir.create(paste(dir.path, "/res/", populations, sep=""), recursive=F)
 for (i in 1:NCOL(X)) {
-  dir.create(paste(dir.path, "/res/", populations, "/environment_", env.variables[i], sep=""), recursive=F)
-  setwd(paste(dir.path, "/res/", populations, "/environment_", env.variables[i], sep=""))
-  for (j in 1:Ks) {
-    dir.create(paste("K", j, "/", sep=""), recursive=F)
-  }
-} # delete envX folders before running the script
-fdr.thres <- c(0.05,0.01,0.001)
-fdr.output <- 0.05
-
-nb.asso.q <- matrix(0,nrow=1, ncol=length(fdr.thres))
-rownames(nb.asso.q) <- "value"
-colnames(nb.asso.q) <- c("q0.05","q0.01","q0.001")
-
-nb.asso.k <- matrix(0, nrow=NCOL(X), ncol=as.integer(Ks))
-rownames(nb.asso.k) <- colnames(X)
-colnames(nb.asso.k) <- paste("K", 1:Ks, sep="")
+  dir.create(paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/environment_", env.variables[i], sep=""), recursive=F)
+} 
 
 #### Fit an LFMM based on ridge estimates, i.e, compute B, U, V estimates ####
-for (j in 1:NCOL(X)) {
-  for (i in 1:Ks) {
+for (i in 1:NCOL(X)) {
+    
+  print(paste("Generating Z-scores for environmental factor ", env.variables[i], "and K = ", Ks, sep=""))
 
-  print(paste("Generating Z-scores for environmental factor ", env.variables[j], "and K = ", i, sep=""))
-
-  setwd(paste(dir.path, "/res/", populations, "/environment_", env.variables[j], "/K", i, "/", sep=""))
+  setwd(paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/environment_", env.variables[i], "/", sep=""))
   res <- matrix(nrow=NCOL(Y), ncol=2); rownames(res) <- colnames(Y); colnames(res) <- c("SNPid","zscore")
   mod.lfmm2 <- NULL; stats.lfmm2 <- NULL
     
   #Estimate latent factors and environmental effects using the regularised least-squares problem "ridge estimates"
 
-  mod.lfmm2 <- lfmm2(input=Z, env=X[,j], K=i, lambda=1e-5, effect.sizes=T)
+  mod.lfmm2 <- lfmm2(input=Z, env=X[,j], K=Ks, lambda=1e-5, effect.sizes=T)
     
   # Statistical tests on genotypic data with imputed missing dat
   stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,j], full=F, genomic.control=F) 
   res[,"SNPid"] <- snp.info #"SNPid" #res[,"SNPid"] <- snp.info$SNPid
   res[,"zscore"] <- stats.lfmm2$zscores
 
-  # res[,"qvalue"] <- p.adjust(as.vector(stats.lfmm2$pvalues), method="fdr", n=length(stats.lfmm2$pvalues))
-  write.table(res, paste("LFMM_Zscores_", populations, "environment_", env.variables[j], "_K", i, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F) # save all information per SNP
-  }
+  # Save a simple table that stores the raw z-score found for every SNP.
+  write.table(res, paste("LFMM_Zscores_", populations, "environment_", env.variables[i], "_K", Ks, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
 }
