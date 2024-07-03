@@ -26,8 +26,12 @@ POPULATIONS=$4 #The 3-character code that specifies which (sub)set of ACORN popu
 ENV_VARIABLES=$5 #A list seperated by commas WITHOUT SPACES of the names of all the environmental factors you wish to include in the analysis.
 
 #Create a good filename for the imputed table outputs. Will be stored as intermediate and can be used by other analyses that require imputed datasets.
-IMPUTED_TABLE=${INPUT_AF_TABLE/.txt/_Imputed_by_Mean.txt}
-IMPUTED_THINNED_TABLE=${INPUT_THINNED_AF_TABLE/.txt/_Imputed_by_Mean.txt}
+IMPUTED_TABLE=$(basename ${INPUT_AF_TABLE/.txt/_Imputed_by_Mean.txt})
+IMPUTED_THINNED_TABLE=$(basename ${INPUT_THINNED_AF_TABLE/.txt/_Imputed_by_Mean.txt})
+
+#Create an output directory for this particular dataset's intermediate files
+OUTPUT_DIR=$(dirname ${INPUT_AF_TABLE})/${POPULATIONS}_IntermediateFiles_LFMM
+mkdir -p ${OUTPUT_DIR}
 
 #The first line creates a new column that contains the mean of all values. 
 #The second line replaces 'NA' values with the mean which is contained in the last column.
@@ -37,13 +41,13 @@ IMPUTED_THINNED_TABLE=${INPUT_THINNED_AF_TABLE/.txt/_Imputed_by_Mean.txt}
 awk -F "\t" ' OFS="\t" {sum = 0; j = 1; MEANpos = NF+1; for (i = 2; i <= NF; i++) if ($i=='NA') {j++} else (sum+=$i); sum /= (NF-j); $MEANpos=sum; print $0 }' ${INPUT_AF_TABLE} | \
 awk -F "\t" ' OFS="\t" {sum = 0; MEANpos=NF; VARpos=NF+1; for (i=2; i<=NF-1; i++) sum+=($1-$MEANpos)^2; $VARpos=sum; print $0 }' | \
 awk -F "\t" ' OFS="\t" {MEANpos= NF-1; VARpos=NF; for (i=2; i <= NF; i++) if ($i=="NA") {$i=$MEANpos}; if ($VARpos!=0) {print $0}} ' | \
-awk -F "\t" ' OFS="\t" {NF-=2}1' > ${IMPUTED_TABLE}
+awk -F "\t" ' OFS="\t" {NF-=2}1' > ${OUTPUT_DIR}/${IMPUTED_TABLE}
 
 #Repeat for the Thinned table
 awk -F "\t" ' OFS="\t" {sum = 0; j = 1; MEANpos = NF+1; for (i = 2; i <= NF; i++) if ($i=='NA') {j++} else (sum+=$i); sum /= (NF-j); $MEANpos=sum; print $0 }' ${INPUT_THINNED_AF_TABLE} | \
 awk -F "\t" ' OFS="\t" {sum = 0; MEANpos=NF; VARpos=NF+1; for (i=2; i<=NF-1; i++) sum+=($1-$MEANpos)^2; $VARpos=sum; print $0 }' | \
 awk -F "\t" ' OFS="\t" {MEANpos= NF-1; VARpos=NF; for (i=2; i <= NF; i++) if ($i=="NA") {$i=$MEANpos}; if ($VARpos!=0) {print $0}} ' | \
-awk -F "\t" ' OFS="\t" {NF-=2}1' > ${IMPUTED_THINNED_TABLE}
+awk -F "\t" ' OFS="\t" {NF-=2}1' > ${OUTPUT_DIR}/${IMPUTED_THINNED_TABLE}
 
 ###SECOND STEP###
 #The splitter-upper
