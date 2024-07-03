@@ -35,7 +35,8 @@ dat.env <- args[4] #Path to the environmental data
 max.k <- args [5] #The maximum number of K that the script should analyse.
 populations <- args [6] #The code for the subset (e.g. 1GA)
 chunk <- args [7] #The chunk (parallelisation) that is currently analysed.
-selected.env <- gsub(",", " ", args[8]) #A list of the environmental factors that should be analysed.
+selected.env <- gsub(",", " ", args[8]) #A list of the environmental factors that should be analysed. Names seperated by commas WITHOUT SPACES.
+                                        #Here the commas are immediately replaced by spaces to make the environmental factors 'legible' as seperate entities.
 
 #### Set the working directory ####
 setwd(dir.path)
@@ -45,7 +46,7 @@ getwd()
 env.data <- read.table(paste(dat.env, sep=""), header=T, sep=",")
 
 #extract only the selected environmental variables from the full environmental dataset.
-env.variables<-scan(text=selected.env, what= "")
+env.variables<-scan(text=selected.env, what= "") #Places the environmental factors in an arrray rather than a continuous string.
 print(env.variables)
 
 #Make the population names (Plot_ID) the row names of the environmental dataset.
