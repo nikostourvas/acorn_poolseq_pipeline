@@ -21,7 +21,7 @@ INPUT_THINNED_AF_TABLE=${INPUT_AF_TABLE/AlleleFrequencyTable.txt/Thinned_500bp_A
                                                                                                           #No need to perform any imputation etc. beforehand. Needs to be placed in ./dat
 
 ENV_DATA=$2 #A csv that contains all the environmental data (in columns) for each of the populations (in rows). Population names need to correspond with the genetic data.
-MAX_K=$3 #The maximum K that you wish the script to analyse. The script will run in loops from 1-MAX_K
+SET_K=$3 #The K that you wish the script to analyse. The script will only run for one instance of K.
 POPULATIONS=$4 #The 3-character code that specifies which (sub)set of ACORN populations is used.
 ENV_VARIABLES=$5 #A list seperated by commas WITHOUT SPACES of the names of all the environmental factors you wish to include in the analysis.
 
@@ -63,8 +63,8 @@ realpath ${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_Full_Analysis_${POPULATIONS}_
 
 #The following awk command adds all the other parameters in the order that the next R-script expects. Separated by a space (except for the environmental variables, which are given as a comma-seperated list).
 awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${IMPUTED_THINNED_TABLE}" \
--v awk_environmental_data="${ENV_DATA}" -v awk_max_k="${MAX_K}" -v awk_populations="${POPULATIONS}" -v awk_environmental_factors=${ENV_VARIABLES} \
-' OFS=" " {print awk_working_directory, $0, awk_thinned_dataset, awk_environmental_data, awk_max_k, awk_populations, NR, awk_environmental_factors}' \
+-v awk_environmental_data="${ENV_DATA}" -v awk_set_k="${SET_K}" -v awk_populations="${POPULATIONS}" -v awk_environmental_factors=${ENV_VARIABLES} \
+' OFS=" " {print awk_working_directory, $0, awk_thinned_dataset, awk_environmental_data, awk_set_k, awk_populations, NR, awk_environmental_factors}' \
 LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt > LFMM_Full_Analysis_Part1_Parameters_${POPULATIONS}.txt
 
 rm LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unneeded intermediate file.
@@ -72,11 +72,11 @@ rm LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unneeded inter
 ###BONUS STEP###
 #Create a file that can be used to launch the next Rscript as well. The user can use this file to launch the second R-script with a gnu parallel command.
 
-echo ${ENV_VARIABLES} | tr -s ',' '\n' > LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt #This time, use the list of environmental variables as a scaffold for the file
+echo ${ENV_VARIABLES} | tr -s ',' '\n' > LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt #This time, use the list of environmental variables as a scaffold for the file. The comma-separated variable names are properly seperated. 
 
 #The following awk command adds all the other parameters in the order that the next R-script expects. Separated by a space.
-awk -F " " -v awk_working_directory="${PWD}" -v awk_populations="${POPULATIONS}" -v awk_max_k="${MAX_K}" \
-'OFS=" " {print awk_working_directory, awk_populations, awk_max_k, $0}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > LFMM_Full_Analysis_Part2_Parameters_${POPULATIONS}.txt
+awk -F " " -v awk_working_directory="${PWD}" -v awk_populations="${POPULATIONS}" -v awk_set_k="${SET_K}" \
+'OFS=" " {print awk_working_directory, awk_populations, awk_set_k, $0}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > LFMM_Full_Analysis_Part2_Parameters_${POPULATIONS}.txt
 
 rm LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt
 
