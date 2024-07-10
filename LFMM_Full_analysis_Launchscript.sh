@@ -69,7 +69,7 @@ realpath ${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_Full_Analysis_${POPULATIONS}_
 awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${IMPUTED_THINNED_TABLE}" \
 -v awk_environmental_data="${ENV_DATA}" -v awk_set_k="${SET_K}" -v awk_populations="${POPULATIONS}" -v awk_environmental_factors=${ENV_VARIABLES} \
 ' OFS=" " {print awk_working_directory, $0, awk_thinned_dataset, awk_environmental_data, awk_set_k, awk_populations, NR, awk_environmental_factors}' \
-LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt > LFMM_Full_Analysis_Part1_Parameters_${POPULATIONS}.txt
+LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_Full_Analysis_Part1_Parameters_${POPULATIONS}.txt
 
 rm LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unneeded intermediate file.
 
@@ -80,12 +80,12 @@ echo ${ENV_VARIABLES} | tr -s ',' '\n' > LFMM_Full_Analysis_Part2_${POPULATIONS}
 
 #The following awk command adds all the other parameters in the order that the next R-script expects. Separated by a space.
 awk -F " " -v awk_working_directory="${PWD}" -v awk_populations="${POPULATIONS}" -v awk_set_k="${SET_K}" \
-'OFS=" " {print awk_working_directory, awk_populations, awk_set_k, $0}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > LFMM_Full_Analysis_Part2_Parameters_${POPULATIONS}.txt
+'OFS=" " {print awk_working_directory, awk_populations, awk_set_k, $0}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_Full_Analysis_Part2_Parameters_${POPULATIONS}.txt
 
 rm LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt
 
 ###THE GRANDE FINALE###
 #Actually launching the first round of lfmm jobs
 
-parallel --verbose -j 50 'Rscript /data/genetics_tmp/acorn_poolseq_pipeline/LFMM_Full_analysis_Part1.R {}' :::: LFMM_Full_Analysis_Part1_Parameters_${POPULATIONS}.txt
+parallel --verbose -j 50 'Rscript /data/genetics_tmp/acorn_poolseq_pipeline/LFMM_Full_analysis_Part1.R {}' :::: ./par/LFMM_Full_Analysis_Part1_Parameters_${POPULATIONS}.txt
 
