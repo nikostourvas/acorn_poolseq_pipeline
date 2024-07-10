@@ -97,7 +97,7 @@ dir.create(paste(dir.path, "/res/", populations, "/selectingK", sep=""), recursi
 #Create directories for each environmental factor, and directories for each K within those environmental variable directories.
 for (i in 1:NCOL(X)) {
   setwd(paste(dir.path, "/res/", populations, "/selectingK", sep=""))
-  dir.create(paste("/EnvironmentalFactor_", env.variables[i], sep=""))
+  dir.create(paste("/EnvironmentalFactor_", env.variables[i], sep=""), recursive=F)
   for (j in 1:Ks) {
     setwd((paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variables[i], "/", sep="")))
     dir.create(paste("/K", j, "/", sep=""), recursive=F)
