@@ -62,6 +62,7 @@ snp.info <- as.vector(colnames(gen)) #Store the name of each of the SNPs as a ve
 
 #reduce the env set to the gen set
 print(rownames(gen))
+print(rownames(env))
 rownames(gen) <- gsub("X","",rownames(gen))
 env.reduced <- env[rownames(env) %in% rownames(gen),] 
 env <- env.reduced
