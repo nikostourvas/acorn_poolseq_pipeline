@@ -50,10 +50,10 @@ env.variables<-scan(text=selected.env, what= "") #Places the environmental facto
 print(env.variables)
 
 #Make the population names (Plot_ID) the row names of the environmental dataset.
-env <- env.data[c(env.variables)]
-env <- as.matrix(env)
-rownames(env) <- env[,Plot_ID.x]
-colnames(env) <- env.variables
+env.subset <- env.data[c(env.variables)]
+env.subset <- as.matrix(env.subset)
+rownames(env.subset) <- env.data$Plot_ID.x
+colnames <- env.variables
 
 #### Import the genetic dataset ####
 gen.data <- read.table(paste(dat.gen, sep=""), header=T, sep="\t", row.names = "chrom_pos")
