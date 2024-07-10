@@ -106,7 +106,7 @@ for (i in 1:NCOL(X)) {
 
 #### Fit an LFMM based on ridge estimates, i.e, compute B, U, V estimates ####
 
-for (i in 1:NCOL(env)) {
+for (i in 1:NCOL(X)) {
   for (j in 1:Ks){
 
   print(paste("Generating Z-scores for environmental factor ", env.variables[i], " and K= ", j, sep=""))
