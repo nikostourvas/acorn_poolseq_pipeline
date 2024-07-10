@@ -111,7 +111,7 @@ for (i in 1:NCOL(env)) {
 
   print(paste("Generating Z-scores for environmental factor ", env.variables[i], " and K= ", j, sep=""))
 
-  setwd(paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variables[i] "/K", j, sep="")) #Set the working directory for this environmental variable and K.
+  setwd(paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variables[i], "/K", j, sep="")) #Set the working directory for this environmental variable and K.
   
   res <- matrix(nrow=NCOL(Y), ncol=2); rownames(res) <- colnames(Y); colnames(res) <- c("SNPid","zscore") #Create a matrix to store lfmm results.
 
