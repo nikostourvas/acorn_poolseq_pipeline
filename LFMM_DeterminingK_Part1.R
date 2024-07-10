@@ -67,6 +67,7 @@ env.reduced <- env[rownames(env) %in% rownames(gen),]
 env <- env.reduced
 identical(as.character(rownames(env)),as.character(rownames(gen)))#check NAs
 head(env)
+dim(env)
 
 gen.matrix <- as.matrix(gen)
 colnames(gen.matrix) <- NULL
