@@ -51,6 +51,7 @@ print(env.variables)
 
 #Make the population names (Plot_ID) the row names of the environmental dataset.
 env <- env.data[c(env.variables)]
+rownames(env) <- env[Plot_ID.x]
 
 #### Import the genetic dataset ####
 gen.data <- read.table(paste(dat.gen, sep=""), header=T, sep="\t", row.names = "chrom_pos")
