@@ -43,7 +43,7 @@ setwd(dir.path)
 getwd()
 
 #### Import the environmental dataset ####
-env.data <- read.table(paste(dat.env, sep=""), header=T, sep=";")
+env.data <- read.table(paste(dat.env, sep=""), header=T, sep=",")
 
 #extract only the selected environmental variables from the full environmental dataset.
 env.variables<-scan(text=selected.env, what= "") #Places the environmental factors in an arrray rather than a continuous string.
