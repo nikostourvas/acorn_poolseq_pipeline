@@ -80,7 +80,7 @@ rm LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unne
 echo ${ENV_VARIABLES} | tr -s ',' '\n' > LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt #This time, use the list of environmental variables as a scaffold for the file. The comma-separated variable names are properly seperated. 
 
 #The following awk command adds all the other parameters in the order that the next R-script expects. Separated by a space.
-awk -F " " -v awk_working_directory="${PWD}" -v awk_populations="${POPULATIONS}" -v awk_set_k="${SET_K}" \
+awk -F " " -v awk_working_directory="${PWD}" -v awk_populations="${POPULATIONS}" -v awk_set_k="${MAX_K}" \
 'OFS=" " {print awk_working_directory, awk_populations, awk_set_k, $0}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_Full_Analysis_Part2_Parameters_${POPULATIONS}.txt
 
 rm LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt
