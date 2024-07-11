@@ -77,13 +77,13 @@ rm LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unne
 ###BONUS STEP###
 #Create a file that can be used to launch the next Rscript as well. The user can use this file to launch the second R-script with a gnu parallel command.
 
-echo ${ENV_VARIABLES} | tr -s ',' '\n' > LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt #This time, use the list of environmental variables as a scaffold for the file. The comma-separated variable names are properly seperated. 
+echo ${ENV_VARIABLES} | tr -s ',' '\n' > LFMM_DeterminingK_Parameters_Part2_${POPULATIONS}_INTERMEDIATE.txt #This time, use the list of environmental variables as a scaffold for the file. The comma-separated variable names are properly seperated. 
 
 #The following awk command adds all the other parameters in the order that the next R-script expects. Separated by a space.
 awk -F " " -v awk_working_directory="${PWD}" -v awk_populations="${POPULATIONS}" -v awk_set_k="${MAX_K}" \
-'OFS=" " {print awk_working_directory, awk_populations, awk_set_k, $0}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_Full_Analysis_Part2_Parameters_${POPULATIONS}.txt
+'OFS=" " {print awk_working_directory, awk_populations, awk_set_k, $0}' LFMM_DeterminingK_Parameters_Part2_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_DeterminingK_Part2_Parameters_${POPULATIONS}.txt
 
-rm LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt
+rm LFMM_DeterminingK_Parameters_Part2_${POPULATIONS}_INTERMEDIATE.txt
 
 ###THE GRANDE FINALE###
 #Actually launching the lfmm jobs
