@@ -87,5 +87,5 @@ rm LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt
 ###THE GRANDE FINALE###
 #Actually launching the first round of lfmm jobs
 
-parallel --verbose -j 50 'Rscript /home/geneticsSchare/acorn_poolseq_pipeline/LFMM_Full_analysis_Part1.R {}' :::: ./par/LFMM_Full_Analysis_Part1_Parameters_${POPULATIONS}.txt
+parallel --verbose -j 50 'Rscript /home/geneticsShare/acorn_poolseq_pipeline/LFMM_Full_analysis_Part1.R {}' :::: ./par/LFMM_Full_Analysis_Part1_Parameters_${POPULATIONS}.txt
 
