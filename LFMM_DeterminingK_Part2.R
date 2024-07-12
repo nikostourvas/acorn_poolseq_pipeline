@@ -10,7 +10,7 @@ library(scales)
 library(qvalue)
 rm(list = ls())
 
-args=commandArgs(trailingOnly = TRUE)
+args=scan(text=commandArgs(trailingOnly = TRUE),what="")
 dir.path <- args[1] #First string to receive is the output directory
 populations <- args[2] #Path to the thinned genomic dataset. Needs to be imputed first.
 max.k <- as.numeric(args[3]) #Maximum number of Ks.
