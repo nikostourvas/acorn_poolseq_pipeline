@@ -8,13 +8,12 @@
 ####README####
 
 #This script can be used to output raw z-scores from lfmm.
-#The script loops for several Ks; from 1 to the maximum K set by the user.
-#Additionally, for each K, it loops through all environmental factors the user specifies. 
+#The script needs to know K beforehand. Another set of scripts is used to determine which value for K is most appropriate.
+#The script loops through all environmental factors the user specifies. 
 #The script can in principle take on large genomic datasets (Millions),
 #but for the sake of speed and RAM usage,it is best to limit it to chunks of 1M SNPs.
 #The model for structure is constructed using a thinned dataset, which has to be provided seperately.
 #This thinned dataset should be the same across all the chunks of genomic data, if run in parallel.
-
 
 #### Load packages ####
 #install.packages("BiocManager")
