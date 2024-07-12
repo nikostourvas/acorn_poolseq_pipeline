@@ -62,13 +62,13 @@ for(i in 1:max.k) { #Loop for the number of Ks we wish to evaluate.
   results.df$pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE) #Calculate P-values and add them to the final results dataframe. 
   
   #Plot the distribution of p-values for this particular K and environmental factor.
-   png(paste(subdir.path, "PvalueDistribution_", populations, "EnvironmentalFactor_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
+   png(paste(subdir.path, "PvalueDistribution_", populations, "_EnvironmentalFactor_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
     par(mfrow=c(1,2), mar=c(5, 5, 4, 1))
     hist(results.df$pvalues, col="red", main="P-value distribution")
-    qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=.4)
+    qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=2)
     abline(coef=c(0,1))
     dev.off()
   
 }
-write.table(gif.matrix, file = paste(subdir.path, "/EnvironmentalFactor_", env.variable, "_GIFs.txt", sep = ""), sep = ",", quote = F, row.names = F, col.names = T) #Output the GIFs in a seperate file for each environmental variable. 
+write.table(gif.matrix, file = paste(subdir.path, "/", populations, "_EnvironmentalFactor_", env.variable, "_GIFs.txt", sep = ""), sep = ",", quote = F, row.names = F, col.names = T) #Output the GIFs in a seperate file for each environmental variable. 
 
