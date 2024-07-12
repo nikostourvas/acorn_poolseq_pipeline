@@ -16,6 +16,8 @@ populations <- args[2] #Path to the thinned genomic dataset. Needs to be imputed
 max.k <- as.numeric(args[3]) #Maximum number of Ks.
 env.variable <- args[4]
 
+print(max.k)
+
 gif.matrix <- matrix(nrow = 1, ncol = max.k)
 rownames(gif.matrix) <- c("gif")
 colnames(gif.matrix) <- c(1:max.k)
