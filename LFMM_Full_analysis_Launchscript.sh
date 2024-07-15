@@ -66,7 +66,7 @@ rm body.txt #Remove the header-less table that we created.
 realpath ${OUTPUT_DIR}/${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt #Use the path of all 50 split genetic datasets as a scaffold to create the parameters file.
 
 #The following awk command adds all the other parameters in the order that the next R-script expects. Separated by a space (except for the environmental variables, which are given as a comma-seperated list).
-awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${IMPUTED_THINNED_TABLE}" \
+awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${OUTPUT_DIR}/${IMPUTED_THINNED_TABLE}" \
 -v awk_environmental_data="${ENV_DATA}" -v awk_set_k="${SET_K}" -v awk_populations="${POPULATIONS}" -v awk_environmental_factors=${ENV_VARIABLES} \
 ' OFS=" " {print awk_working_directory, $0, awk_thinned_dataset, awk_environmental_data, awk_set_k, awk_populations, NR, awk_environmental_factors}' \
 LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_Full_Analysis_Part1_Parameters_${POPULATIONS}.txt
