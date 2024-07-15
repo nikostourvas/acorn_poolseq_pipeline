@@ -112,7 +112,8 @@ for (i in 1:NCOL(X)) {
     
   print(paste("Generating Z-scores for environmental factor ", env.variables[i], "and K = ", Ks, sep=""))
 
-  setwd(paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/environment_", env.variables[i], "/", sep=""))
+  output.dir<-paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/environment_", env.variables[i], "/", sep="")
+
   res <- matrix(nrow=NCOL(Y), ncol=2); rownames(res) <- colnames(Y); colnames(res) <- c("SNPid","zscore")
   mod.lfmm2 <- NULL; stats.lfmm2 <- NULL
     
@@ -126,5 +127,5 @@ for (i in 1:NCOL(X)) {
   res[,"zscore"] <- stats.lfmm2$zscores
 
   # Save a simple table that stores the raw z-score found for every SNP.
-  write.table(res, paste("LFMM_Zscores_", populations, "environment_", env.variables[i], "_K", Ks, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
+  write.table(res, paste(output.dir, "LFMM_Zscores_", populations, "environment_", env.variables[i], "_K", Ks, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
 }
