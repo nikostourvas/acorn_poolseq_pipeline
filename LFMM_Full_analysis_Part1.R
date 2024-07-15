@@ -104,9 +104,10 @@ Ks <- set.k #The maximum value of K we want the script to loop to (loop goes fro
 print(Ks)
 
 #Prepare the necessary directories. These commands are ignored if the directories already exist.
-dir.create(paste(dir.path, "/res/", populations, sep=""), recursive=F)
+dir.create(paste(dir.path, "/res/", populations, "/", sep=""), recursive=F)
+
 for (i in 1:NCOL(X)) {
-  dir.create(paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/environment_", env.variables[i], sep=""), recursive=F)
+  dir.create(paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/environment_", env.variables[i], "/", sep=""), recursive=F)
 } 
 
 #### Fit an LFMM based on ridge estimates, i.e, compute B, U, V estimates ####
