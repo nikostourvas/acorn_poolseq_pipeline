@@ -105,6 +105,7 @@ print(Ks)
 
 #Prepare the necessary directories. These commands are ignored if the directories already exist.
 dir.create(paste(dir.path, "/res/", populations, "/", sep=""), recursive=F)
+dir.create(paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/", sep=""), recursive=F)
 
 for (i in 1:NCOL(X)) {
   dir.create(paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/environment_", env.variables[i], "/", sep=""), recursive=F)
