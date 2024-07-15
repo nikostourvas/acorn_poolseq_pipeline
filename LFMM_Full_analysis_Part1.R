@@ -126,7 +126,8 @@ for (i in 1:NCOL(X)) {
   #Estimate latent factors and environmental effects using the regularised least-squares problem "ridge estimates"
 
   print("Second instance of LFMM")
-  mod.lfmm2 <- lfmm2(input=Z, env=X[,i], k=Ks, lambda=1e-5, effect.sizes=T)
+
+  mod.lfmm2 <- lfmm2(input=Z, env=X[,i], K=Ks, lambda=1e-5, effect.sizes=T)
     
   # Statistical tests on genotypic data with imputed missing dat
   print("Third implementation of LFMM")
