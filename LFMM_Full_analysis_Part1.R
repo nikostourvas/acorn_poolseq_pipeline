@@ -110,7 +110,7 @@ for (i in 1:NCOL(X)) {
 #### Fit an LFMM based on ridge estimates, i.e, compute B, U, V estimates ####
 for (i in 1:NCOL(X)) {
     
-  print(paste("Generating Z-scores for environmental factor ", env.variables[i], "and K = ", Ks, sep=""))
+  print(paste("Generating Z-scores for environmental factor ", env.variables[i], " and K = ", Ks, sep=""))
 
   output.dir<-paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/environment_", env.variables[i], "/", sep="")
 
@@ -122,7 +122,7 @@ for (i in 1:NCOL(X)) {
   mod.lfmm2 <- lfmm2(input=Z, env=X[,i], K=Ks, lambda=1e-5, effect.sizes=T)
     
   # Statistical tests on genotypic data with imputed missing dat
-  stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,j], full=F, genomic.control=F) 
+  stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=F) 
   res[,"SNPid"] <- snp.info #"SNPid" #res[,"SNPid"] <- snp.info$SNPid
   res[,"zscore"] <- stats.lfmm2$zscores
 
