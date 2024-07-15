@@ -101,6 +101,8 @@ Y <- gen.matrix #The SNPs we are analysing in this implementation of the script
 Z <- gen.thin.matrix #The thinned, genome-wide SNPs that we use to account for structure.
 Ks <- set.k #The maximum value of K we want the script to loop to (loop goes from 1 to max.k)
 
+print(Ks)
+
 #Prepare the necessary directories. These commands are ignored if the directories already exist.
 dir.create(paste(dir.path, "/res/", populations, sep=""), recursive=F)
 for (i in 1:NCOL(X)) {
