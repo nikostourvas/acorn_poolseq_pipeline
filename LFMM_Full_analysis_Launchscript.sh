@@ -53,17 +53,17 @@ awk -F "\t" ' OFS="\t" {NF-=2}1' > ${OUTPUT_DIR}/${IMPUTED_THINNED_TABLE}
 #The splitter-upper
 #Splits up the large, unthinned AFtable into 50 roughly equal-size tables. The thinned dataset is small enough as it is and should not be split.
 
-HEADER=$(head -n 1 ${IMPUTED_TABLE}) #Store the head line of the table in a string for later.
-tail -n +2 ${IMPUTED_TABLE} > body.txt #Create a file that contains the whole table EXCEPT for the header line.
-split -n l/50 --numeric-suffixes=01 --additional-suffix .txt body.txt ${IMPUTED_TABLE/.txt/_Chunk} #Split up the header-less table
-sed -i "1i ${HEADER}" ${IMPUTED_TABLE/.txt/_Chunk??.txt} #Insert the header line at the top of each split table
+HEADER=$(head -n 1 ${OUTPUT_DIR}/${IMPUTED_TABLE}) #Store the head line of the table in a string for later.
+tail -n +2 ${OUTPUT_DIR}/${IMPUTED_TABLE} > body.txt #Create a file that contains the whole table EXCEPT for the header line.
+split -n l/50 --numeric-suffixes=01 --additional-suffix .txt body.txt ${OUTPUT_DIR}/${IMPUTED_TABLE/.txt/_Chunk} #Split up the header-less table
+sed -i "1i ${HEADER}" ${OUTPUT_DIR}/${IMPUTED_TABLE/.txt/_Chunk??.txt} #Insert the header line at the top of each split table
 rm body.txt #Remove the header-less table that we created.
 
 ###THIRD STEP###
 #The R initiation-station
 #Start by creating a file that contains all the parameters for each job. Then use this file to instruct GNU parallel.
 
-realpath ${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt #Use the path of all 50 split genetic datasets as a scaffold to create the parameters file.
+realpath ${OUTPUT_DIR}/${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt #Use the path of all 50 split genetic datasets as a scaffold to create the parameters file.
 
 #The following awk command adds all the other parameters in the order that the next R-script expects. Separated by a space (except for the environmental variables, which are given as a comma-seperated list).
 awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${IMPUTED_THINNED_TABLE}" \
