@@ -115,11 +115,14 @@ for (i in 1:NCOL(X)) {
   output.dir<-paste(dir.path, "/res/", populations, "/Full_analysis_K_", Ks, "/environment_", env.variables[i], "/", sep="")
 
   res <- matrix(nrow=NCOL(Y), ncol=2); rownames(res) <- colnames(Y); colnames(res) <- c("SNPid","zscore")
+  
+  print("First instance of LFMM")
   mod.lfmm2 <- NULL; stats.lfmm2 <- NULL
     
   #Estimate latent factors and environmental effects using the regularised least-squares problem "ridge estimates"
 
-  mod.lfmm2 <- lfmm2(input=Z, env=X[,i], K=Ks, lambda=1e-5, effect.sizes=T)
+  print("Second instance of LFMM")
+  mod.lfmm2 <- lfmm2(input=Z, env=X[,i], k=Ks, lambda=1e-5, effect.sizes=T)
     
   # Statistical tests on genotypic data with imputed missing dat
   stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=F) 
