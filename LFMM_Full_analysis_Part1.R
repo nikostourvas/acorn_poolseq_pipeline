@@ -49,7 +49,7 @@ env.data <- read.table(paste(dat.env, sep=""), header=T, sep=",")
 
 #extract only the selected environmental variables from the full environmental dataset.
 env.variables<-scan(text=selected.env, what= "") #Places the environmental factors in an arrray rather than a continuous string. 
-print(env.variables)
+#print(env.variables)
 
 #Make the population names (Plot_ID) the row names of the environmental dataset.
 env <- env.data[c(env.variables)]
@@ -125,6 +125,7 @@ for (i in 1:NCOL(X)) {
   mod.lfmm2 <- lfmm2(input=Z, env=X[,i], k=Ks, lambda=1e-5, effect.sizes=T)
     
   # Statistical tests on genotypic data with imputed missing dat
+  print("Third implementation of LFMM")
   stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=F) 
   res[,"SNPid"] <- snp.info #"SNPid" #res[,"SNPid"] <- snp.info$SNPid
   res[,"zscore"] <- stats.lfmm2$zscores
