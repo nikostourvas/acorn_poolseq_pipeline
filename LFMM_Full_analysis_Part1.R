@@ -33,7 +33,7 @@ dir.path <- args[1] #First string to receive is the output directory
 dat.gen <- args[2] #Path to genomic data under consideration. Needs to be imputed first.
 dat.gen.thin <- args[3] #Path to the thinned genomic dataset. Needs to be imputed first.
 dat.env <- args[4] #Path to the environmental data 
-set.k <- as.numeric(args[5]) #The K that the model should assume. NEEDS TO BE DETERMINED WITH ANOTHER SCRIPT.
+set.k <- as.integer(args[5]) #The K that the model should assume. NEEDS TO BE DETERMINED WITH ANOTHER SCRIPT.
 populations <- args [6] #The code for the subset (e.g. 1GA)
 chunk <- args [7] #The chunk (parallelisation) that is currently analysed.
 selected.env <- gsub(",", " ", args[8]) #A list of the environmental factors that should be analysed. Names seperated by commas WITHOUT SPACES.
