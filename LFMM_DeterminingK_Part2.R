@@ -52,12 +52,12 @@ for(i in 1:max.k) { #Loop for the number of Ks we wish to evaluate.
     #} #This bracket is still part of the 'spare' code meant to tackle leading zeros.
     merged.zscores<-rbind(merged.zscores, zscores.chunk) #Append current chunk dataframe to overall dataframe.
   }
-  
+
   print(paste("Calculating GIF for K ", i, sep="")) #Give the user a progress update.
   gif <- median((merged.zscores$zscore)^2)*(qchisq(0.5, df = 1, lower.tail = FALSE)) #Calculate the genomic inflation factor
+  gif.matrix[1,i] <- gif #Add the genomic inflation factor to the storage matrix.
 
   print(paste("Calculating P-values for K ", i, sep="")) #Give the user a progress update. 
-  gif.matrix[1,i] <- gif #Add the genomic inflation factor to the storage matrix.
   results.df§corrected_pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE) #Calculate P-values and add them to the final results dataframe.
   
   results.df <- as.data.frame(merged.zscores) #Rename dataframe
