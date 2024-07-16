@@ -132,7 +132,7 @@ for (i in 1:NCOL(X)) {
   res[,"pvalue"] <- stats.lfmm2$pvalues
 
   test.stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=T)
-  gif<-matrix(nrow=1, nrow=1)
+  gif<-matrix(nrow=1, ncol=1)
   gif[1,1]<-test.stats.lfmm2$gif
   write.table(gif, paste("LFMM_GIF_", populations, "_EnvironmentalFactor_", env.variables[i], "_K", j, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=F, quote=F)
 
