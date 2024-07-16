@@ -54,7 +54,7 @@ for(i in 1:max.k) { #Loop for the number of Ks we wish to evaluate.
   }
 
   print(paste("Calculating GIF for K ", i, sep="")) #Give the user a progress update.
-  gif <- median((merged.zscores$zscore)^2)*(qchisq(0.5, df = 1, lower.tail = FALSE)) #Calculate the genomic inflation factor
+  gif <- median((merged.zscores$zscore)^2)/(qchisq(0.5, df = 1, lower.tail = FALSE)) #Calculate the genomic inflation factor
   gif.matrix[1,i] <- gif #Add the genomic inflation factor to the storage matrix.
 
   
