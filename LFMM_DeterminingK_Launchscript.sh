@@ -70,7 +70,7 @@ realpath ${OUTPUT_DIR}/${IMPUTED_TABLE/.txt/_Chunk??.txt} > LFMM_DeterminingK_Pa
 awk -F " " -v awk_working_directory="${PWD}" -v awk_thinned_dataset="${OUTPUT_DIR}/${IMPUTED_THINNED_TABLE}" \
 -v awk_environmental_data="${ENV_DATA}" -v awk_max_k="${MAX_K}" -v awk_populations="${POPULATIONS}" -v awk_environmental_factors=${ENV_VARIABLES} \
 ' OFS=" " {print awk_working_directory, $0, awk_thinned_dataset, awk_environmental_data, awk_max_k, awk_populations, NR, awk_environmental_factors}' \
-LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_DeterminingK_Parameters_${POPULATIONS}.txt
+LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_DeterminingK_Part1_Parameters_${POPULATIONS}.txt
 
 rm LFMM_DeterminingK_Parameters_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unneeded intermediate file.
 
