@@ -131,10 +131,11 @@ for (i in 1:NCOL(X)) {
   res[,"zscore"] <- stats.lfmm2$zscores
   res[,"pvalue"] <- stats.lfmm2$pvalues
 
-  test.stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=T)
-  gif<-matrix(nrow=1, ncol=1)
-  gif[1,1]<-test.stats.lfmm2$gif
-  write.table(gif, paste("LFMM_GIF_", populations, "_EnvironmentalFactor_", env.variables[i], "_K", j, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=F, quote=F)
+  #The following bit of script was used to extract per-chunk GIFs calculated directly by LFMM, to diagnose issues with GIFs. It's left here, should it be needed in the future.
+  #test.stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=T)
+  #gif<-matrix(nrow=1, ncol=1)
+  #gif[1,1]<-test.stats.lfmm2$gif
+  #write.table(gif, paste("LFMM_GIF_", populations, "_EnvironmentalFactor_", env.variables[i], "_K", j, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=F, quote=F)
 
   write.table(res, paste("LFMM_Zscores_", populations, "_EnvironmentalFactor_", env.variables[i], "_K", j, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F) # save all information per SNP
   }
