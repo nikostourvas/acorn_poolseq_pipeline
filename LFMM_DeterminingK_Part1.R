@@ -70,8 +70,6 @@ rownames(gen) <- gsub("X","",rownames(gen))
 env.reduced <- env[rownames(env) %in% rownames(gen),] 
 env <- env.reduced
 identical(as.character(rownames(env)),as.character(rownames(gen)))#check NAs
-head(env)
-dim(env)
 
 gen.matrix <- as.matrix(gen)
 colnames(gen.matrix) <- NULL
@@ -115,7 +113,6 @@ for (i in 1:NCOL(X)) {
 
 for (i in 1:NCOL(X)) {
   for (j in 1:Ks){
-
   print(paste("Generating Z-scores for environmental factor ", env.variables[i], " and K= ", j, sep=""))
 
   setwd(paste(dir.path, "/res/", populations, "/selectingK/EnvironmentalFactor_", env.variables[i], "/K", j, sep="")) #Set the working directory for this environmental variable and K.
@@ -133,6 +130,11 @@ for (i in 1:NCOL(X)) {
   res[,"SNPid"] <- snp.info 
   res[,"zscore"] <- stats.lfmm2$zscores
   res[,"pvalue"] <- stats.lfmm2$pvalues
+
+  test.stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=T)
+  gif<-matrix(nrow=1, nrow=1)
+  gif[1,1]<-test.stats.lfmm2$gif
+  write.table(gif, paste("LFMM_GIF_", populations, "_EnvironmentalFactor_", env.variables[i], "_K", j, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=F, quote=F)
 
   write.table(res, paste("LFMM_Zscores_", populations, "_EnvironmentalFactor_", env.variables[i], "_K", j, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F) # save all information per SNP
   }
