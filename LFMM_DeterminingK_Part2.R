@@ -68,15 +68,15 @@ for(i in 1:max.k) { #Loop for the number of Ks we wish to evaluate.
   png(paste(subdir.path, "PvalueDistribution_Uncorrected_", populations, "_EnvironmentalFactor_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
     par(mfrow=c(1,2), mar=c(5, 5, 4, 1))
     hist(results.df$pvalue, col="red", main="Uncorrected P-value distribution")
-    qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=2)
+    qqplot(rexp(length(results.df$pvalue), rate=log(10)), -log10(results.df$pvalue), xlab="Expected quantile", pch=19, cex=2)
     abline(coef=c(0,1))
     dev.off()
   
   #Plot the distribution of corrected p-values for this particular K and environmental factor.
    png(paste(subdir.path, "PvalueDistribution_Corrected_", populations, "_EnvironmentalFactor_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
     par(mfrow=c(1,2), mar=c(5, 5, 4, 1))
-    hist(results.df$pvalues, col="red", main="Corrected P-value distribution")
-    qqplot(rexp(length(results.df$corrected_pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=2)
+    hist(results.df$corrected_pvalues, col="red", main="Corrected P-value distribution")
+    qqplot(rexp(length(results.df$corrected_pvalues), rate=log(10)), -log10(results.df$corrected_pvalues), xlab="Expected quantile", pch=19, cex=2)
     abline(coef=c(0,1))
     dev.off()
   
