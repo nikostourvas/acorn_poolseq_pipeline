@@ -132,6 +132,7 @@ for (i in 1:NCOL(X)) {
   stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=F) 
   res[,"SNPid"] <- snp.info 
   res[,"zscore"] <- stats.lfmm2$zscores
+  res[,"pvalue"] <- stats.lfmm2$pvalues
 
   write.table(res, paste("LFMM_Zscores_", populations, "_EnvironmentalFactor_", env.variables[i], "_K", j, "_Chunk_", chunk, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F) # save all information per SNP
   }

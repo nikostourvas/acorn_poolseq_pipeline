@@ -52,20 +52,29 @@ for(i in 1:max.k) { #Loop for the number of Ks we wish to evaluate.
     #} #This bracket is still part of the 'spare' code meant to tackle leading zeros.
     merged.zscores<-rbind(merged.zscores, zscores.chunk) #Append current chunk dataframe to overall dataframe.
   }
-  print(paste("Calculating GIF for K ", i, sep="")) #Give the user a progress update.
-
-  gif <- median((merged.zscores$zscore)^2)*(qchisq(0.5, df = 1, lower.tail = FALSE)) #Calculate the genomic inflation factor
-  gif.matrix[1,i] <- gif #Add the genomic inflation factor to the storage matrix.
-
-  print(paste("Calculating P-values for K ", i, sep="")) #Give the user a progress update.
-  results.df <- as.data.frame(merged.zscores) #Rename dataframe
-  results.df$pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE) #Calculate P-values and add them to the final results dataframe. 
   
-  #Plot the distribution of p-values for this particular K and environmental factor.
-   png(paste(subdir.path, "PvalueDistribution_", populations, "_EnvironmentalFactor_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
+  print(paste("Calculating GIF for K ", i, sep="")) #Give the user a progress update.
+  gif <- median((merged.zscores$zscore)^2)*(qchisq(0.5, df = 1, lower.tail = FALSE)) #Calculate the genomic inflation factor
+
+  print(paste("Calculating P-values for K ", i, sep="")) #Give the user a progress update. 
+  gif.matrix[1,i] <- gif #Add the genomic inflation factor to the storage matrix.
+  results.df§corrected_pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE) #Calculate P-values and add them to the final results dataframe.
+  
+  results.df <- as.data.frame(merged.zscores) #Rename dataframe
+
+  #Plot the distribution of uncorrected p-values that were directly obtained from LFMM without adjustments.
+  png(paste(subdir.path, "PvalueDistribution_Uncorrected_", populations, "_EnvironmentalFactor_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
     par(mfrow=c(1,2), mar=c(5, 5, 4, 1))
-    hist(results.df$pvalues, col="red", main="P-value distribution")
+    hist(results.df$pvalue, col="red", main="Uncorrected P-value distribution")
     qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=2)
+    abline(coef=c(0,1))
+    dev.off()
+  
+  #Plot the distribution of corrected p-values for this particular K and environmental factor.
+   png(paste(subdir.path, "PvalueDistribution_Corrected_", populations, "_EnvironmentalFactor_", env.variable, "_K", i, ".png", sep=""), units = "px", width=2500, height=1500)
+    par(mfrow=c(1,2), mar=c(5, 5, 4, 1))
+    hist(results.df$pvalues, col="red", main="Corrected P-value distribution")
+    qqplot(rexp(length(results.df$corrected_pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=2)
     abline(coef=c(0,1))
     dev.off()
   
