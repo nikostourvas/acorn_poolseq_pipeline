@@ -58,7 +58,7 @@ for(i in 1:max.k) { #Loop for the number of Ks we wish to evaluate.
   gif.matrix[1,i] <- gif #Add the genomic inflation factor to the storage matrix.
 
   print(paste("Calculating P-values for K ", i, sep="")) #Give the user a progress update. 
-  results.df§corrected_pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE) #Calculate P-values and add them to the final results dataframe.
+  results.df$corrected_pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE) #Calculate P-values and add them to the final results dataframe.
   
   results.df <- as.data.frame(merged.zscores) #Rename dataframe
 
