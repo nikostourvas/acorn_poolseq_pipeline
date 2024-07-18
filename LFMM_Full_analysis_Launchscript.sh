@@ -24,6 +24,7 @@ ENV_DATA=$2 #A csv that contains all the environmental data (in columns) for eac
 SET_K=$3 #The K that you wish the script to analyse. The script will only run for one instance of K.
 POPULATIONS=$4 #The 3-character code that specifies which (sub)set of ACORN populations is used.
 ENV_VARIABLES=$5 #A list seperated by commas WITHOUT SPACES of the names of all the environmental factors you wish to include in the analysis.
+FDR=$6 #The significance threshold that needs to be reached for a SNP to be included in the final output.
 
 #Create a good filename for the imputed table outputs. Will be stored as intermediate and can be used by other analyses that require imputed datasets.
 IMPUTED_TABLE=$(basename ${INPUT_AF_TABLE/.txt/_Imputed_by_Mean.txt})
@@ -79,8 +80,8 @@ rm LFMM_Full_Analysis_${POPULATIONS}_INTERMEDIATE.txt #Get rid of unneeded inter
 echo ${ENV_VARIABLES} | tr -s ',' '\n' > LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt #This time, use the list of environmental variables as a scaffold for the file. The comma-separated variable names are properly seperated. 
 
 #The following awk command adds all the other parameters in the order that the next R-script expects. Separated by a space.
-awk -F " " -v awk_working_directory="${PWD}" -v awk_populations="${POPULATIONS}" -v awk_set_k="${SET_K}" -v awk_genetic_dataset="${OUTPUT_DIR}/${IMPUTED_TABLE}" \
-'OFS=" " {print awk_working_directory, awk_populations, awk_set_k, $0, awk_genetic_dataset}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_Full_Analysis_Part2_Parameters_${POPULATIONS}.txt
+awk -F " " -v awk_working_directory="${PWD}" -v awk_populations="${POPULATIONS}" -v awk_set_k="${SET_K}" -v awk_genetic_dataset="${OUTPUT_DIR}/${IMPUTED_TABLE}" -v awk_environmental_factors="${ENV_VARIABLES}" -v awk_fdr=${FDR} \
+'OFS=" " {print awk_working_directory, awk_populations, awk_set_k, $0, awk_genetic_dataset, awk_environmental_factors, awk_fdr}' LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt > ./par/LFMM_Full_Analysis_Part2_Parameters_${POPULATIONS}.txt
 
 rm LFMM_Full_Analysis_Part2_${POPULATIONS}_INTERMEDIATE.txt
 
