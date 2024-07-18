@@ -77,12 +77,12 @@ for(j in 2:50) {
     merged.zscores<-rbind(merged.zscores, zscores.chunk) #Append the chunk we are looping over at the bottom of the df that we have compiled up to now.
   
   }
-  print(paste("Calculating GIF" sep=""))
+  print("Calculating GIF")
 
   gif <- median((merged.zscores$zscore)^2)/(qchisq(0.5, df = 1, lower.tail = FALSE)) #Calculate the genomic inflation factor based on all the Z-scores.
   gif.matrix[1,1] <- gif #Store the genomic inflation factor for later.
 
-  print(paste("Calculating P-values" sep="")) #Give the user an indicator of the progress. Not visible during parallel processing. 
+  print("Calculating P-values") #Give the user an indicator of the progress. Not visible during parallel processing. 
   results.df <- as.data.frame(merged.zscores) #Rename the dataframe that we used to merge all the z-scores.
 
   results.df$pvalues <- pchisq(results.df$zscore^2/gif, df = 1, lower.tail = FALSE) #Calculate all the P-values based on z-scores corrected with the GIF.
