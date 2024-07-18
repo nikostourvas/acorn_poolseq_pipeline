@@ -44,7 +44,7 @@ rownames(nb.asso.q) <- "value"
 colnames(nb.asso.q) <- c("q0.05","q0.01","q0.001")
 
 nb.asso.k <- matrix(nrow=1, ncol=1)
-rownames(nb.asso.k) <- colnames(env.variable)
+rownames(nb.asso.k) <- env.variable
 colnames(nb.asso.k) <- paste("K1")
 
 ###Merge the Z-scores of all 50 chunks of unthinned genetic data. This is the main output of Part 1. 
