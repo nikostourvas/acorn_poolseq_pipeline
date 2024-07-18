@@ -47,6 +47,8 @@ nb.asso.k <- matrix(nrow=1, ncol=1)
 rownames(nb.asso.k) <- env.variable
 colnames(nb.asso.k) <- paste("K1")
 
+print("checkpoint 1")
+
 ###Merge the Z-scores of all 50 chunks of unthinned genetic data. This is the main output of Part 1. 
 
 setwd(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/", sep="")) #Set the working directory that contains all the chunk files.
