@@ -34,7 +34,7 @@ fdr<-args[7] #The significance threshold that needs to be reached for a SNP to b
 
 gif.matrix <- matrix(nrow = 1, ncol = 1)
 rownames(gif.matrix) <- c("gif")
-colnames(gif.matrix) <- c(1)
+colnames(gif.matrix) <- c("1")
 
 fdr.output <- fdr
 fdr.thres <- c(0.05, 0.01, 0,001)
@@ -43,11 +43,13 @@ nb.asso.q <- matrix(nrow=1, ncol=length(fdr.thres))
 rownames(nb.asso.q) <- "value"
 colnames(nb.asso.q) <- c("q0.05","q0.01","q0.001")
 
+print("checkpoint 1")
+
 nb.asso.k <- matrix(nrow=1, ncol=1)
 rownames(nb.asso.k) <- env.variable
 colnames(nb.asso.k) <- paste("K1")
 
-print("checkpoint 1")
+print("checkpoint 2")
 
 ###Merge the Z-scores of all 50 chunks of unthinned genetic data. This is the main output of Part 1. 
 
