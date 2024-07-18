@@ -128,7 +128,7 @@ write.table(gif.matrix, file = paste("GIF_", env.variable, "_K_" set.k, ".txt", 
 
 #### Import the genetic dataset ####
 
-gen.data <- read.table(paste(dat.gen, sep=""), header=T, sep="\t", row.names = "chrom_pos")
+gen.data <- read.table(paste(full.gen, sep=""), header=T, sep="\t", row.names = "chrom_pos")
 
 #transpose dataframe
 gen <- as.data.frame(t(gen.data))
