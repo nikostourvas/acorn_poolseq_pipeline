@@ -28,6 +28,7 @@ dir.path <- args[1] #First string to receive is the output directory
 populations <- args[2] #Path to the thinned genomic dataset. Needs to be imputed first.
 set.k <- as.numeric(args[3]) #The value of K that was set for this analysis. 
 env.variable<-args[4] #The environmental factor this scirpt operates on (parallel to other environmental factors)
+full.gen <-args[5] #Path to the full, unthinned genomic dataset. Needed for plotting towards the end of this script. 
 
 gif.matrix <- matrix(nrow = 1, ncol = 1)
 rownames(gif.matrix) <- c("gif")
@@ -124,4 +125,41 @@ for(j in 2:50) {
     write.table(nb.asso.q, paste("AssociationsNb_env", env.variable, "_K", set.k, "_q.csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
 
 write.table(gif.matrix, file = paste("GIF_", env.variable, "_K_" set.k, ".txt", sep = ""), sep = ",", quote = F, row.names = F, col.names = T)
+
+#### Import the full genetic dataset for plotting purposes ####
+gen.data <- read.table(paste(full.gen, sep=""), header=T, sep="\t", row.names = "chrom_pos")
+
+#transpose dataframe
+gen <- as.data.frame(t(gen.data))
+
+#Store the names of all the SNPs in a vector.
+snp.info <- as.vector(colnames(gen))
+
+#### Plot SNPs significantly associated to environmental conditions ####
+fdr.output <- 0.05
+setwd(paste(dir.path,"lfmm/",codesp[sp],sep=""))
+for (j in 1:NCOL(X)) {
+    candidate.list <- read.table(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/CandidatesOrdered_env", env.variable, "_K", set.k, "_q", fdr.output, ".csv", sep=""), row.names="SNPid", header=T, sep=",")
+    tmp.gen <- gen
+    colnames(tmp.gen) <- snp.info # "SNPid" # snp.info$SNPid
+    tmp.gen.t <- t(tmp.gen); rownames(tmp.gen.t) <- colnames(tmp.gen); colnames(tmp.gen.t) <- rownames(tmp.gen)
+    candidate.gen <- merge(candidate.list, tmp.gen.t, by="row.names"); colnames(candidate.gen)[1] <- "SNPid"
+    candidate.gen.ordered <- candidate.gen[order(candidate.gen$pvalue, decreasing=F),]
+    if (NROW(candidate.list) > 0) {
+      genotypes <- t(candidate.gen.ordered[,5:NCOL(candidate.gen.ordered)])
+      pdf(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/PlotOfSignificantCandidates_env", env.variable, "_K", set.k, "_q", fdr.output, ".pdf", sep=""), width=10, height=10)
+      par(mfrow=c(2,2), mar=c(5, 5, 1, 1))
+      for (p in 1:NROW(candidate.list)) {
+        plot(X[,j], genotypes[,p], pch=20, cex=1.5, xlab=colnames(X)[j], ylab="Genotype frequency [-]",
+             cex.lab=1.2, ylim=c(0, 1), cex.main=1.2, col=alpha("blue",0.2))
+        zs <- candidate.list$zscore[p]
+        pv <- candidate.list$pvalue[p]
+        qv <- candidate.list$qvalue[p]
+        legend(min(X[,j]), 1.5, legend=c(paste(rownames(candidate.list)[p]), paste("z-score =", format(zs, digits=3)),
+                                           paste("p-value =", format(pv, digits=2)), paste("q-value =", format(qv, digits=4))), bty='n', cex=0.7)
+      }
+      dev.off()
+ } 
+}
+
 
