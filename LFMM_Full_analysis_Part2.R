@@ -28,6 +28,7 @@ dir.path <- args[1] #First string to receive is the output directory
 populations <- args[2] #Path to the thinned genomic dataset. Needs to be imputed first.
 set.k <- as.numeric(args[3]) #The value of K that was set for this analysis. 
 env.variable<-args[4] #The environmental factor this scirpt operates on (parallel to other environmental factors)
+full.gen <-args[5] #Path to the full, unthinned genomic dataset. Needed for plotting towards the end of this script. 
 
 gif.matrix <- matrix(nrow = 1, ncol = 1)
 rownames(gif.matrix) <- c("gif")
@@ -124,4 +125,22 @@ for(j in 2:50) {
     write.table(nb.asso.q, paste("AssociationsNb_env", env.variable, "_K", set.k, "_q.csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
 
 write.table(gif.matrix, file = paste("GIF_", env.variable, "_K_" set.k, ".txt", sep = ""), sep = ",", quote = F, row.names = F, col.names = T)
+
+#### Import the genetic dataset ####
+
+gen.data <- read.table(paste(dat.gen, sep=""), header=T, sep="\t", row.names = "chrom_pos")
+
+#transpose dataframe
+gen <- as.data.frame(t(gen.data))
+
+#Store the names of all the SNPs in a vector.
+snp.info <- as.vector(colnames(gen))
+
+#reduce the env set to the gen set. Only the populations that occur in both the environmental and genetic dataset remain. 
+rownames(gen) <- gsub("X","",rownames(gen)) #Accounts for a difference in the formating of the population names. 
+
+gen.matrix <- as.matrix(gen)
+colnames(gen.matrix) <- NULL
+rownames(gen.matrix) <- NULL
+dim(gen.matrix)
 
