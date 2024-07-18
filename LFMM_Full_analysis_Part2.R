@@ -41,7 +41,7 @@ colnames(gif.matrix) <- c("1")
 print("checkpoint 1")
 
 fdr.output <- fdr
-fdr.thres <- c(0.05, 0.01, 0,001)
+fdr.thres <- c(0.05, 0.01, 0.001)
 
 nb.asso.q <- matrix(nrow=1, ncol=3)
 rownames(nb.asso.q) <- "value"
@@ -103,7 +103,7 @@ for(j in 2:50) {
     for (x in 1:length(fdr.thres)) {
       q <- NULL; w <- NULL; v <- NULL; candidate <- NULL
       q <- fdr.thres[x]
-      v <- qv.lfmm2$qvalues
+      v <- results.df$qvalues
       w <- which(sort(v) <= q)
       
       print(paste("Assessing candidates for fdr threshold ", q, sep=""))
