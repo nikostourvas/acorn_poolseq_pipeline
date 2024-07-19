@@ -134,7 +134,7 @@ for(j in 2:50) {
     }
     write.table(nb.asso.q, paste("AssociationsNb_env", env.variable, "_K", set.k, "_q.csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
 
-write.table(gif.matrix, file = paste("GIF_", env.variable, "_K_" set.k, ".txt", sep = ""), sep = ",", quote = F, row.names = F, col.names = T)
+write.table(gif.matrix, file = paste("GIF_", env.variable, "_K_", set.k, ".txt", sep = ""), sep = ",", quote = F, row.names = F, col.names = T)
 
 #### Import the full genetic and environmental dataset for plotting purposes ####
 gen.data <- read.table(paste(full.gen, sep=""), header=T, sep="\t", row.names = "chrom_pos")
@@ -162,7 +162,6 @@ X <- as.matrix(env) #The environmental data
 
 #### Plot SNPs significantly associated to environmental conditions ####
 
-setwd(paste(dir.path,"lfmm/",codesp[sp],sep=""))
 for (j in 1:NCOL(X)) {
     candidate.list <- read.table(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/CandidatesOrdered_env", env.variable, "_K", set.k, "_q", fdr.output, ".csv", sep=""), row.names="SNPid", header=T, sep=",")
     tmp.gen <- gen
