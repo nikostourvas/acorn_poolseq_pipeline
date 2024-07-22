@@ -119,18 +119,23 @@ for(j in 2:50) {
       candidate <- results.df[candidate,]
       
       if(NCOL(candidate) == 1) {
-        write.table(t(candidate), paste("CandidatesOrdered_env", env.variable, "_K", set.k, "_q", q, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
+        write.table(t(candidate), paste("CandidatesOrdered_env_", env.variable, "_K", set.k, "_q", q, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
       } else {
         if(NCOL(candidate) > 1) {
           write.table(candidate[order(as.numeric(candidate$pvalue), decreasing=F),], paste("CandidatesOrdered_env", env.variable, "_K", set.k, "_q", q, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
         } else {
-          write.table(candidate, paste("CandidatesOrdered_env", env.variable, "_K", set.k, "_q", q, ".csv", sep=""), sep=",", row.names=T, col.names=F, quote=F)
+          write.table(candidate, paste("CandidatesOrdered_env_", env.variable, "_K", set.k, "_q", q, ".csv", sep=""), sep=",", row.names=T, col.names=F, quote=F)
         }
       }
     }
-    write.table(nb.asso.q, paste("AssociationsNb_env", env.variable, "_K", set.k, "_q.csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
+    write.table(nb.asso.q, paste("AssociationsNb_env_", env.variable, "_K", set.k, "_q.csv", sep=""), sep=",", row.names=F, col.names=T, quote=F)
 
 write.table(gif.matrix, file = paste("GIF_", env.variable, "_K_" set.k, ".txt", sep = ""), sep = ",", quote = F, row.names = F, col.names = T)
+
+#Remove a bunch of objects to free up memory space.
+rm(results.df)
+rm(merged.zscores)
+rm(qv.lfmm2)
 
 #### Import the full genetic and environmental dataset for plotting purposes ####
 gen.data <- read.table(paste(full.gen, sep=""), header=T, sep="\t", row.names = "chrom_pos")
@@ -168,7 +173,7 @@ for (j in 1:NCOL(X)) {
     candidate.gen.ordered <- candidate.gen[order(candidate.gen$pvalue, decreasing=F),]
     if (NROW(candidate.list) > 0) {
       genotypes <- t(candidate.gen.ordered[,5:NCOL(candidate.gen.ordered)])
-      pdf(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/PlotOfSignificantCandidates_env", env.variable, "_K", set.k, "_q", fdr.output, ".pdf", sep=""), width=10, height=10)
+      pdf(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/PlotOfSignificantCandidates_", populations, "_env_", env.variable, "_K", set.k, "_q", fdr.output, ".pdf", sep=""), width=10, height=10)
       par(mfrow=c(2,2), mar=c(5, 5, 1, 1))
       for (p in 1:NROW(candidate.list)) {
         plot(X[,j], genotypes[,p], pch=20, cex=1.5, xlab=colnames(X)[j], ylab="Genotype frequency [-]",
