@@ -167,7 +167,7 @@ X <- as.matrix(env) #The environmental data
 
 #### Plot SNPs significantly associated to environmental conditions ####
 
-for (j in 1:NCOL(X)) {
+for (j in 1:NCOL(X)) { #in this application, this loop only runs once. It is kept as a loop to retain the structure of the original script by Benjamin Dauphin and Christian Rellstab as much as possible.
     candidate.list <- read.table(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/CandidatesOrdered_env", env.variable, "_K", set.k, "_q", fdr.output, ".csv", sep=""), row.names="SNPid", header=T, sep=",")
     tmp.gen <- gen
     colnames(tmp.gen) <- snp.info # "SNPid" # snp.info$SNPid
@@ -179,7 +179,7 @@ for (j in 1:NCOL(X)) {
       pdf(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/PlotOfSignificantCandidates_", populations, "_env_", env.variable, "_K", set.k, "_q", fdr.output, ".pdf", sep=""), width=10, height=10)
       par(mfrow=c(2,2), mar=c(5, 5, 1, 1))
       for (p in 1:NROW(candidate.list)) {
-        plot(X[,j], genotypes[,p], pch=20, cex=1.5, xlab=colnames(X)[j], ylab="Genotype frequency [-]",
+        plot(X[,j], genotypes[,p], pch=20, cex=1.5, xlab=colnames(X)[j], ylab="Genotype frequency [-]", main=candidate.list$SNPid[p,],
              cex.lab=1.2, ylim=c(0, 1), cex.main=1.2, col=alpha("blue",0.2))
         zs <- candidate.list$zscore[p]
         pv <- candidate.list$pvalue[p]
