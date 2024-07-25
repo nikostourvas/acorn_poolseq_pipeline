@@ -97,6 +97,7 @@ for(j in 2:50) {
     hist(results.df$pvalues, col="red", main="P-value distribution")
     qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=1)
     abline(coef=c(0,1))
+    legend("bottomright", title=c(paste("MedianP = ", median(-log10(results.df$pvalues)), sep=""))) #Display the median pvalue (-log10 transformed) 
     dev.off()
 
    # Summarise results and generate Manhattan plot at different significance thresholds
