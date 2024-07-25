@@ -70,7 +70,7 @@ for(i in 1:max.k) { #Loop for the number of Ks we wish to evaluate.
     hist(results.df$pvalue, col="red", main="Uncorrected P-value distribution")
     qqplot(rexp(length(results.df$pvalue), rate=log(10)), -log10(results.df$pvalue), xlab="Expected quantile", pch=19, cex=2)
     abline(coef=c(0,1))
-    legend("bottomright", title=c(paste("MedianP = ", median(-log10(results.df$pvalue)), sep=""))) #Display the median pvalue (-log10 transformed) 
+    legend("bottomright", title=c(paste("MedianP = ", median(-log10(results.df$pvalue)), sep="")), cex=2) #Display the median pvalue (-log10 transformed) 
     dev.off()
   
   #Plot the distribution of corrected p-values for this particular K and environmental factor.
@@ -79,7 +79,7 @@ for(i in 1:max.k) { #Loop for the number of Ks we wish to evaluate.
     hist(results.df$corrected_pvalues, col="red", main="Corrected P-value distribution")
     qqplot(rexp(length(results.df$corrected_pvalues), rate=log(10)), -log10(results.df$corrected_pvalues), xlab="Expected quantile", pch=19, cex=2)
     abline(coef=c(0,1))
-    legend("bottomright", title=c(paste("MedianP = ", median(-log10(results.df$corrected_pvalues)), sep=""))) #Display the median pvalue (-log10 transformed) 
+    legend("bottomright", title=c(paste("MedianP = ", median(-log10(results.df$corrected_pvalues)), sep="")), cex=2) #Display the median pvalue (-log10 transformed) 
     dev.off()
   
 }
