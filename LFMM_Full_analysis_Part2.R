@@ -97,7 +97,11 @@ for(j in 2:50) {
     hist(results.df$pvalues, col="red", main="P-value distribution")
     qqplot(rexp(length(results.df$pvalues), rate=log(10)), -log10(results.df$pvalues), xlab="Expected quantile", pch=19, cex=1)
     abline(coef=c(0,1))
-    legend("bottomright", title=c(paste("MedianP = ", median(-log10(results.df$pvalues)), sep="")), cex=2) #Display the median pvalue (-log10 transformed) 
+    # display the median p-value (-log10 transformed) as a point in this qqplot
+    median_pvalue <- median(results.df$pvalues)
+    points(-log10(median_pvalue), -log10(median_pvalue), col="red", pch=17, cex=5)
+    legend("bottomright", legend=paste("Median P = ", round(-log10(median_pvalue), 2), 
+           sep=""), col="red", pch=17, cex=1.5) #Display the median pvalue (-log10 transformed)
     dev.off()
 
    # Summarise results and generate Manhattan plot at different significance thresholds
@@ -185,8 +189,8 @@ for (j in 1:NCOL(X)) { #in this application, this loop only runs once. It is kep
         zs <- candidate.list$zscore[p]
         pv <- candidate.list$pvalue[p]
         qv <- candidate.list$qvalue[p]
-        legend(min(X[,j]), 1.5, legend=c(paste(rownames(candidate.list)[p]), paste("z-score =", format(zs, digits=3)),
-                                           paste("p-value =", format(pv, digits=2)), paste("q-value =", format(qv, digits=4))), bty='n', cex=0.7)
+        legend("topright", legend=c(paste("SNP ID:", rownames(candidate.list)[p]), paste("z-score =", format(zs, digits=3)),
+                                          paste("p-value =", format(pv, digits=2)), paste("q-value =", format(qv, digits=4))), bty='n', cex=0.7)
       }
       dev.off()
  } 
