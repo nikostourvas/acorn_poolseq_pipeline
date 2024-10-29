@@ -89,7 +89,7 @@ for(j in 2:50) {
   qv.lfmm2 <- qvalue::qvalue(as.vector(results.df$pvalues), fdr.level=fdr.output) #Calculate q-values.
   results.df$qvalues <- qv.lfmm2$qvalues #Add q-values to the dataframe with our results. 
 
-  #write.table(results.df, paste("LFMM_AllResults_env_", env.variable, "_K", set.k, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F) # save all information per SNP. Commented out to save disk space.
+  write.table(results.df, paste("LFMM_AllResults_env_", env.variable, "_K", set.k, ".csv", sep=""), sep=",", row.names=F, col.names=T, quote=F) # save all information per SNP. Commented out to save disk space.
 
   #Plot the distribution of p-values. We plot them as PNGs, because the PDFs contained so many points that it took 5 minutes to load each one.
    png(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/PvalueDistribution_", populations, "_environment_", env.variable, "_K", set.k, ".png", sep=""), units = "px", width=2500, height=1500)
@@ -172,27 +172,35 @@ X <- as.matrix(env) #The environmental data
 
 #### Plot SNPs significantly associated to environmental conditions ####
 
-for (j in 1:NCOL(X)) { #in this application, this loop only runs once. It is kept as a loop to retain the structure of the original script by Benjamin Dauphin and Christian Rellstab as much as possible.
+for (j in 1:NCOL(X)) { # In this application, this loop only runs once. It is kept as a loop to retain the structure of the original script by Benjamin Dauphin and Christian Rellstab as much as possible.
     candidate.list <- read.table(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/CandidatesOrdered_env", env.variable, "_K", set.k, "_q", fdr.output, ".csv", sep=""), row.names="SNPid", header=T, sep=",")
     tmp.gen <- gen
     colnames(tmp.gen) <- snp.info # "SNPid" # snp.info$SNPid
     tmp.gen.t <- t(tmp.gen); rownames(tmp.gen.t) <- colnames(tmp.gen); colnames(tmp.gen.t) <- rownames(tmp.gen)
     candidate.gen <- merge(candidate.list, tmp.gen.t, by="row.names"); colnames(candidate.gen)[1] <- "SNPid"
     candidate.gen.ordered <- candidate.gen[order(candidate.gen$pvalue, decreasing=F),]
+    
+    # Systematically subsample the SNP list to retain only 200 plots or less
+    max_plots <- 200
+    if (NROW(candidate.list) > max_plots) {
+        step <- ceiling(NROW(candidate.list) / max_plots)
+        candidate.list <- candidate.list[seq(1, NROW(candidate.list), by=step), ]
+    }
+    
     if (NROW(candidate.list) > 0) {
-      genotypes <- t(candidate.gen.ordered[,5:NCOL(candidate.gen.ordered)])
-      pdf(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/PlotOfSignificantCandidates_", populations, "_env_", env.variable, "_K", set.k, "_q", fdr.output, ".pdf", sep=""), width=10, height=10)
-      par(mfrow=c(2,2), mar=c(5, 5, 1, 1))
-      for (p in 1:NROW(candidate.list)) {
-        plot(X[,j], genotypes[,p], pch=20, cex=1.5, xlab=colnames(X)[j], ylab="Genotype frequency [-]", main=candidate.list$SNPid[p,],
-             cex.lab=1.2, ylim=c(0, 1), cex.main=1.2, col=alpha("blue",0.2))
-        zs <- candidate.list$zscore[p]
-        pv <- candidate.list$pvalue[p]
-        qv <- candidate.list$qvalue[p]
-        legend("topright", legend=c(paste("SNP ID:", rownames(candidate.list)[p]), paste("z-score =", format(zs, digits=3)),
-                                          paste("p-value =", format(pv, digits=2)), paste("q-value =", format(qv, digits=4))), bty='n', cex=0.7)
-      }
-      dev.off()
+        genotypes <- t(candidate.gen.ordered[,5:NCOL(candidate.gen.ordered)])
+        pdf(paste(dir.path, "/res/", populations, "/Full_analysis_K_", set.k, "/environment_", env.variable, "/PlotOfSignificantCandidates_", populations, "_env_", env.variable, "_K", set.k, "_q", fdr.output, ".pdf", sep=""), width=10, height=10)
+        par(mfrow=c(2,2), mar=c(5, 5, 1, 1))
+        for (p in 1:NROW(candidate.list)) {
+            plot(X[,j], genotypes[,p], pch=20, cex=1.5, xlab=colnames(X)[j], ylab="Genotype frequency [-]", main=candidate.list$SNPid[p,],
+                 cex.lab=1.2, ylim=c(0, 1), cex.main=1.2, col=alpha("blue",0.2))
+            zs <- candidate.list$zscore[p]
+            pv <- candidate.list$pvalue[p]
+            qv <- candidate.list$qvalue[p]
+            legend("topright", legend=c(paste("SNP ID:", rownames(candidate.list)[p]), paste("z-score =", format(zs, digits=3)),
+                                        paste("p-value =", format(pv, digits=2)), paste("q-value =", format(qv, digits=4))), bty='n', cex=0.7)
+        }
+        dev.off()
  } 
 }
 
