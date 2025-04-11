@@ -130,25 +130,30 @@ for (i in 1:NCOL(X)) {
   #stats.lfmm2 <- lfmm2.test(object=mod.lfmm2, input=Y, env=X[,i], full=F, genomic.control=F)
   # Statistical tests on genotypic data with imputed missing dat using robust regression
   #  with the rlm function from MASS package
+  
+  # Combine the environmental variable and latent factors into one data frame:
+  covariates <- data.frame(env = X[,i], mod.lfmm2@U)
+  # Optionally, give names to the latent factors:
+  colnames(covariates)[-1] <- paste0("LF", 1:ncol(mod.lfmm2@U))
+
   # Initialize matrices to store the statistics.
   M <- ncol(Y)
   pvals <- numeric(M)
   zvals <- numeric(M)
   pvals <- numeric(M)
 
-   # Loop over each SNP (each column of Y)
-  for (j in 1:M) {
-    # Fit the regression model for SNP j using robust regression
-    fit <- rlm(Y[, j] ~ ., data = covariates,
-               maxit=1000)
-    
-    # Get the summary and extract the coefficient for the 'env' predictor.
-    sfit <- summary(fit)
-    
-    # In the design matrix, the first coefficient is the intercept.
-    # The second coefficient corresponds to env.
-    # Extract the t value for the environmental variable.
-    zvals[j] <- sfit$coefficients["env", "t value"]
+    # Loop over each SNP (each column of Y)
+    for (snp in 1:M) {
+      # Fit the regression model for each SNP using robust regression
+      fit <- rlm(Y[, snp] ~ ., data = covariates, maxit=1000)
+      
+      # Get the summary and extract the coefficient for the 'env' predictor.
+      sfit <- summary(fit)
+      
+      # In the design matrix, the first coefficient is the intercept.
+      # The second coefficient corresponds to env.
+      # Extract the t value for the environmental variable.
+      zvals[snp] <- sfit$coefficients["env", "t value"]
   }
 
   pvals <- pchisq(zvals^2, df=1, lower.tail=FALSE) # Calculate p-values from z-scores
